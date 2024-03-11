@@ -1,0 +1,32 @@
+project:
+  type: website
+
+website:
+  title: "Practical Bayesian Extremist"
+  description: "This is Jumho Lee;s personal Blog."
+  navbar:
+    left:
+      - text: Blog
+        href: blog.qmd
+      - text: Dashboard
+        href: https://www.github.com/morner75
+      - text: Archive
+        href: archive.qmd
+      - text: Curriculum Vitae
+        menu:
+          - href: CV_KOR.qmd
+            text: "Korean"
+          - href: CV_ENG.qmd
+            text: "English"
+    right:
+      - icon: github
+        href: https://www.github.com/morner75
+      - icon: linkedin
+        href: https://www.linkedin.com/in/junho-lee-050943267/
+  page-footer:
+    left: "rendered by [Quarto](https://quarto.org/)"
+
+format:
+  html:
+    theme: sandstone
+    css: styles.css

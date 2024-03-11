@@ -1,0 +1,37 @@
+---
+title: "Practical Bayesian Extremist"
+image: starry_night.jpeg
+about:
+  template: trestles
+  image-width: 30em
+  image-shape: rounded
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/junho-lee-050943267/
+    - icon: github
+      text: Github
+      href: https://www.github.com/morner75
+page-layout: full
+---
+
+:::{#inro_korean}
+
+**블로그에 오신 걸 환영합니다.   
+금융감독원에서 베이지안 통계학을 연구하고 응용하는 이준호입니다.**
+
+젊은 시절 경제학과 법학을 공부하였으나, 2010년 중반 데이터 혁명과 기계학습에 감명받아 뒤늦은 40대에 유학길에 올라 영국 에든버러대학교(University of Edinburgh) 평소 관심이 있던 베이즈 통계학(Bayesian statistics)을 공부였습니다.
+
+극단값 이론과(Extreme value theory) 베이즈비모수통계학(Nonparametric Bayes)을 전공하였고, R 언어를 이용한 실용적인 데이터 분석 패키지 개발과 통계학과 머신러닝 모형의 수학적 배경에 관심을 갖고 있습니다.
+
+유학 이후 금융감독원에서 거시경제 및 기후경제모형 모델링, 금융산업과 금융회사에 대한 스트레스 테스트 업무를 주로 담당했었고, 현재는 증권 불공정거래 탐색 및 자금추적  모형을 개발하고 있습니다
+
+**Hi, I'm Junho Lee, a Bayesian statistician and R programmer.**  
+
+I have a PhD in Statistics from the University of Edinburgh and work for the Financial Supervisory Service in South Korea. 
+
+I have worked on various macroeconomic modelling including climate scenario analysis, as well as conducting stress-testing over financial institutions in South Korea. 
+
+My current interest is on developing fraud detection models in stock market and applying Bayesian networks to account tracking. 
+
+:::
