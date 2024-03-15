@@ -1,0 +1,88 @@
+---
+title: '베이지안 평활기법'
+date: '2022-10-04'
+categories: ['Bayesian smoothing']
+description: 'Bayesian smoothing 기법에 대한 소개'
+execute: 
+  message: false
+  warning: false
+editor_options: 
+  chunk_output_type: console
+---
+
+#### 2. 베이지안 평활기법
+
+이제 시계열 자료에 대한 베이지안 입장에서 평활화에 대하여 살펴보자.
+마찬가지로 시계열 자료에 내재된 추세를 확률벡터 $\boldsymbol\mu$ 라 하고, 정규분포 관측모형을 가정하면 관측값 $\mathbf y$ 는 가우스 조건부 확률분포, 
+$$
+\mathbf y \mid \boldsymbol \mu \sim N(\boldsymbol\mu, \sigma^2\mathbf I)
+$$
+를 따른다. 여기서 일단 $\sigma^2$ 가 알려져 있다고 가정하면, 관측치의 우도함수는 다음과 같다. 
+$$
+p(\mathbf y\mid \boldsymbol\mu)\propto \exp\left\{-\frac{1}{2\sigma^2}(\mathbf y-\boldsymbol \mu)'(\mathbf y-\boldsymbol\mu)\right\}.
+$$
+
+이제 $\boldsymbol\mu$ 에 대하여 사전분포 $p(\boldsymbol\mu)$ 를 부여하는 방법에 대하여 알아보자. 2차 확률보행의 경우 $\mu_t$ 의 사전분포는 
+$$
+\mu_t=2\mu_{t-1}-\mu_{t-2}+u_t, \quad u_t\sim N(0,\tau^2),\quad t=3,\ldots,T.
+$$
+여기서 $u_t$ 는 분산이 $\tau^2$ 인 가우스 분포를 나타낸다. 초기값 $\mu_1$ 과 $\mu_2$ 에 대해서는 별도의 사전분포를 부여해야 하는데 우리는
+각각각 다음과 같이 가우스 분포를 부여한다. 
+$$
+(\mu_1,\mu_2)\sim N(0,c\mathbf I_2)
+$$
+위 초기값에 해당하는 사전분포는 확률벡터 $\boldsymbol\mu$ 에 대한 정규 결합 가우스 분포를 얻게 해주며, 확률보행 사전분포의 오차항과 독립이다. 또한
+$c\to\infty$ 이면, 위 사전분포는 평탄한 비정규분포, 즉 
+$$
+p(\mu_1)\propto \text{상수},\quad  p(\mu_2)\propto \text{상수}
+$$
+가 되는데 이 경우 $\boldsymbol\mu$ 의 결합 사전분포는 부분적으로 비정규인 가우스 분포이다. 
+
+초기값 $\mu_1$ 과 $\mu_2$ 에 대하여 평탄한 사전분포를 가정하고, 확률벡터 $\boldsymbol\mu$ 에 대한 결합 가우스 사전분포를 정리하면 
+$$
+p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu'\mathbf K \boldsymbol \mu\right)
+$$
+
+이고, 여기서 $\mathbf K=\mathbf K_2$ 랭크가 $T-2$ 인 벌점행렬이다. 즉, 확률벡터 $\boldsymbol\mu$ 의 결합 사전분포는 정밀도 행렬이 $\mathbf K_2/\tau^2$이고, 특이 가우스 분포를 갖는다. 빈도주의 입장에서 벌점항은 베이지언 입장에서 음의 로그 사전분포와 (상수항 부분을 제외하고) 동일하다는 것을 알 수 있다.
+
+확률벡터 $\boldsymbol\mu$ 의 사후분포는 베이즈 법칙으로부터 다음과 같이 도출한다. 
+$$
+p(\boldsymbol\mu\mid \mathbf y)=\frac{p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)}{p(\mathbf y)}\propto p(\mathbf y\mid \mathbf \mu)p(\boldsymbol\mu)
+$$
+
+사후분포 $p(\boldsymbol\mu\mid \mathbf y)$ 의 특징은 다음과 같다. 
+
+1. 두 분포 $p(\mathbf y\mid \mathbf \mu)$ 과 $p(\boldsymbol\mu)$ 가 가우스 분포이기 때문에 사후분포 또한 가우스 분포를 갖는다. 따라서 그 특징을 사후분포의 기대값
+   $E(\boldsymbol\mu\mid \mathbf y)$과 공분산 행렬 $Cov(\boldsymbol\mu\mid \mathbf y)$ 만으로 묘사할 수 있다. 
+
+   
+
+2. 사후분포의 기대값과 최빈값 (mode) 는 로그사후분포를 극대화하는 값이다. 즉, 가우스분포로부터 
+   $$
+   \log p(\boldsymbol\mu\mid \mathbf y)=\log p(\mathbf y\mid \boldsymbol\mu)+\log p(\boldsymbol\mu)
+   $$
+   
+3. 조건부 독립성 가정과 초기값에 대하여 평탄 사전분포를 가정하면 사후 최빈값은 다음 식을 최소화하는 $\boldsymbol\mu^*$ 값이다. 
+   $$
+   \boldsymbol\mu^*=\arg\min_{\boldsymbol\mu}\frac{1}{\sigma^2}\sum_{t=1}^T (y_t-\mu_t)^2+\frac{1}{\tau^2}\sum_{t=3}^T (\mu_t-2\mu_{t-1}+\mu_{t-2})^2
+   $$
+   
+4. 평활화 파라미터 $\tau^2$ 와 분산 $\sigma^2$ 의 비율 $\lambda=\sigma^2/\tau^2$ 를 정의하면 $\hat{\boldsymbol\mu}_{PLS}$와 $\boldsymbol\mu^*$은 동일하다.
+
+베이지안 접근법을 PLS 추정량과 비교하면 베이지안의 $p(\boldsymbol\mu\mid \mathbf y)$ 사후분포가 아래와 같이 가우스분포로 귀결됨에 따라 
+$$
+\begin{align}
+p(\boldsymbol\mu\mid \mathbf y)&\propto p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\sigma^2}(\mathbf y-\boldsymbol\mu)'(\mathbf y-\boldsymbol\mu)\exp\right)\exp\left(-\frac{1}{2\tau^2}(\boldsymbol\mu)'\mathbf K(\boldsymbol\mu)\exp\right)\\
+&\propto \exp\left(-\frac{1}{2}(\boldsymbol\mu-(\mathbf I +\lambda\mathbf K )^{-1}\mathbf y)'\frac{1}{\sigma^2}(\mathbf I +\lambda\mathbf K)(\boldsymbol\mu-(\mathbf I +\lambda\mathbf K )^{-1}\mathbf y \right)\\
+&\Rightarrow\quad  \boldsymbol\mu\mid \mathbf y \sim N((\mathbf I +\lambda\mathbf K)^{-1}\mathbf y,\sigma^2(\mathbf I +\lambda\mathbf K)^{-1})
+\end{align}
+$$
+PLS 추정량이 사후분포의 최빈값 또는 사후분포의 기대값 $E(\boldsymbol\mu\mid \mathbf y)$ 이 일치한다. 또한 이 결과는 어떤 임의의 $d$ 차 확률보행 사전분포에 대해서도 성립하므로 벌점행렬 $\mathbf K$ 에 대해서도 유효하게 성립한다. 하지만, $p(\boldsymbol\mu\mid \mathbf y)$ 사후분포의 공분산 행렬은 PLS 추정량의 공분산과 다르다. 즉, 
+$$
+Cov(\hat{\boldsymbol\mu})=\sigma^2(\mathbf I +\lambda\mathbf K)^{-2}\neq\sigma^2(\mathbf I +\lambda\mathbf K)^{-1}=Cov(\boldsymbol\mu\mid \mathbf y)
+$$
+두 공분산의 차이는 양의 준정칙성을 갖는데, 이런 의미에서 사후분포의 공분산이 PLS 추정량의 공분산보다 크다고 할 수 있다. 
+$$
+Cov(\boldsymbol\mu\mid \mathbf y) - Cov(\hat{\boldsymbol\mu})=Cov(\boldsymbol\mu\mid \mathbf y) (\mathbf I -(\mathbf I +\lambda\mathbf K)^{-1})
+$$
+하지만, 위와 같은 전통적 PLS 추정량과 베이지안 접근법의 동일한 결과는 오직 점추정치에 한하여 성립할 뿐, 통계적 추정량의 측면에서는 전혀 다르다.
