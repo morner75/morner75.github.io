@@ -41,21 +41,21 @@ page-layout: full
 
 ### Talks/Posters
 
-Lee, J., & de Carvalho, M. (2018). “Modelling Time‑Varying Conformance to Benford’s Law”. a poster at ISBA 2018 World meeting, June 2018, Edinburgh, UK.
-
-Lee, J., de Carvalho, M. & Rua, A. (2019). “What hides behind an extreme currency demand? Bayesian semi‑parametric modelling of heteroscedastic extremes”. a poster at Centre for Statistics conference, June 2019, Edinburgh, UK.
-
-Lee, J., de Carvalho, M. & Rua, A. (2019). “Bayesian semi‑parametric modelling of heteroscedastic extremes”. a talk at Extreme Value Analysis 2019, July 2019, Zagreb, Croatia.
-
-Lee, J., de Carvalho, M. & Rua, A. (2019). “Bayesian semiparametric regression for heavy‑tailed responses”. a talk at CMstatistics 2019, 14‑16 December 2019, London, UK.
-
-Lee, J., de Carvalho, M., & Rua, A. (2021). “Bayesian smoothing of time‑varying extremal dependence in international stock markets”. a talk at Eco‑stats 2021, June 2021, Hong Kong.
-
-Lee, J., & de Carvalho, M. (2021). “Bayesian Semiparametric Inferences for Covariate‑adjusted Extreme‑value Copula with application to Cryptocurrency Markets”. a talk at XXV Congress of the Portuguese Statistical Society, November 2021, Portugal.
+Lee, Junho (2024), "Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service", a talk at NFSC-KOICA international conference, 'Vietnam's financial market: Opportunities and challenges', Dec 2023, Dalat, Vietnam. 
 
 이준호·김정일(2023). “금융감독기관의 기후스트레스테스트 진행현황 및 향후계획”. SPGMI-KPMG 웹비나, 2023.3.
 
+Lee, J., & de Carvalho, M. (2021). “Bayesian Semiparametric Inferences for Covariate‑adjusted Extreme‑value Copula with application to Cryptocurrency Markets”. a talk at XXV Congress of the Portuguese Statistical Society, November 2021, Portugal.
 
+Lee, J., de Carvalho, M., & Rua, A. (2021). “Bayesian smoothing of time‑varying extremal dependence in international stock markets”. a talk at Eco‑stats 2021, June 2021, Hong Kong.
+
+Lee, J., de Carvalho, M. & Rua, A. (2019). “Bayesian semiparametric regression for heavy‑tailed responses”. a talk at CMstatistics 2019, 14‑16 December 2019, London, UK.
+
+Lee, J., de Carvalho, M. & Rua, A. (2019). “Bayesian semi‑parametric modelling of heteroscedastic extremes”. a talk at Extreme Value Analysis 2019, July 2019, Zagreb, Croatia.
+
+Lee, J., de Carvalho, M. & Rua, A. (2019). “What hides behind an extreme currency demand? Bayesian semi‑parametric modelling of heteroscedastic extremes”. a poster at Centre for Statistics conference, June 2019, Edinburgh, UK.
+
+Lee, J., & de Carvalho, M. (2018). “Modelling Time‑Varying Conformance to Benford’s Law”. a poster at ISBA 2018 World meeting, June 2018, Edinburgh, UK.
 
 ### Work Experience
 
