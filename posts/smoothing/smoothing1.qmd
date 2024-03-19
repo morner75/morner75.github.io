@@ -27,22 +27,49 @@ $$
 y_t=\mu_t+\varepsilon_t,\quad t=1,\ldots, T
 $$
 
- 여기서 $\varepsilon_1,\ldots,\varepsilon_T$ 를 $E(\varepsilon_t)=0,\;\forall t$ 를 만족하는 독립인 오차항을 나타낸다.
+여기서 $\varepsilon_1,\ldots,\varepsilon_T$ 를 $E(\varepsilon_t)=0,\;\forall t$ 를 만족하는 독립인 오차항을 나타낸다.
 
 
+평활화 문제를 실제 데이터에 적용해 보자. 
+아래 코드는 1990년 이후 월평균 원달러 환율 데이터를 line 그래프로 나타낸 것이다. 
 
 ::: panel-tabset
-### R
+### R ggplot2
 
-```{r}
+```{r, fig.width=8, fig.height=4}
 library(tidyverse)
-library(palmerpenguins)
+library(zoo)
+library(getMFdata)
 
+data(usdkrw)
 
+usdkrw <- 
+  usdkrw %>% 
+  mutate(yearmon=as.yearmon(yearmon))
+
+ggplot(data=usdkrw,aes(yearmon,usdkrw))+
+  geom_line()+
+  theme_classic()
 
 ```
 
-### Python
+### R plotly
+```{r, fig.width=8, fig.height=4}
+library(tidyverse)
+library(zoo)
+library(plotly)
+library(getMFdata)
+
+data(usdkrw)
+
+usdkrw <- 
+  usdkrw %>% 
+  mutate(yearmon=as.yearmon(yearmon))
+
+plot_ly(data=usdkrw,x=~yearmon,y=~usdkrw) %>% 
+  add_lines()
+
+```
 :::
 
 
