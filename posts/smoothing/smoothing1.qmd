@@ -36,9 +36,10 @@ $$
 
 ```{r}
 library(tidyverse)
+library(palmerpenguins)
 
-ggplot(mpg) +
-  geom_jitter(aes(cty, hwy), size = 4, alpha = 0.5) 
+
+
 ```
 
 ### Python
