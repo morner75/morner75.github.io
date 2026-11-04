@@ -1,8 +1,9 @@
 ---
-title: "연구결과물"
+title: "Research"
 description: "연구 내용을 쉽게 풀어 쓴 해설 페이지입니다."
 lang: ko
 page-layout: full
+css: research/research.css
 listing:
   contents: research/**/index.qmd
   sort: "date desc"

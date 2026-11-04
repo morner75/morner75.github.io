@@ -1,0 +1,27 @@
+/* Research 영역 공통 스타일: CV와 같은 비율로 글자를 한 단계 작게 표시한다. */
+main.content {
+  font-size: 0.875rem;
+}
+
+/* 제목 영역 */
+main.content .quarto-title h1.title {
+  font-size: 1.75rem;
+}
+
+main.content .quarto-title .subtitle {
+  font-size: 1.05rem;
+}
+
+main.content .quarto-title .description,
+main.content .quarto-title-meta,
+main.content .quarto-title-meta-heading,
+main.content .quarto-title-meta-contents {
+  font-size: 0.875rem;
+}
+
+/* 목록 */
+.quarto-listing .listing-date,
+.quarto-listing .listing-description,
+.quarto-listing .listing-description * {
+  font-size: 0.875rem;
+}

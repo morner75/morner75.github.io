@@ -105,7 +105,9 @@ image: figures/fig-01.png
 lang: ko
 page-layout: full
 toc: false
-css: wash-trading.css
+css:
+  - ../research.css
+  - wash-trading.css
 resources:
   - figures/*.png
 ---

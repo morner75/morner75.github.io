@@ -1,0 +1,34 @@
+---
+title: "Practical Bayesian Extremist"
+image: starry_night.jpeg
+about:
+  template: trestles
+  image-width: 30em
+  image-shape: rounded
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/junho-lee-050943267/
+    - icon: github
+      text: Github
+      href: https://www.github.com/morner75
+page-layout: full
+lang: en
+include-before-body:
+  text: '<a class="lang-switch" href="index.html" hreflang="ko">한국어</a>'
+include-after-body: _lang-en.html
+---
+
+:::{#intro_english}
+
+**Hi, I'm Junho Lee, an investigator working across capital and virtual asset markets, and a Bayesian statistician.**
+
+I have a PhD in Statistics from the University of Edinburgh and have worked at the Financial Supervisory Service in South Korea since 2003.
+
+Much of my career has been spent investigating unfair trading in stock and derivatives markets and examining financial investment companies. Since January 2026, I have been the Team Head of the Virtual Asset Investigation Analysis Team, extending that investigative experience to virtual asset markets. I have also worked on stress-testing and climate scenario analysis.
+
+My research interests include extreme value theory, Bayesian nonparametrics and practical data analysis in R. I am also working on fraud detection models for market manipulation and applying Bayesian networks to account tracking.
+
+The views expressed on this blog are my own and do not represent those of my employer.
+
+:::

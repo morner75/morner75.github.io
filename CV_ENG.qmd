@@ -10,6 +10,10 @@ format:
     toc: true
 css: cv.css
 page-layout: full
+lang: en
+include-before-body:
+  text: '<a class="lang-switch" href="CV_KOR.html" hreflang="ko">한국어</a>'
+include-after-body: _lang-en.html
 ---
 
 

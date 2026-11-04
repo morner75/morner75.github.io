@@ -8,41 +8,21 @@ website:
     left:
       - text: Blog
         href: blog.qmd
-      - text: 연구결과물
+      - text: Research
         href: research.qmd
-      - text: Dashboard
-        href: https://www.github.com/morner75
-      - text: Archive
-        href: archive.qmd
       - text: Curriculum Vitae
-        menu:
-          - href: CV_KOR.qmd
-            text: "Korean"
-          - href: CV_ENG.qmd
-            text: "English"
+        href: CV_KOR.qmd
     right:
       - icon: github
         href: https://www.github.com/morner75
       - icon: linkedin
         href: https://www.linkedin.com/in/junho-lee-050943267/
-  bread-crumbs: false
-  sidebar:
-    style: floating
-    contents:
-      - section: "최근 연구 결과물"
-        contents:
-          - text: "이용자보호법과 워시 트레이딩 (2026)"
-            href: research/wash-trading/index.qmd
-          - text: "Behavioural changes in dairy calves (2026)"
-            href: https://doi.org/10.1016/j.anopes.2026.100158
-          - text: "온실가스 배출과 신용공급 (2024)"
-            href: https://doi.org/10.23229/fss.2024.11.1.003
-          - text: "Bayesian smoothing for extremal dependence (2024)"
-            href: https://doi.org/10.1093/jrsssc/qlae002
   page-footer:
     left: "rendered by [Quarto](https://quarto.org/)"
 
 format:
   html:
-    theme: sandstone
+    theme:
+      - sandstone
+      - theme.scss
     css: styles.css

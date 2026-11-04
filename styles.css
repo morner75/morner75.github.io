@@ -5,3 +5,31 @@ body {
   word-break: keep-all;
   overflow-wrap: break-word;
 }
+
+/* Blog와 Research 목록의 글 제목 */
+.quarto-listing .listing-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+/* 국문·영문 전환 버튼: 상단 메뉴 바로 아래 오른쪽에 둔다. */
+.lang-switch {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  z-index: 5;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #3e3f3a;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #dfd7ca;
+  border-radius: 6px;
+}
+
+.lang-switch:hover,
+.lang-switch:focus {
+  color: #3e3f3a;
+  background: #f8f5f0;
+}

@@ -1,0 +1,16 @@
+<script>
+// 영문 페이지의 상단 링크를 영문 페이지로 연결한다.
+document.addEventListener('DOMContentLoaded', function () {
+  var english = { 'index.html': 'index_en.html', 'CV_KOR.html': 'CV_ENG.html' };
+  var current = location.pathname.split('/').pop();
+  document.querySelectorAll('#quarto-header a[href]').forEach(function (link) {
+    var href = link.getAttribute('href');
+    var file = href.split('/').pop();
+    if (!english[file]) return;
+    link.setAttribute('href', href.replace(file, english[file]));
+    if (english[file] === current && link.classList.contains('nav-link')) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>

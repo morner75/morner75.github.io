@@ -13,6 +13,9 @@ about:
       text: Github
       href: https://www.github.com/morner75
 page-layout: full
+lang: ko
+include-before-body:
+  text: '<a class="lang-switch" href="index_en.html" hreflang="en">English</a>'
 ---
 
 :::{#intro_korean}
@@ -25,15 +28,5 @@ page-layout: full
 대학에서 경제학과 법학을 공부했고, 2010년대 중반 데이터 혁명과 기계학습에 감명받아 뒤늦은 40대에 영국 에든버러대학교(University of Edinburgh)로 유학을 떠나 통계학 박사 학위를 받았습니다. 극단값 이론(Extreme value theory)과 베이즈 비모수 통계학(Nonparametric Bayes)을 전공했고, R을 이용한 실용적인 데이터 분석과 통계·머신러닝 모형의 수학적 배경에 관심을 갖고 있습니다. 시세조종 등 불공정거래 탐지 모형과 베이지안 네트워크를 활용한 계좌추적 모형 개발에도 힘쓰고 있습니다.
 
 이 블로그의 내용은 개인 견해이며, 소속 기관의 공식 입장과 무관합니다.
-
-**Hi, I'm Junho Lee, an investigator working across capital and virtual asset markets, and a Bayesian statistician.**
-
-I have a PhD in Statistics from the University of Edinburgh and have worked at the Financial Supervisory Service in South Korea since 2003.
-
-Much of my career has been spent investigating unfair trading in stock and derivatives markets and examining financial investment companies. Since January 2026, I have been the Team Head of the Virtual Asset Investigation Analysis Team, extending that investigative experience to virtual asset markets. I have also worked on stress-testing and climate scenario analysis.
-
-My research interests include extreme value theory, Bayesian nonparametrics and practical data analysis in R. I am also working on fraud detection models for market manipulation and applying Bayesian networks to account tracking.
-
-The views expressed on this blog are my own and do not represent those of my employer.
 
 :::
