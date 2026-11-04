@@ -1,0 +1,18 @@
+---
+title: "연구결과물"
+description: "연구 내용을 쉽게 풀어 쓴 해설 페이지입니다."
+lang: ko
+page-layout: full
+listing:
+  contents: research/**/index.qmd
+  sort: "date desc"
+  type: default
+  categories: false
+  sort-ui: false
+  filter-ui: false
+  fields: [image, title, date, description]
+  date-format: "YYYY년 M월"
+  feed: false
+---
+
+전체 논문과 발표 목록은 [Curriculum Vitae](CV_KOR.qmd)에서 볼 수 있습니다.

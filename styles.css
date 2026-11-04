@@ -1,1 +1,7 @@
 /* css styles */
+
+/* 한글이 단어 중간에서 끊기지 않게 한다. */
+body {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
