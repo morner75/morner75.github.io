@@ -1,0 +1,3462 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="가상자산이용자보호법 시행이 빗썸의 워시 트레이딩에 미친 영향: 벤포드 법칙·멱법칙·PELT로 본 실증 분석의 쉬운 해설">
+
+<title>가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../research.css">
+<link rel="stylesheet" href="wash-trading.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향</h1>
+<p class="subtitle lead">연구 해설 · Working paper(2026년 11월)</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">가상자산</div>
+    <div class="quarto-category">워시 트레이딩</div>
+    <div class="quarto-category">벤포드 법칙</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    가상자산이용자보호법 시행이 빗썸의 워시 트레이딩에 미친 영향: 벤포드 법칙·멱법칙·PELT로 본 실증 분석의 쉬운 해설
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">공개</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2026년 11월</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="wt"><div class="wt-grid">
+<div class="wt-main">
+
+
+<div class="hero" id="summary">
+  <div class="byline">이준호(금융감독원 가상자산조사국), 최범전(금융감독원 감독혁신국)</div>
+  <p class="lead">2024년 7월 19일 시행된 가상자산이용자보호법 이후, 빗썸에서 거래량을 부풀리는 <b>워시 트레이딩</b>이 줄었을까? 계좌 정보 없이 5분 단위 거래량만으로 세 가지 통계 지표를 만들어 법 시행 전후를 비교하였다.</p>
+  <div class="verdict"><b>한 줄 결론</b> — 법 시행 전후로 거래량의 통계적 특성은 분명히 달라졌다. 그러나 그 변화는 시행 이전의 추세, 거래소의 수수료 정책, 해외 거래소에서도 나타난 공통 변화로 상당 부분 설명되어, <b>법 시행이 워시 트레이딩을 줄였다는 통계적 근거는 확인되지 않았다.</b></div>
+  <div class="stats">
+    <div class="stat"><div class="n">34</div><div class="l">분석 종목<br>(대형 8 · 중소형 26)</div></div>
+    <div class="stat"><div class="n">43개월</div><div class="l">2022.6 ~ 2025.12<br>5분봉</div></div>
+    <div class="stat"><div class="n">1,462</div><div class="l">종목–월<br>분석 단위</div></div>
+    <div class="stat"><div class="n">3</div><div class="l">탐지 지표<br>벤포드·꼬리·변화점</div></div>
+    <div class="stat"><div class="n">26</div><div class="l">바이낸스 비교<br>종목</div></div>
+  </div>
+  <details class="mtoc"><summary>목차</summary><ol>
+    <li><a href="#why">왜 이 연구인가</a></li><li><a href="#data">데이터와 종목 구분</a></li>
+    <li><a href="#benford-m">지표 ① 벤포드 법칙</a></li><li><a href="#tail-m">지표 ② 멱법칙 꼬리지수</a></li>
+    <li><a href="#pelt-m">지표 ③ 변화점 탐지</a></li><li><a href="#design">법의 효과를 가려내는 방법</a></li>
+    <li><a href="#res-benford">결과 ① 벤포드</a></li><li><a href="#res-tail">결과 ② 꼬리지수</a></li>
+    <li><a href="#res-pelt">결과 ③ 변화점</a></li><li><a href="#synth">종합</a></li>
+    <li><a href="#extra">원고에 싣지 않은 분석</a></li><li><a href="#impl">시사점과 한계</a></li>
+    <li><a href="#appendix">부록</a></li><li><a href="#glossary">용어 풀이</a></li></ol></details>
+</div>
+
+<!-- 1 ------------------------------------------------------------------>
+<section id="why">
+<h2 class="anchored"><span class="no">1</span>왜 이 연구인가</h2>
+<h3 class="anchored">워시 트레이딩이란</h3>
+<p>워시 트레이딩(wash trading)은 실제로 소유권이 바뀌지 않는데도 같은 사람이나 서로 짜고 움직이는 사람들이 사고팔아 거래가 일어난 것처럼 보이게 하는 행위이다. 미국 상품거래법은 이를 “시장위험을 부담하거나 포지션을 바꾸지 않고 매매가 이루어진 것처럼 보이게 하는 거래”로 정의한다. 결과는 <b>부풀려진 거래량</b>이다.</p>
+<p>가상자산 거래소에서는 이 유인이 특히 크다. 거래량은 코인마켓캡 같은 집계 사이트의 거래소 순위와 종목의 인기도를 좌우하고, 많아 보이는 거래량은 다시 실제 거래를 끌어들인다. 해외 연구에서는 규제를 받지 않는 거래소의 보고 거래량 가운데 70% 이상이 허위로 추정되기도 하였다(Cong <i>et al.</i>, 2023).</p>
+
+<h3 class="anchored">가상자산이용자보호법의 핵심</h3>
+<p>2023년 7월 18일 공포되고 2024년 7월 19일 시행된 이 법은 이전의 특정금융정보법이 다루지 못한 <b>불공정거래 규제</b>와 <b>이용자 보호</b>를 담고 있다.</p>
+<div class="cards">
+  <div class="card"><span class="tag">이용자 자산 보호</span><div class="t">예치금·가상자산 분리 보관</div><p>예치금은 은행이 보관하고, 이용자 가상자산의 80% 이상은 콜드월렛에 보관한다. 사고에 대비한 보험·준비금 의무가 생겼다.</p></div>
+  <div class="card"><span class="tag">불공정거래 규제</span><div class="t">시세조종 형사처벌·과징금</div><p>시세조종 등은 1년 이상 징역 또는 부당이득 3~5배 벌금, 부당이득 2배 과징금 대상이다. 거래소는 이상거래를 상시 감시하고 당국에 통보해야 한다.</p></div>
+  <div class="card"><span class="tag">감독·제재</span><div class="t">당국의 검사·조사 권한</div><p>금융감독원은 사업자의 이용자 보호 의무 준수를 검사하고, 금융위원회는 시정명령·영업정지·과태료를 부과할 수 있다.</p></div>
+</div>
+<p>워시 트레이딩은 이 법이 금지하는 시세조종의 한 형태이다. 그렇다면 법 시행 이후 거래량에 남는 워시 트레이딩의 흔적이 줄어들었어야 한다. 이 연구는 그 흔적을 통계로 재어 본 것이다.</p>
+<div class="box easy"><div class="h">이 연구가 할 수 없는 것</div><p>계좌 정보가 없으므로 “누가 자기 자신과 거래했다”를 직접 확인할 수는 없다. 대신 정상적인 거래라면 거래량이 따라야 할 <b>통계적 규칙</b>을 기준으로, 그 규칙에서 얼마나 벗어나는지를 잰다. 따라서 결과는 워시 트레이딩의 직접 증거가 아니라 <b>정황 지표</b>이다.</p></div>
+</section>
+
+<!-- 2 ------------------------------------------------------------------>
+<section id="data">
+<h2 class="anchored"><span class="no">2</span>데이터와 종목 구분</h2>
+<h3 class="anchored">빗썸 5분봉, 34개 종목, 43개월</h3>
+<p>분석에는 빗썸 원화마켓에서 분석기간 내내 거래된 34개 종목의 5분봉(시가·고가·저가·종가·거래량)을 사용하였다. 기간은 2022년 6월 1일부터 2025년 12월 31일까지이고, 자료는 크로스앵글(Xangle)에서 받았다. 5분봉은 거래가 있었던 구간에만 생기므로, 종목당 최대 377,280개(1,310일×288) 가운데 실제 관측치는 크로미아 139,127개에서 리플 375,706개까지 차이가 난다. 이 비율(<b>관측비율</b>)이 종목의 거래 활성도를 보여 준다.</p>
+<p>비교를 위해 같은 종목의 해외 거래소 자료로 바이낸스 USDT 마켓 5분봉을 함께 썼다. 분석기간 내내 바이낸스에서도 거래된 26개 종목(대형 8, 중소형 18)이 대상이다.</p>
+
+<h3 class="anchored">대형 그룹과 중소형 그룹</h3>
+<p>워시 트레이딩이 없다고 확신할 수 있는 국내 기준 거래소는 없다. 그래서 같은 거래소 안에서 <b>워시 트레이딩의 영향이 상대적으로 작을 것으로 보이는 종목</b>을 비교 기준으로 삼았다. 기간 평균 시가총액(로그)과 관측비율을 표준화해 K-평균 군집으로 두 무리로 나누었고, 결과는 Ward 계층 군집과 완전히 일치하였다.</p>
+<div class="cards">
+  <div class="card"><div class="t"><span class="legend-dot" style="background:var(--large)"></span>대형 그룹 8개</div><p>이더리움, 리플, 에이다, 트론, 체인링크, 비트코인 캐시, 스텔라루멘, 이더리움 클래식. 시가총액 합계의 97.4%, 관측비율 평균 94.0%.</p></div>
+  <div class="card"><div class="t"><span class="legend-dot" style="background:var(--small)"></span>중소형 그룹 26개</div><p>나머지 종목. 관측비율 평균 54.3%로 5분 구간의 절반 정도에서만 거래가 있다. 일평균 거래대금은 대형(292.7억 원)의 약 1/30(9.7억 원).</p></div>
+  <div class="card"><div class="t">왜 이렇게 나누나</div><p>유동성이 낮은 종목일수록 적은 돈으로 거래량을 크게 부풀릴 수 있어 워시 트레이딩 유인이 크다. 법이 효과가 있었다면 중소형 그룹에서 더 크게 나타났을 것이다.</p></div>
+</div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 2]</span> 규모·유동성 그룹별 기술통계(그룹 내 종목 평균)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">그룹</th>
+<th class="r" data-quarto-table-cell-role="th">종목수</th>
+<th class="r" data-quarto-table-cell-role="th">관측비율(%)</th>
+<th class="r" data-quarto-table-cell-role="th">월평균 관측치</th>
+<th class="r" data-quarto-table-cell-role="th">일평균 거래대금(억원)</th>
+<th class="r" data-quarto-table-cell-role="th">5분 거래대금 중위수(백만원)</th>
+<th class="r" data-quarto-table-cell-role="th">일간수익률 표준편차(%)</th>
+<th class="r" data-quarto-table-cell-role="th">왜도</th>
+<th class="r" data-quarto-table-cell-role="th">첨도</th>
+<th class="r" data-quarto-table-cell-role="th">log10 거래량 표준편차</th>
+<th class="r" data-quarto-table-cell-role="th">거래량 분포폭</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">94.0</td>
+<td class="r">8,246</td>
+<td class="r">292.7</td>
+<td class="r">38.71</td>
+<td class="r">3.65</td>
+<td class="r">23.9</td>
+<td class="r">1,419</td>
+<td class="r">0.80</td>
+<td class="r">3.93</td>
+</tr>
+<tr class="even">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">54.3</td>
+<td class="r">4,766</td>
+<td class="r">9.7</td>
+<td class="r">0.82</td>
+<td class="r">4.40</td>
+<td class="r">44.6</td>
+<td class="r">5,025</td>
+<td class="r">1.14</td>
+<td class="r">4.92</td>
+</tr>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r">63.7</td>
+<td class="r">5,585</td>
+<td class="r">76.3</td>
+<td class="r">9.74</td>
+<td class="r">4.22</td>
+<td class="r">39.7</td>
+<td class="r">4,177</td>
+<td class="r">1.06</td>
+<td class="r">4.68</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: [부록 표-1]의 종목별 값을 그룹 내에서 평균한 값임. 일간수익률은 KST 기준 일별 마지막 5분봉 종가의 로그수익률. 왜도와 첨도는 5분 거래대금 기준.</p></figure>
+<details class="more"><summary>[표 3] 그룹별 시행 전후 거래 변화</summary><div>
+<p>시행 후 대형 그룹은 거래가 늘었지만 중소형 그룹은 5분 거래대금 중위수와 관측비율이 줄었다. 시장 전체의 거래가 늘어난 시기에 중소형 종목의 거래는 오히려 위축된 것이다. 이 <b>거래 위축</b>은 뒤의 결과를 해석할 때 계속 등장한다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 3]</span> 그룹별 가상자산이용자보호법 시행 전후 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">항목</th>
+<th class="r" data-quarto-table-cell-role="th">대형 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">대형 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">대형 증가종목</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 증가종목</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">관측비율(%)</td>
+<td class="r">92.7</td>
+<td class="r">96.0</td>
+<td class="r">6/8</td>
+<td class="r">55.3</td>
+<td class="r">53.3</td>
+<td class="r">10/26</td>
+</tr>
+<tr class="even">
+<td class="l">일평균 거래대금(억원)</td>
+<td class="r">171.8</td>
+<td class="r">480.1</td>
+<td class="r">6/8</td>
+<td class="r">9.4</td>
+<td class="r">10.3</td>
+<td class="r">14/26</td>
+</tr>
+<tr class="odd">
+<td class="l">5분 거래대금중위수(백만원)</td>
+<td class="r">28.69</td>
+<td class="r">70.39</td>
+<td class="r">6/8</td>
+<td class="r">0.96</td>
+<td class="r">0.71</td>
+<td class="r">5/26</td>
+</tr>
+<tr class="even">
+<td class="l">일간수익률 표준편차(%)</td>
+<td class="r">3.37</td>
+<td class="r">4.00</td>
+<td class="r">6/8</td>
+<td class="r">4.38</td>
+<td class="r">4.43</td>
+<td class="r">12/26</td>
+</tr>
+<tr class="odd">
+<td class="l">로그 거래량 표준편차</td>
+<td class="r">0.79</td>
+<td class="r">0.77</td>
+<td class="r">3/8</td>
+<td class="r">1.13</td>
+<td class="r">1.14</td>
+<td class="r">13/26</td>
+</tr>
+<tr class="even">
+<td class="l">log10(P99/P1)</td>
+<td class="r">3.95</td>
+<td class="r">3.78</td>
+<td class="r">2/8</td>
+<td class="r">4.85</td>
+<td class="r">4.32</td>
+<td class="r">0/26</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 시행 전은 2022년 6월~2024년 6월, 시행 후는 2024년 8월~2025년 12월 기간임. 시행 전·후 값은 종목별 지표의 그룹 내 평균이며, 증가 종목 수는 시행 후 값이 시행 전보다 큰 종목의 수를 의미.</p></figure></div></details>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 1]</span> 분석대상 34개 종목의 일별 거래대금 합계와 비트코인 가격</figcaption><div class="imgbox"><img src="figures/fig-01.png" alt="[그림 1] 분석대상 34개 종목의 일별 거래대금 합계와 비트코인 가격" loading="lazy" class="figure-img"></div><p class="note">주: 그림 상단의 세로축은 로그 척도이며, 굵은선은 30일 이동평균. 그림 하단은 빗썸 비트코인(BTC) 일별 종가를 나타냄. 빨간 점선은 가상자산이용자보호법 시행일(2024년 7월 19일)을 나타냄</p></figure>
+<p>34개 종목의 거래대금은 2022년 하반기~2023년 침체되었다가 2024년 상반기에 늘었고, 2024년 11월 이후 급증하였다. 법 시행일부터 2024년 10월까지의 일별 거래대금 중위수는 913억 원이었고, 2024년 11월 이후에는 3,307억 원이었다. 거래가 크게 늘어난 시점은 법 시행보다 2024년 말 시장 상승기와 맞물린다.</p>
+
+<h3 class="anchored">분석기간의 주요 사건</h3>
+<p>법 시행 말고도 거래 행태를 바꿀 수 있는 사건이 여럿 있었다. 특히 빗썸의 <b>거래수수료 무료화</b>는 워시 트레이딩의 비용을 0으로 만든다. 뒤에서 각 사건 전후 3개월을 비교해 법 시행과 견준다.</p>
+<ol class="timeline">
+  <li><span class="d">① 2022.11.11</span>FTX 파산 신청</li>
+  <li class="law"><span class="d">② 2023.7.18</span><b>가상자산이용자보호법 공포</b></li>
+  <li class="fee"><span class="d">③ 2023.10.4</span>빗썸 거래수수료 무료 시작</li>
+  <li class="fee"><span class="d">④ 2024.2.5</span>빗썸 거래수수료 유료 전환</li>
+  <li class="law"><span class="d">⑤ 2024.7.19</span><b>가상자산이용자보호법 시행</b><span class="x">시행 전: 2022.6~2024.6(25개월) · 시행 후: 2024.8~2025.12(17개월) · 시행월 2024.7은 비교에서 제외</span></li>
+  <li class="fee"><span class="d">⑥ 2024.10.1</span>빗썸 거래수수료 무료 재개</li>
+  <li><span class="d">⑦ 2024.11.25</span>빗썸 API 자전거래 방지 시스템 적용<span class="x">같은 계정의 API 지정가 주문끼리 체결되는 것을 미리 막는 조치</span></li>
+  <li><span class="d">⑧ 2024.12.3</span>비상계엄 선포</li>
+</ol>
+</section>
+
+<!-- 3 ------------------------------------------------------------------>
+<section id="benford-m">
+<h2 class="anchored"><span class="no">3</span>지표 ① 벤포드 법칙: 첫 자리 숫자의 규칙</h2>
+<p class="sub">거래량의 ‘첫 자리 숫자’가 자연스러운 비율로 나타나는가</p>
+<h3 class="anchored">1이 9보다 여섯 배 많이 나온다</h3>
+<p>여러 자릿수에 걸쳐 퍼져 있는 자연 발생 수치(인구, 강 길이, 회계 금액, 거래량 등)의 첫 자리는 1~9가 고르게 나오지 않는다. 첫 자리가 1일 확률은 약 30.1%이고, 9일 확률은 4.6%에 불과하다. 이것이 <b>벤포드 법칙</b>이다.</p>
+<div class="eq"><i>P</i>(<i>d</i>) = log<sub>10</sub>(1 + <span class="frac"><span>1</span><span><i>d</i></span></span>), &nbsp; <i>d</i> = 1, 2, …, 9</div>
+<figure class="figure"><div class="imgbox"><img src="figures/fig-02.png" alt="벤포드 분포의 첫 자리 확률" loading="lazy" class="figure-img"></div><p class="note">벤포드 분포의 첫 자리 확률(원고에서는 뺀 그림).</p></figure>
+<div class="box easy"><div class="h">왜 그런가: 직관</div>
+<p>어떤 수가 100에서 시작해 매년 10%씩 늘어난다고 하자. 100에서 200이 되기까지(첫 자리 1)는 약 7년이 걸리지만, 900에서 1,000이 되기까지(첫 자리 9)는 약 1년이면 된다. 곱셈으로 커지는 수는 첫 자리 1에 오래 머문다. 거래량은 투자자 수 × 주문 크기 × 정보 도착 빈도 × 시간대별 활동처럼 여러 요인이 <b>곱해져</b> 정해지므로 이 규칙을 따르기 쉽다. 또 서로 다른 규모의 참여자가 뒤섞인 자료는 각자의 분포와 상관없이 벤포드 분포에 가까워진다(Hill, 1995).</p></div>
+<p>반면 워시 트레이딩 프로그램은 정해진 범위의 수량이나 같은 크기의 주문을 반복하는 경우가 많다. 그러면 특정 첫 자리가 지나치게 자주 나온다. 아래 그림의 왼쪽(메탈, 2025년 6월)에서는 5와 6이 벤포드 비율보다 두 배 가까이 많다. 오른쪽(에이다, 2025년 9월)은 거의 완벽하게 일치한다.</p>
+<figure class="figure"><figcaption><span class="cap-no">[해설 그림 1]</span> 실제 종목–월의 첫 자리 분포</figcaption><div class="imgbox"><img src="figures/fig-03.png" alt="메탈 2025년 6월과 에이다 2025년 9월의 첫 자리 분포" loading="lazy" class="figure-img"></div><p class="note">막대는 5분 거래량의 첫 자리 비율, × 표시와 점선은 벤포드 분포. 1,462개 종목–월 가운데 MAD가 큰 축과 작은 축의 예이다.</p></figure>
+<h3 class="anchored">어긋남의 크기: MAD</h3>
+<p>적합도는 아홉 개 숫자 각각에서 관측 비율과 벤포드 비율의 차이를 절댓값으로 평균한 <b>MAD</b>(평균절대편차)로 잰다. 클수록 많이 벗어났다는 뜻이다. Nigrini (2012)는 첫 자리 MAD가 0.006 미만이면 ‘근접 적합’, 0.015를 넘으면 ‘비적합’으로 본다.</p>
+<div class="eq">MAD = <span class="frac"><span>1</span><span>9</span></span> Σ<sub><i>d</i>=1</sub><sup>9</sup> | <i>p̂<sub>d</sub></i> − <i>P</i>(<i>d</i>) |</div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 4]</span> 첫 자리 MAD 판정 기준(Nigrini, 2012)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">MAD</th>
+<th class="l" data-quarto-table-cell-role="th">판정</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">0.006 미만</td>
+<td class="l">근접 적합(close conformity)</td>
+</tr>
+<tr class="even">
+<td class="l">0.006 이상 0.012 미만</td>
+<td class="l">수용 가능(acceptable conformity)</td>
+</tr>
+<tr class="odd">
+<td class="l">0.012 이상 0.015 이하</td>
+<td class="l">경계적 수용(marginally acceptable)</td>
+</tr>
+<tr class="even">
+<td class="l">0.015 초과</td>
+<td class="l">비적합(nonconformity)</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">자료: Nigrini (2012).</p></figure>
+
+<h3 class="anchored">원고에 다 담지 못한 세 가지 함정</h3>
+<h4 class="anchored">함정 1. 관측치가 적으면 정상이어도 MAD가 크다</h4>
+<p>벤포드 분포에서 완벽하게 뽑은 자료라도 표본이 유한하면 우연한 들쭉날쭉함 때문에 MAD가 0이 되지 않는다. 그 기댓값은 관측치 수 <i>n</i>이 작을수록 커진다.</p>
+<div class="eq"><i>E</i>[MAD] ≈ <span class="frac"><span>1</span><span>9</span></span> Σ<sub><i>d</i></sub> √( 2<i>P</i>(<i>d</i>){1 − <i>P</i>(<i>d</i>)} / (π<i>n</i>) )</div>
+<figure class="figure"><figcaption><span class="cap-no">[해설 그림 2]</span> 관측치 수에 따른 MAD의 기댓값</figcaption><div class="imgbox"><img src="figures/fig-04.png" alt="관측치 수와 E[MAD]" loading="lazy" class="figure-img"></div><p class="note">파란 선은 위 근사식, 회색 띠는 벤포드 분포에서 뽑은 모의 표본(각 2,000회)의 MAD 5~95% 범위. 한 달 관측치가 약 1,532개보다 적으면 워시 트레이딩이 전혀 없어도 MAD의 기댓값이 근접 적합 기준(0.006)을 넘는다.</p></figure>
+<p>한 달 최대 관측치(8,928개)에서 기댓값은 약 0.0025이지만, 관측치가 1,015개인 가장 적은 종목–월에서는 0.0074이다. 관측치 수는 곧 거래 활성도이므로, 그대로 비교하면 “거래가 적은 종목 = 워시 트레이딩이 많은 종목”으로 오해하게 된다. 그래서 이 연구는 MAD에서 이 기댓값을 뺀 <b>초과 MAD</b>를 주된 비교 지표로 썼다.</p>
+<div class="eq">초과 MAD = MAD − <i>E</i>[MAD]</div>
+<h4 class="anchored">함정 2. χ² 검정은 거의 언제나 “벤포드 아님”이라고 답한다</h4>
+<p>통계 시간에 배우는 χ² 적합도 검정은 표본이 클수록 아주 작은 차이도 유의하게 만든다. 관측치가 수천 개인 종목–월에서는 실제로 의미 없는 차이에도 귀무가설이 기각된다. 실제로 전체 종목–월의 85.6%, 거래가 활발한 대형 그룹에서도 65.4%가 5% 수준에서 기각되었다. 그래서 χ²는 참고로만 보고 표본 크기에 덜 민감한 MAD를 썼다.</p>
+<h4 class="anchored">함정 3. 모두 합치면 완벽해 보인다</h4>
+<p>34개 종목의 거래량을 모두 합쳐 첫 자리 분포를 그리면 MAD가 시행 전 0.0021, 시행 후 0.0017로 둘 다 근접 적합이다([부록 그림-1]). 이질적인 자료를 섞으면 개별 종목의 이탈이 서로 상쇄되기 때문이다. 시장 전체 숫자만 보고 “문제없다”고 판단하면 안 되는 이유이며, 이 연구가 종목–월 단위로 측정한 이유이다.</p>
+<div class="box warn"><div class="h">해석상 주의</div><p>수량이 아닌 원화 거래대금에는 벤포드 법칙을 쓰지 않았다. 매 시점 달라지는 가격을 곱하면 척도 불변성이 깨지기 때문이다. 또 이 연구는 개별 체결이 아니라 5분 동안의 합계를 쓰므로, 워시 트레이딩의 흔적이 정상 거래에 희석되어 체결 단위 분석보다 탐지력이 낮을 수 있다. 거래량이 좁은 범위에 몰린 종목(예: 리플, 이더리움)은 정상이어도 벤포드에서 벗어날 수 있다.</p></div>
+</section>
+
+<!-- 4 ------------------------------------------------------------------>
+<section id="tail-m">
+<h2 class="anchored"><span class="no">4</span>지표 ② 멱법칙 꼬리지수 α: 큰 거래가 얼마나 자주 나오나</h2>
+<p class="sub">거래량 분포의 ‘오른쪽 꼬리’ 두께</p>
+<p>금융시장의 거래 규모에는 정규분포로는 설명할 수 없을 만큼 아주 큰 값이 자주 나온다. 일정 크기 이상에서는 “크기가 <i>x</i>보다 클 확률”이 <i>x</i>의 거듭제곱으로 줄어드는 <b>멱법칙</b>을 따른다.</p>
+<div class="eq"><i>P</i>(<i>X</i> &gt; <i>x</i>) ∝ <i>x</i><sup>−α</sup>, &nbsp; <i>x</i> ≥ <i>x</i><sub>min</sub></div>
+<figure class="figure"><div class="imgbox"><img src="figures/fig-05.png" alt="멱법칙 표본의 선형·로그-로그 그림" loading="lazy" class="figure-img"></div><p class="note">멱법칙(α=1.5) 모의 표본의 밀도(원고 초안의 그림). 보통 축(왼쪽)에서는 꼬리가 바닥에 붙어 보이지만, 두 축을 모두 로그로 바꾸면(오른쪽) 직선이 된다. 밀도의 기울기는 −(α+1), 누적분포(CCDF)의 기울기는 −α이다.</p></figure>
+<div class="box easy"><div class="h">α 읽는 법</div><p><b>α가 작을수록 꼬리가 두껍다</b> — 즉 아주 큰 거래량이 상대적으로 자주 나온다. α가 1에서 2 사이(‘Pareto–Lévy 영역’)이면 분산이 무한대인 분포이다. 미국 주식의 체결 규모는 약 1.5, 구간 거래량 합계는 약 1.7로 이 영역에 있고, 이를 설명하는 이론도 여럿 있다(대형 투자자의 가격충격 고려, 군집행동 등).</p></div>
+<p>추정에는 최우도법인 Hill 추정량을 썼고, 꼬리가 시작되는 지점 <i>x</i><sub>min</sub>은 거래량의 50~98% 분위수 후보 가운데 적합된 직선과 실제 분포의 차이(KS 거리)가 가장 작은 값으로 정하였다(Clauset <i>et al.</i>, 2009). 평균적으로 꼬리는 90% 분위수에서 시작하였다. 대표 종목의 적합 예시는 [부록 그림-2]에 있다.</p>
+<div class="eq">α̂ = <span class="frac"><span><i>n</i><sub>tail</sub></span><span>Σ ln(<i>x<sub>i</sub></i> / <i>x</i><sub>min</sub>)</span></span></div>
+<h3 class="anchored">논쟁: α가 어느 쪽으로 움직여야 ‘좋은’ 것인가</h3>
+<div class="cards" style="grid-template-columns:1fr">
+  <div class="card"><span class="tag">Cong <i>et al.</i> (2023)</span><p>정상 거래는 1&lt;α&lt;2에 있다. 프로그램이 일정 범위의 주문을 반복하면 중간 크기가 많아져 꼬리가 얇아지고(α≥2), 비정상적으로 큰 가짜 거래가 섞이면 지나치게 두꺼워진다(α≤1). → 이 영역을 벗어나면 의심.</p></div>
+  <div class="card"><span class="tag">Aloosh and Li (2024)</span><p>해킹으로 유출된 Mt. Gox 내부 기록에서 <b>실제 워시 트레이딩을 직접 식별</b>해 보니, 워시 트레이딩 표본의 α는 1.58(영역 안), 정상 거래 표본은 2.05(영역 밖)였다. 벤포드·구조변화 방법은 직접 증거와 맞았지만 꼬리 기준만 반대였다.</p></div>
+</div>
+<div class="box warn"><div class="h">그래서 이 연구에서는</div><p>α를 워시 트레이딩의 판정 기준이 아니라 <b>상위 거래로의 집중 정도를 요약하는 보조 지표</b>로 썼다. α가 내려갔다는 것은 “큰 5분 구간에 거래가 더 몰렸다”는 뜻일 뿐, 그것이 워시 트레이딩의 증가인지 감소인지는 이것만으로 말할 수 없다. 두꺼운 꼬리 자료는 멱법칙과 로그정규분포를 구분하기 어렵다는 점도 같은 이유이다.</p></div>
+</section>
+
+<!-- 5 ------------------------------------------------------------------>
+<section id="pelt-m">
+<h2 class="anchored"><span class="no">5</span>지표 ③ 변화점 탐지(PELT): 거래량의 계단</h2>
+<p class="sub">거래량 수준이 갑자기 바뀌어 한동안 유지된 횟수</p>
+<p>앞의 두 지표는 거래량의 시간 순서를 보지 않는다. 그런데 워시 트레이딩 프로그램은 특정 시점에 켜지고 꺼지며, 켜져 있는 동안 시장 상황과 관계없이 거래량을 더한다. 그러면 거래량에 몇 시간에서 며칠 동안 이어지는 <b>계단 모양의 변화</b>가 남는다. 뉴스에 따른 진짜 거래 급증은 대개 금방 원래 수준으로 돌아온다. 그래서 지속적인 수준 변화가 몇 번 일어났는지(<b>변화점 수</b>)를 센다.</p>
+<figure class="figure"><figcaption><span class="cap-no">[해설 그림 3]</span> PELT가 찾은 변화점: 실제 시계열과 시간 순서를 섞은 시계열</figcaption><div class="imgbox"><img src="figures/fig-06.png" alt="파워렛저 2023년 3월 둘째 주의 변화점 예시" loading="lazy" class="figure-img"></div><p class="note">파워렛저(POWR) 2023년 3월 8~14일. 회색은 전처리한 10분 거래량, 황갈색 계단은 PELT가 나눈 구간의 평균(k=4). 같은 값들의 순서만 무작위로 섞으면(아래) 분포는 똑같지만 시간에 따른 변화가 없으므로 변화점이 하나도 잡히지 않는다.</p></figure>
+<h3 class="anchored">어떻게 세나</h3>
+<ol>
+  <li><b>10분 시계열 만들기</b>: 5분봉을 10분 단위로 더하고, 거래가 없는 구간은 0으로 채운다(한 달 최대 4,464개).</li>
+  <li><b>정상적인 하루 리듬 빼기</b>: 거래량은 밤보다 낮에 많다. 이런 일중 패턴이 변화점으로 잡히지 않도록 ln(1+거래량)에서 하루 144개 시간대별 중위수를 뺀다. 극단값은 상하위 0.5%에서 자른다.</li>
+  <li><b>PELT로 나누기</b>: 시계열을 몇 개의 구간으로 나누되, 구간 안은 비슷하고 구간 사이는 다르도록 나누는 최적 분할을 찾는다. 변화점 하나마다 벌점(<i>k</i> × ln <i>n</i>)을 매겨 쓸데없이 잘게 쪼개지 않게 한다. 구간의 비용은 분포 전체를 비교하는 비모수 비용(Haynes <i>et al.</i>, 2017)이라 정규분포 가정이 필요 없고 꼬리와 0의 몰림 변화에도 반응한다.</li>
+  <li><b>일평균으로 바꾸기</b>: 달마다 일수가 다르므로 변화점 수를 분석 일수로 나눈다. 앞 구간보다 평균이 오른 변화점(상향)과 내린 변화점(하향)도 따로 센다.</li>
+</ol>
+<h3 class="anchored">벌점은 어떻게 정했나: 섞은 시계열로 보정</h3>
+<p>벌점이 너무 작으면 잡음까지 변화점으로 잡고, 너무 크면 진짜 변화도 놓친다. 이 연구는 종목당 6개월씩 뽑은 204개 종목–월의 시계열을 <b>시간 순서만 무작위로 섞었다</b>. 섞은 시계열에서 잡히는 변화점은 모두 거짓이므로, 섞은 시계열의 95% 이상에서 변화점이 0개가 되는 가장 작은 벌점을 골랐다. 그 결과가 <i>k</i>=4(97.5%)이다([부록 표-6]).</p>
+<p>이어 섞은 시계열에 인위적인 계단(크기 0.5·1·2 표준편차 × 지속 1시간·6시간·1일·1주)을 심어 탐지력을 점검하였다. 1 표준편차 이상의 이동이 6시간 이상 지속되면 92~100%를 찾아냈다. 반면 1시간짜리 작은 이동은 거의 잡지 못한다.</p>
+<div class="box more"><div class="h">원고 보충 · 선행연구의 EDM을 쓰지 않은 이유</div><p>Amiram <i>et al.</i> (2025)은 EDM이라는 방법으로 변화점을 셌다. 그런데 그 논문의 벌점(β=0.002)을 빗썸 자료에 그대로 쓰면 <b>섞은 시계열의 93.1%에서도</b> 변화점이 잡히고(월평균 약 381개), 같은 방법으로 보정한 β=0.0275에서는 인위적으로 심은 계단의 적중률이 모든 조건에서 0.5% 이하였다. EDM은 시계열을 최솟값~최댓값으로 정규화한 뒤 벌점을 적용하기 때문에, 그 달의 극단값 하나가 나머지 변화를 압축해 버린다. 그래서 극단값에 영향을 받지 않는 PELT로 바꾸었다([부록 표-5]).</p></div>
+<div class="box warn"><div class="h">해석상 주의</div><p>섞지 않은 실제 시계열에서는 1,462개 종목–월 <b>모두</b>에서 변화점이 잡혔다(<i>k</i>=4에서 월평균 약 21개). 실제 거래량에는 자기상관(오늘의 많은 거래가 내일로 이어지는 성질)이 있는데, 단순히 섞은 시계열로는 이를 반영하지 못하기 때문일 수 있다. 또 거래가 활발할수록 같은 크기의 변화도 잘 잡히므로 대형 그룹(일평균 0.87개)이 중소형(0.66개)보다 변화점이 많다. 그러므로 <b>변화점 수의 절대 수준이 아니라 시행 전후의 상대적 변화</b>를 본다.</p></div>
+</section>
+
+<!-- 6 ------------------------------------------------------------------>
+<section id="design">
+<h2 class="anchored"><span class="no">6</span>법의 효과를 가려내는 방법</h2>
+<p>지표가 시행 후에 달라졌다고 해서 곧 법의 효과는 아니다. 같은 시기에 시장이 크게 올랐고, 거래소 수수료 정책도 바뀌었다. 이 연구는 다섯 단계로 대안 설명을 하나씩 걸러냈다.</p>
+<div class="cards">
+  <div class="card"><span class="tag">가. 시행 전후</span><div class="t">그룹 안에서 전과 후</div><p>종목별 시행 전 25개월 평균과 시행 후 17개월 평균을 비교한다. 종목 수가 8개·26개로 적고 분포가 치우쳐 있어 순위를 쓰는 <b>Wilcoxon 부호순위 검정</b>을 썼다.</p></div>
+  <div class="card"><span class="tag">나. 그룹 간</span><div class="t">이중차분(DiD)</div><p>대형 그룹의 변화를 ‘법이 아니어도 일어났을 변화’로 보고, 중소형 그룹의 변화에서 뺀다. 두 그룹에 공통인 시장 국면을 걸러낸다.</p></div>
+  <div class="card"><span class="tag">다. 추세</span><div class="t">시행 전부터 벌어지고 있었나</div><p>시행 전부터 두 그룹이 다른 방향으로 움직였다면 DiD는 그 추세까지 법의 효과로 잡는다. 그룹별 추세를 허용한 모형과 반기별 이벤트 스터디로 점검한다.</p></div>
+  <div class="card"><span class="tag">라. 다른 사건</span><div class="t">다른 사건 때도 비슷했나</div><p>8개 사건 각각의 전후 3개월을 같은 방법으로 비교한다. 다른 사건에서도 같은 크기의 변화가 있다면 법만의 특별한 변화가 아니다. 반복 검정이므로 Holm 보정도 함께 본다.</p></div>
+  <div class="card"><span class="tag">마. 해외</span><div class="t">법이 없는 바이낸스에서도?</div><p>같은 종목의 바이낸스 지표는 국내법의 영향을 받지 않는다. 빗썸에서만 나타난 변화(거래소 이중차분)와, 그룹 간 차이가 두 거래소에서 다른지(삼중차분)를 본다.</p></div>
+  <div class="card"><span class="tag">공통</span><div class="t">종목–월 패널</div><p>34개 종목 × 42개월(시행월 제외) = 1,428개 종목–월. 종목 고정효과와 월 고정효과를 넣고, 같은 종목의 오차가 서로 상관된 점을 고려해 종목 단위 군집 표준오차를 썼다.</p></div>
+</div>
+
+<h3 class="anchored">이중차분을 그림으로</h3>
+<div class="svgbox" role="img" aria-label="이중차분과 평행추세 가정의 개념도">
+<svg viewbox="0 0 760 285" xmlns="http://www.w3.org/2000/svg">
+  <g font-size="13">
+    <text x="20" y="22" font-weight="700" fill="var(--ink)">(가) 평행 추세가 성립할 때</text>
+    <text x="40" y="262" fill="var(--ink-2)" font-size="12">β = 실제 − (법이 없었다면)</text>
+    <line x1="40" y1="215" x2="350" y2="215" stroke="var(--ink-3)"></line>
+    <line x1="195" y1="35" x2="195" y2="215" stroke="var(--law)" stroke-dasharray="5 4"></line>
+    <text x="200" y="38" fill="var(--law)" font-size="12">법 시행</text>
+    <text x="80" y="235" fill="var(--ink-3)" font-size="12">시행 전</text><text x="255" y="235" fill="var(--ink-3)" font-size="12">시행 후</text>
+    <polyline points="60,175 195,160 330,145" fill="none" stroke="var(--large)" stroke-width="3"></polyline>
+    <text x="262" y="172" fill="var(--large)" font-size="12">대형(대조군)</text>
+    <polyline points="60,120 195,105" fill="none" stroke="var(--small)" stroke-width="3"></polyline>
+    <polyline points="195,105 330,55" fill="none" stroke="var(--small)" stroke-width="3"></polyline>
+    <polyline points="195,105 330,90" fill="none" stroke="var(--small)" stroke-width="2" stroke-dasharray="6 5" opacity=".8"></polyline>
+    <text x="248" y="62" fill="var(--small)" font-size="12">중소형(실제)</text>
+    <text x="238" y="122" fill="var(--small)" font-size="12" opacity=".9">법이 없었다면</text>
+    <line x1="340" y1="55" x2="340" y2="90" stroke="var(--ink)" stroke-width="1.5"></line>
+    <text x="347" y="77" fill="var(--ink)" font-weight="700">β</text>
+  </g>
+  <g font-size="13" transform="translate(390,0)">
+    <text x="20" y="22" font-weight="700" fill="var(--ink)">(나) 시행 전부터 벌어지고 있었다면</text>
+    <line x1="40" y1="215" x2="350" y2="215" stroke="var(--ink-3)"></line>
+    <line x1="195" y1="35" x2="195" y2="215" stroke="var(--law)" stroke-dasharray="5 4"></line>
+    <text x="80" y="235" fill="var(--ink-3)" font-size="12">시행 전</text><text x="255" y="235" fill="var(--ink-3)" font-size="12">시행 후</text>
+    <polyline points="60,175 195,160 330,145" fill="none" stroke="var(--large)" stroke-width="3"></polyline>
+    <polyline points="60,150 195,105 330,60" fill="none" stroke="var(--small)" stroke-width="3"></polyline>
+    <text x="205" y="136" fill="var(--small)" font-size="12">중소형: 같은 기울기로 계속</text>
+    <text x="40" y="262" fill="var(--ink-2)" font-size="12">기본 DiD는 여기서도 β&gt;0을 내지만,</text>
+    <text x="40" y="278" fill="var(--ink-2)" font-size="12">추세를 허용하면 β≈0이 된다.</text>
+  </g>
+</svg></div>
+<div class="eq">기본 모형: &nbsp; <i>Y<sub>it</sub></i> = β·(시행 후<sub><i>t</i></sub> × 중소형<sub><i>i</i></sub>) + 종목 효과<sub><i>i</i></sub> + 월 효과<sub><i>t</i></sub> + 오차</div>
+<div class="eq">추세 허용: &nbsp; … + γ·(중소형<sub><i>i</i></sub> × 월 순서<sub><i>t</i></sub>)</div>
+<p>월 고정효과는 그 달 모든 종목에 공통인 충격(코인 시장 급등, 비상계엄 등)을 흡수한다. β는 “시행 후 중소형 그룹의 지표가 대형 그룹에 비해 얼마나 더 변했는가”이다. 여기서 대형 그룹도 법의 영향을 받았을 수 있으므로, β는 법의 절대 효과가 아니라 <b>두 그룹에 미친 효과의 차이</b>라는 점에 유의해야 한다.</p>
+<div class="box more"><div class="h">원고 보충 · 추세 허용 모형의 약점</div><p>(나)처럼 시행 전부터 벌어지고 있었다면 추세 허용 모형이 맞다. 그러나 γ는 시행 전후 <b>전체 기간</b>으로 추정되므로, 만약 법이 시행 후 기울기를 바꾸었다면 그 몫까지 ‘원래 있던 추세’로 흡수해 버린다. 그래서 원고는 시행 전 기간만으로 추세 차이를 따로 추정하고, 시행 직전 반기(2024년 상반기)를 기준으로 반기마다 그룹 간 차이를 찍어 보는 이벤트 스터디도 함께 보았다. 기본 모형과 추세 허용 모형은 서로 반대 방향으로 치우칠 수 있으므로, <b>둘 중 하나만으로 결론을 내리지 않는다</b>.</p></div>
+<div class="box more"><div class="h">원고 보충 · 해외 비교의 논리</div><p>같은 종목이라면 코인 자체의 사건(기능 출시, 토큰 전환)과 세계 시장 국면은 빗썸과 바이낸스에 함께 영향을 준다. 그래서 종목×월 고정효과로 두 거래소에 공통된 변화를 지우면 <b>빗썸에서만 나타난 변화</b>가 남는다(거래소 이중차분). 다만 빗썸은 원화, 바이낸스는 USDT로 거래되어 투자자와 호가 단위가 다르고, 시행 후 빗썸에는 수수료 무료 재개(⑥)와 자전거래 방지 시스템(⑦)도 있었다. 따라서 ‘빗썸 고유’는 ‘법 시행 효과’와 같은 말이 아니다.</p></div>
+</section>
+
+<!-- 7 ------------------------------------------------------------------>
+<section id="res-benford">
+<h2 class="anchored"><span class="no">7</span>결과 ① 벤포드 법칙</h2>
+<div class="box easy"><div class="h">한눈에</div><p>시행 후 <b>대형 그룹은 적합도가 좋아지고, 중소형 그룹은 나빠졌다</b>. 기본 이중차분으로는 그 격차가 유의하게 벌어졌다. 그러나 법이 적용되지 않는 바이낸스의 같은 종목에서도 같은 방향·비슷한 폭으로 나타나, 법 시행 고유의 변화로 보기 어렵다.</p></div>
+<h3 class="anchored">대체로 벤포드를 따르지만 중소형의 이탈이 크다</h3>
+<p>1,462개 종목–월의 MAD 중위수는 0.0084이고, 경계적 수용까지 포함하면 84.1%가 Nigrini 기준을 충족하였다. 대형 그룹의 MAD 중위수는 0.0047(비적합 4.1%), 중소형은 0.0096(비적합 19.5%)이다. 관측치 수를 반영한 초과 MAD로도 중소형(0.0072)이 대형(0.0034)의 약 2.1배여서, 이 차이는 표본 크기만으로 설명되지 않는다.</p>
+<details class="more"><summary>[표 6] 종목–월 첫 자리 MAD 분포 · [그림 2] 종목–월 초과 MAD 히트맵</summary><div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 6]</span> 종목–월 첫 자리 MAD 분포</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">종목–월 개수</th>
+<th class="r" data-quarto-table-cell-role="th">평균</th>
+<th class="r" data-quarto-table-cell-role="th">표준편차</th>
+<th class="r" data-quarto-table-cell-role="th">중위수</th>
+<th class="r" data-quarto-table-cell-role="th">E[MAD] 평균</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD 평균</th>
+<th class="r" data-quarto-table-cell-role="th">근접 적합(%)</th>
+<th class="r" data-quarto-table-cell-role="th">Nigrini 비적합(%)</th>
+<th class="r" data-quarto-table-cell-role="th">χ² 중위수</th>
+<th class="r" data-quarto-table-cell-role="th">χ² 기각(%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">1,462</td>
+<td class="r">0.0097</td>
+<td class="r">0.0059</td>
+<td class="r">0.0084</td>
+<td class="r">0.0034</td>
+<td class="r">0.0063</td>
+<td class="r">31.2</td>
+<td class="r">15.9</td>
+<td class="r">46.0</td>
+<td class="r">85.6</td>
+</tr>
+<tr class="even">
+<td class="l">대형</td>
+<td class="r">344</td>
+<td class="r">0.0060</td>
+<td class="r">0.0044</td>
+<td class="r">0.0047</td>
+<td class="r">0.0026</td>
+<td class="r">0.0034</td>
+<td class="r">67.7</td>
+<td class="r">4.1</td>
+<td class="r">23.2</td>
+<td class="r">65.4</td>
+</tr>
+<tr class="odd">
+<td class="l">중소형</td>
+<td class="r">1,118</td>
+<td class="r">0.0108</td>
+<td class="r">0.0059</td>
+<td class="r">0.0096</td>
+<td class="r">0.0036</td>
+<td class="r">0.0072</td>
+<td class="r">19.9</td>
+<td class="r">19.5</td>
+<td class="r">53.1</td>
+<td class="r">91.8</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 초과 MAD는 MAD에서 관측치 수에 따른 기댓값 E[MAD]를 뺀 값. 근접적합은 MAD &lt; 0.006, Nigrini 비적합은 MAD &gt; 0.015. χ² 검정은 5% 수준(χ²&gt;15.51).</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 2]</span> 종목–월 초과 MAD</figcaption><div class="imgbox"><img src="figures/fig-07.png" alt="[그림 2] 종목–월 초과 MAD" loading="lazy" class="figure-img"></div><p class="note">주: 종목은 관측비율 순으로 위에서 아래로 정렬. 점선은 법 시행일(2024년 7월 19일).</p></figure>
+<p>극단적인 이탈은 특정 종목에 몰려 있지 않고 두 그룹과 시행 전후에 고루 흩어져 있다(가장 큰 값: 쎄타 네트워크 2025년 1월 0.046, 에이다 2022년 7월 0.040).</p></div></details>
+
+<h3 class="anchored">시행 전후: 반대 방향으로</h3>
+<p>대형 그룹의 MAD는 0.0066에서 0.0051로 낮아졌고(8개 중 7개 감소, p=0.059), 시행 후에는 비적합 종목–월이 하나도 없었다. 중소형 그룹은 0.0100에서 0.0120으로 높아졌고(26개 중 20개 증가, p=0.003), 비적합 월 비율도 13.8%에서 27.6%로 두 배가 되었다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 7]</span> 법 시행 전후 종목–월 MAD 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">종목수</th>
+<th class="r" data-quarto-table-cell-role="th">MAD 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">MAD 시행후</th>
+<th class="r" data-quarto-table-cell-role="th">MAD p값</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD 시행후</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD p값</th>
+<th class="r" data-quarto-table-cell-role="th">Nigrini 비적합 비율(월,%) 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">Nigrini 비적합 비율(월,%) 시행후</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r">0.0092</td>
+<td class="r">0.0104</td>
+<td class="r">0.091</td>
+<td class="r">0.0058</td>
+<td class="r">0.0070</td>
+<td class="r">0.040</td>
+<td class="r">12.2</td>
+<td class="r">21.1</td>
+</tr>
+<tr class="even">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">0.0066</td>
+<td class="r">0.0051</td>
+<td class="r">0.059</td>
+<td class="r">0.0040</td>
+<td class="r">0.0026</td>
+<td class="r">0.059</td>
+<td class="r">7.0</td>
+<td class="r">0.0</td>
+</tr>
+<tr class="odd">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">0.0100</td>
+<td class="r">0.0120</td>
+<td class="r">0.003</td>
+<td class="r">0.0064</td>
+<td class="r">0.0084</td>
+<td class="r">&lt;0.001</td>
+<td class="r">13.8</td>
+<td class="r">27.6</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 종목별 월평균값의 그룹 내 평균. p값은 Wilcoxon 부호순위 검정 결과(종목별 시행 전후)</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 3]</span> 주요 사건 시점과 그룹별 월평균 초과 MAD</figcaption><div class="imgbox"><img src="figures/fig-08.png" alt="[그림 3] 주요 사건 시점과 그룹별 월평균 초과 MAD" loading="lazy" class="figure-img"></div><p class="note">주: 번호는 [표 5]의 사건 번호이며, 빨간 점선은 가상자산이용자보호법의 공포(②)와 시행(⑤)을 의미</p></figure>
+
+<h3 class="anchored">이중차분: 기본 모형에서는 유의, 추세에 따라 달라진다</h3>
+<p>기본 이중차분 β는 0.0035(p&lt;0.001)로, 시행 후 중소형 그룹의 MAD가 대형에 비해 시행 전 중소형 평균의 약 35%만큼 더 높아졌다. 그런데 그룹별 선형 추세를 허용하면 중소형이 매월 0.00013씩 더 나빠지는 추세가 유의하였고(p=0.006), 이를 통제한 시행 효과는 0.0006(p=0.664)으로 사라졌다.</p>
+<p>반대로 시행 전 기간만 보면 추세 차이는 10% 수준에서만 유의하였고(p=0.099), 반기별 이벤트 스터디에서도 시행 전 반기들의 차이는 모두 5% 수준에서 유의하지 않았다. 격차는 시행 후 2025년 상반기(0.0049)와 하반기(0.0047)에 크게 벌어졌다. 즉 “시행 이전 추세의 연장”으로만 보기도, “시행 효과”로 보기도 어려운, <b>추세 가정에 민감한 결과</b>이다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 8]</span> 벤포드 MAD의 이중차분 추정 결과</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="l" data-quarto-table-cell-role="th"></th>
+<th class="r" data-quarto-table-cell-role="th">MAD 추정치</th>
+<th class="r" data-quarto-table-cell-role="th">MAD 표준오차</th>
+<th class="r" data-quarto-table-cell-role="th">MAD p값</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD 추정치</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD 표준오차</th>
+<th class="r" data-quarto-table-cell-role="th">초과 MAD p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">기본</td>
+<td class="l">이중차분(β)</td>
+<td class="r">0.0035</td>
+<td class="r">0.0008</td>
+<td class="r">&lt;0.001</td>
+<td class="r">0.0034</td>
+<td class="r">0.0008</td>
+<td class="r">&lt;0.001</td>
+</tr>
+<tr class="even">
+<td class="l">그룹 추세 모형</td>
+<td class="l">추세 차이(월당)</td>
+<td class="r">0.00013</td>
+<td class="r">0.00005</td>
+<td class="r">0.006</td>
+<td class="r">0.00013</td>
+<td class="r">0.00004</td>
+<td class="r">0.007</td>
+</tr>
+<tr class="odd">
+<td class="l"></td>
+<td class="l">시행효과</td>
+<td class="r">0.0006</td>
+<td class="r">0.0013</td>
+<td class="r">0.664</td>
+<td class="r">0.0006</td>
+<td class="r">0.0013</td>
+<td class="r">0.641</td>
+</tr>
+<tr class="even">
+<td class="l">시행 전 기간</td>
+<td class="l">추세 차이(월당)</td>
+<td class="r">0.00010</td>
+<td class="r">0.00006</td>
+<td class="r">0.099</td>
+<td class="r">0.00011</td>
+<td class="r">0.00006</td>
+<td class="r">0.083</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 그룹추세모형은 기본 모형에 중소형 그룹의 선형 추세 항을 포함한 모형으로, 추세 차이는 시행 전후 전체 기간으로 추정함. 시행 전 기간 추세 차이는 2022년 6월~2024년 6월 자료만으로 추정한 값임</p></figure>
+
+<h3 class="anchored">다른 사건과 비교: 수수료 무료화 때 더 크게 움직였다</h3>
+<p>법 시행(⑤) 직후 3개월만 보면 중소형(0.0068→0.0096)과 대형(0.0029→0.0041)이 <b>함께</b> 나빠져, 두 그룹의 변화 폭에 차이가 없었다(p=0.282). 오히려 중소형 그룹의 적합도는 수수료 무료 시작(③, 0.0092→0.0050)과 무료 재개(⑥, 0.0089→0.0043) 직후에 크게 좋아졌다. 다만 이 시기는 시장 회복기·급등기와 겹치고, 수수료가 다시 붙은 ④ 때는 되돌아가지 않아, 수수료 정책과 시장 활황이 함께 작용한 것으로 보인다. 거래가 늘면 정상 거래의 비중이 커지고 분포 폭도 넓어져 적합도가 좋아지기 때문이다.</p>
+<details class="more"><summary>[표 9] 주요 사건 전후 3개월의 초과 MAD 비교</summary><div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 9]</span> 주요 사건 전후 3개월의 초과 MAD 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">번호</th>
+<th class="l" data-quarto-table-cell-role="th">사건</th>
+<th class="r" data-quarto-table-cell-role="th">대형 사건전</th>
+<th class="r" data-quarto-table-cell-role="th">대형 사건후</th>
+<th class="r" data-quarto-table-cell-role="th">대형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 사건전</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 사건후</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">그룹 간 차이</th>
+<th class="r" data-quarto-table-cell-role="th">그룹 간 p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">①</td>
+<td class="l">FTX 파산</td>
+<td class="r">0.0038</td>
+<td class="r">0.0074</td>
+<td class="r">0.441</td>
+<td class="r">0.0064</td>
+<td class="r">0.0060</td>
+<td class="r">0.275</td>
+<td class="r">−0.0041</td>
+<td class="r">0.201</td>
+</tr>
+<tr class="even">
+<td class="r">②</td>
+<td class="l">법 공포</td>
+<td class="r">0.0038</td>
+<td class="r">0.0026</td>
+<td class="r">0.183</td>
+<td class="r">0.0077</td>
+<td class="r">0.0085</td>
+<td class="r">0.334</td>
+<td class="r">0.0019</td>
+<td class="r">0.092</td>
+</tr>
+<tr class="odd">
+<td class="r">③</td>
+<td class="l">빗썸 수수료 무료 시작</td>
+<td class="r">0.0028</td>
+<td class="r">0.0042</td>
+<td class="r">0.363</td>
+<td class="r">0.0092</td>
+<td class="r">0.0050</td>
+<td class="r">&lt;0.001</td>
+<td class="r">−0.0056</td>
+<td class="r">0.008</td>
+</tr>
+<tr class="even">
+<td class="r">④</td>
+<td class="l">빗썸 수수료 유료 전환</td>
+<td class="r">0.0042</td>
+<td class="r">0.0032</td>
+<td class="r">1.000</td>
+<td class="r">0.0050</td>
+<td class="r">0.0057</td>
+<td class="r">0.162</td>
+<td class="r">0.0017</td>
+<td class="r">0.282</td>
+</tr>
+<tr class="odd">
+<td class="r">⑤</td>
+<td class="l">법 시행</td>
+<td class="r">0.0029</td>
+<td class="r">0.0041</td>
+<td class="r">0.042</td>
+<td class="r">0.0068</td>
+<td class="r">0.0096</td>
+<td class="r">0.003</td>
+<td class="r">0.0016</td>
+<td class="r">0.282</td>
+</tr>
+<tr class="even">
+<td class="r">⑥</td>
+<td class="l">빗썸 수수료 무료 재개</td>
+<td class="r">0.0032</td>
+<td class="r">0.0016</td>
+<td class="r">0.141</td>
+<td class="r">0.0089</td>
+<td class="r">0.0043</td>
+<td class="r">&lt;0.001</td>
+<td class="r">−0.0030</td>
+<td class="r">0.037</td>
+</tr>
+<tr class="odd">
+<td class="r">⑦</td>
+<td class="l">빗썸 자전거래 방지 시스템 적용</td>
+<td class="r">0.0041</td>
+<td class="r">0.0017</td>
+<td class="r">0.059</td>
+<td class="r">0.0096</td>
+<td class="r">0.0064</td>
+<td class="r">&lt;0.001</td>
+<td class="r">−0.0008</td>
+<td class="r">0.383</td>
+</tr>
+<tr class="even">
+<td class="r">⑧</td>
+<td class="l">비상계엄 선포</td>
+<td class="r">0.0035</td>
+<td class="r">0.0016</td>
+<td class="r">0.107</td>
+<td class="r">0.0067</td>
+<td class="r">0.0080</td>
+<td class="r">0.104</td>
+<td class="r">0.0032</td>
+<td class="r">0.014</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 전은 사건월 직전 3개월, 후는 직후 3개월이며 사건월은 제외. 그룹내 p값은 Wilcoxon 부호순위 검정 결과이고, 그룹 간 차이는 (중소형 변화 − 대형 변화) 값이며, p값은 Wilcoxon 순위합 검정 결과임</p></figure>
+<p>Holm 보정 후에는 중소형 그룹 안의 변화만 ③·⑤·⑥·⑦에서 유의하게 남았고, 대형 그룹 안의 변화와 그룹 간 차이는 모든 사건에서 유의하지 않았다. 자전거래 방지 시스템(⑦)은 같은 계정의 API 주문끼리만 막으므로 다른 계정을 쓰는 워시 트레이딩에는 영향을 주지 않는다는 점도 고려해야 한다.</p></div></details>
+
+<h3 class="anchored">바이낸스와 비교: 같은 방향으로 움직였다</h3>
+<p>26개 종목으로 보면, 중소형 그룹의 초과 MAD는 빗썸(0.0065→0.0093)과 바이낸스(0.0024→0.0051)에서 <b>비슷한 폭으로</b> 높아졌다. 바이낸스 대비 빗썸의 차이는 0.0001(p=0.980)로 사실상 0이다. 대형 그룹의 개선도 바이낸스(0.0101→0.0054)에서 더 컸다. 두 거래소의 그룹 간 격차 확대 차이(삼중차분)는 −0.0033(p=0.304)으로 유의하지 않았다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 10]</span> 빗썸과 바이낸스의 초과 MAD 비교(26개 종목)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">빗썸 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">빗썸 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">바이낸스 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">바이낸스 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">추정치</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+<th class="r" data-quarto-table-cell-role="th">추세 허용 추정치</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">대형(8)</td>
+<td class="r">0.0040</td>
+<td class="r">0.0026</td>
+<td class="r">0.0101</td>
+<td class="r">0.0054</td>
+<td class="r">0.0033</td>
+<td class="r">0.045</td>
+<td class="r">0.0032</td>
+<td class="r">0.048</td>
+</tr>
+<tr class="even">
+<td class="l">중소형(18)</td>
+<td class="r">0.0065</td>
+<td class="r">0.0093</td>
+<td class="r">0.0024</td>
+<td class="r">0.0051</td>
+<td class="r">0.0001</td>
+<td class="r">0.980</td>
+<td class="r">−0.0015</td>
+<td class="r">0.614</td>
+</tr>
+<tr class="odd">
+<td class="l">이중차분: 빗썸</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">0.0042</td>
+<td class="r">&lt;0.001</td>
+<td class="r"></td>
+<td class="r"></td>
+</tr>
+<tr class="even">
+<td class="l">이중차분: 바이낸스</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">0.0075</td>
+<td class="r">0.018</td>
+<td class="r"></td>
+<td class="r"></td>
+</tr>
+<tr class="odd">
+<td class="l">삼중차분</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">−0.0033</td>
+<td class="r">0.304</td>
+<td class="r">−0.0048</td>
+<td class="r">0.153</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 그룹 간 이중차분은 거래소별로 추정한 중소형 그룹의 상대적 변화이고, 삼중차분은 두 거래소를 함께 넣은 모형의 계수이며 그 추세 허용 모형은 빗썸의 선형 추세와 그 중소형 상호작용 항을 더한 것이다.</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 4]</span> 빗썸과 바이낸스의 그룹별 월평균 초과 MAD</figcaption><div class="imgbox"><img src="figures/fig-09.png" alt="[그림 4] 빗썸과 바이낸스의 그룹별 월평균 초과 MAD" loading="lazy" class="figure-img"></div><p class="note">주: 26개 종목의 그룹별 월평균이다. 실선은 빗썸, 점선은 바이낸스이며, 파란색은 대형 그룹, 황갈색은 중소형 그룹이다. 빨간 점선은 법 시행일(2024년 7월 19일)이다.</p></figure>
+</section>
+
+<!-- 8 ------------------------------------------------------------------>
+<section id="res-tail">
+<h2 class="anchored"><span class="no">8</span>결과 ② 꼬리지수 α</h2>
+<div class="box easy"><div class="h">한눈에</div><p>시행 후 <b>두 그룹 모두 α가 비슷한 폭으로 낮아졌다</b>(상위 구간으로 거래가 더 몰림). 그룹 간 차이는 없었고, 하락은 분석기간 초부터 완만하게 이어진 추세였다. 바이낸스에는 없는 빗썸 고유의 변화였지만 이때도 그룹 간 차이는 없었다.</p></div>
+<p>전체 종목–월의 α 중위수는 1.53이고 77.2%가 Pareto–Lévy 영역(1&lt;α&lt;2)에 있었다. 대형 그룹은 중위수 1.89로 꼬리가 얇은 편이고(41.0%가 α≥2), 중소형은 1.44로 두꺼우며 α≤1인 극단적 꼬리도 7.9%였다. 중소형 종목에서는 거래량 상위 10% 구간이 그 달 거래량의 66.0%를 차지한다([부록 표-3]).</p>
+<details class="more"><summary>[표 11] 종목–월 꼬리지수 추정 결과</summary><div><figure class="tfig figure"><figcaption><span class="cap-no">[표 11]</span> 종목–월 꼬리지수 추정 결과</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">종목–월 수</th>
+<th class="r" data-quarto-table-cell-role="th">α 평균</th>
+<th class="r" data-quarto-table-cell-role="th">α 표준편차</th>
+<th class="r" data-quarto-table-cell-role="th">α 중위수</th>
+<th class="r" data-quarto-table-cell-role="th">Pareto–Lévy(%)</th>
+<th class="r" data-quarto-table-cell-role="th">α≤1(%)</th>
+<th class="r" data-quarto-table-cell-role="th">α≥2(%)</th>
+<th class="r" data-quarto-table-cell-role="th">xmin 분위수</th>
+<th class="r" data-quarto-table-cell-role="th">꼬리 관측치</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">1,462</td>
+<td class="r">1.58</td>
+<td class="r">0.44</td>
+<td class="r">1.53</td>
+<td class="r">77.2</td>
+<td class="r">6.2</td>
+<td class="r">16.6</td>
+<td class="r">0.901</td>
+<td class="r">542</td>
+</tr>
+<tr class="even">
+<td class="l">대형</td>
+<td class="r">344</td>
+<td class="r">1.94</td>
+<td class="r">0.44</td>
+<td class="r">1.89</td>
+<td class="r">58.1</td>
+<td class="r">0.9</td>
+<td class="r">41.0</td>
+<td class="r">0.906</td>
+<td class="r">786</td>
+</tr>
+<tr class="odd">
+<td class="l">중소형</td>
+<td class="r">1,118</td>
+<td class="r">1.47</td>
+<td class="r">0.37</td>
+<td class="r">1.44</td>
+<td class="r">83.0</td>
+<td class="r">7.9</td>
+<td class="r">9.1</td>
+<td class="r">0.900</td>
+<td class="r">467</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: α는 CCDF 지수이며, xmin은 거래량 50~98% 분위수 후보 중 Kolmogorov-Smirnov 거리를 최소화하는 값. xmin 분위수는 xmin이 해당 종목-월 거래량 분포에서 위치하는 분위수의 평균.</p></figure></div></details>
+<h3 class="anchored">시행 전후: 두 그룹 모두 하락</h3>
+<p>대형 그룹은 1.99에서 1.87로(8개 중 7개 감소, p=0.030), 중소형은 1.51에서 1.42로(26개 중 21개 감소, p=0.005) 낮아졌다. 의미는 다르다. 대형 그룹은 얇았던 꼬리가 Pareto–Lévy 영역 안으로 들어왔고(52.0%→67.6%), 중소형은 α≤1인 극단적 꼬리 비율이 5.7%에서 11.1%로 두 배 가까이 늘었다. 중소형의 상위 1% 구간 비중도 23.5%에서 26.5%로 높아졌다. 평상시 거래가 줄어 소수의 큰 구간에 거래가 몰린 모습이다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 12]</span> 법 시행 전후 꼬리지수 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">종목 수</th>
+<th class="r" data-quarto-table-cell-role="th">α 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">α 시행후</th>
+<th class="r" data-quarto-table-cell-role="th">α p값</th>
+<th class="r" data-quarto-table-cell-role="th">Pareto–Lévy(%) 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">Pareto–Lévy(%) 시행후</th>
+<th class="r" data-quarto-table-cell-role="th">α≤1(%) 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">α≤1(%) 시행후</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r">1.62</td>
+<td class="r">1.53</td>
+<td class="r">&lt;0.001</td>
+<td class="r">76.5</td>
+<td class="r">78.2</td>
+<td class="r">4.7</td>
+<td class="r">8.5</td>
+</tr>
+<tr class="even">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">1.99</td>
+<td class="r">1.87</td>
+<td class="r">0.030</td>
+<td class="r">52.0</td>
+<td class="r">67.6</td>
+<td class="r">1.5</td>
+<td class="r">0.0</td>
+</tr>
+<tr class="odd">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">1.51</td>
+<td class="r">1.42</td>
+<td class="r">0.005</td>
+<td class="r">84.0</td>
+<td class="r">81.4</td>
+<td class="r">5.7</td>
+<td class="r">11.1</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 종목별 월평균값의 그룹 내 평균. p값은 종목별 시행 전후 값에 대한 Wilcoxon 부호순위 검정 결과이다. Pareto-Lévy와 α≤1 비율은 해당 기간 종목-월 기준이다.</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 5]</span> 주요 사건 시점과 그룹별 꼬리지수 α의 추이</figcaption><div class="imgbox"><img src="figures/fig-10.png" alt="[그림 5] 주요 사건 시점과 그룹별 꼬리지수 α의 추이" loading="lazy" class="figure-img"></div><p class="note">주: 그룹 내 종목-월 α의 월별 중위수. 회색 점선은 Pareto-Lévy 영역(1&lt;α&lt;2)의 상한(α=2)을, 빨간 점선은 가상자산이용자보호법의 공포(②)와 시행(⑤) 시점을 나타냄</p></figure>
+<h3 class="anchored">이중차분·사건·해외 비교</h3>
+<p>이중차분 추정치(0.032, p=0.591)와 추세를 허용한 시행 효과(−0.045, p=0.698)는 모두 유의하지 않았고, 시행 전 추세 차이와 반기별 차이도 없었다. 사건별로는 수수료 무료 시작(③) 후 두 그룹 모두 α가 높아지고(꼬리가 얇아짐), 유료 전환(④) 후 중소형이 되돌아간 것이 가장 뚜렷하였다. Holm 보정 후에도 남는 것은 이 두 시점의 중소형 변화뿐이다.</p>
+<p>바이낸스에서는 α가 오히려 조금 높아져(대형 1.83→1.87, 중소형 1.56→1.63), 빗썸의 하락은 두 그룹 모두 빗썸 고유의 변화였다(거래소 이중차분 약 −0.16). 그러나 그 크기가 두 그룹에서 같아(삼중차분 −0.002, p=0.986), 워시 트레이딩 유인이 큰 중소형에 집중된 변화가 아니었다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 13]</span> 꼬리지수 α의 이중차분 추정 결과</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="l" data-quarto-table-cell-role="th"></th>
+<th class="r" data-quarto-table-cell-role="th">추정치</th>
+<th class="r" data-quarto-table-cell-role="th">표준오차</th>
+<th class="r" data-quarto-table-cell-role="th">p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">기본</td>
+<td class="l">이중차분(β)</td>
+<td class="r">0.032</td>
+<td class="r">0.058</td>
+<td class="r">0.591</td>
+</tr>
+<tr class="even">
+<td class="l">그룹 추세 모형</td>
+<td class="l">추세 차이(월당)</td>
+<td class="r">0.0035</td>
+<td class="r">0.0054</td>
+<td class="r">0.527</td>
+</tr>
+<tr class="odd">
+<td class="l"></td>
+<td class="l">시행효과</td>
+<td class="r">−0.045</td>
+<td class="r">0.114</td>
+<td class="r">0.698</td>
+</tr>
+<tr class="even">
+<td class="l">시행 전 기간</td>
+<td class="l">추세 차이(월당)</td>
+<td class="r">0.0062</td>
+<td class="r">0.0068</td>
+<td class="r">0.368</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 추정 방법은 [표 8]과 같음</p></figure>
+<details class="more"><summary>[표 14] 주요 사건 전후 3개월의 α · [표 15] 빗썸과 바이낸스 비교 · [그림 6]</summary><div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 14]</span> 주요 사건 전후 3개월의 꼬리지수 α 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">번호</th>
+<th class="l" data-quarto-table-cell-role="th">사건</th>
+<th class="r" data-quarto-table-cell-role="th">대형 사건전</th>
+<th class="r" data-quarto-table-cell-role="th">대형 사건후</th>
+<th class="r" data-quarto-table-cell-role="th">대형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 사건전</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 사건후</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">그룹 간 차이</th>
+<th class="r" data-quarto-table-cell-role="th">그룹 간 p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">①</td>
+<td class="l">FTX 파산</td>
+<td class="r">1.97</td>
+<td class="r">1.86</td>
+<td class="r">0.529</td>
+<td class="r">1.50</td>
+<td class="r">1.35</td>
+<td class="r">0.014</td>
+<td class="r">−0.04</td>
+<td class="r">0.612</td>
+</tr>
+<tr class="even">
+<td class="r">②</td>
+<td class="l">법 공포</td>
+<td class="r">1.80</td>
+<td class="r">1.96</td>
+<td class="r">0.080</td>
+<td class="r">1.42</td>
+<td class="r">1.46</td>
+<td class="r">0.525</td>
+<td class="r">−0.13</td>
+<td class="r">0.187</td>
+</tr>
+<tr class="odd">
+<td class="r">③</td>
+<td class="l">빗썸 수수료 무료 시작</td>
+<td class="r">1.87</td>
+<td class="r">2.06</td>
+<td class="r">0.042</td>
+<td class="r">1.44</td>
+<td class="r">1.68</td>
+<td class="r">&lt;0.001</td>
+<td class="r">0.05</td>
+<td class="r">0.556</td>
+</tr>
+<tr class="even">
+<td class="r">④</td>
+<td class="l">빗썸 수수료 유료 전환</td>
+<td class="r">2.06</td>
+<td class="r">1.98</td>
+<td class="r">0.624</td>
+<td class="r">1.68</td>
+<td class="r">1.48</td>
+<td class="r">&lt;0.001</td>
+<td class="r">−0.11</td>
+<td class="r">0.282</td>
+</tr>
+<tr class="odd">
+<td class="r">⑤</td>
+<td class="l">법 시행</td>
+<td class="r">1.91</td>
+<td class="r">1.76</td>
+<td class="r">0.183</td>
+<td class="r">1.50</td>
+<td class="r">1.37</td>
+<td class="r">0.054</td>
+<td class="r">0.02</td>
+<td class="r">0.761</td>
+</tr>
+<tr class="even">
+<td class="r">⑥</td>
+<td class="l">빗썸 수수료 무료 재개</td>
+<td class="r">1.74</td>
+<td class="r">1.94</td>
+<td class="r">0.141</td>
+<td class="r">1.37</td>
+<td class="r">1.45</td>
+<td class="r">0.243</td>
+<td class="r">−0.13</td>
+<td class="r">0.264</td>
+</tr>
+<tr class="odd">
+<td class="r">⑦</td>
+<td class="l">빗썸 자전거래 방지 시스템 적용</td>
+<td class="r">1.76</td>
+<td class="r">1.79</td>
+<td class="r">0.834</td>
+<td class="r">1.37</td>
+<td class="r">1.47</td>
+<td class="r">0.075</td>
+<td class="r">0.07</td>
+<td class="r">0.612</td>
+</tr>
+<tr class="even">
+<td class="r">⑧</td>
+<td class="l">비상계엄 선포</td>
+<td class="r">1.93</td>
+<td class="r">1.81</td>
+<td class="r">0.363</td>
+<td class="r">1.40</td>
+<td class="r">1.43</td>
+<td class="r">0.594</td>
+<td class="r">0.14</td>
+<td class="r">0.128</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 값은 종목별 기간 평균 α의 그룹 내 평균을 나타냄.</p></figure>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 15]</span> 빗썸과 바이낸스의 꼬리지수 α 비교(26개 종목)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">빗썸 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">빗썸 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">바이낸스 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">바이낸스 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">추정치</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+<th class="r" data-quarto-table-cell-role="th">추세 허용 추정치</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">대형(8)</td>
+<td class="r">1.99</td>
+<td class="r">1.87</td>
+<td class="r">1.83</td>
+<td class="r">1.87</td>
+<td class="r">−0.155</td>
+<td class="r">0.086</td>
+<td class="r">−0.219</td>
+<td class="r">0.042</td>
+</tr>
+<tr class="even">
+<td class="l">중소형(18)</td>
+<td class="r">1.53</td>
+<td class="r">1.44</td>
+<td class="r">1.56</td>
+<td class="r">1.63</td>
+<td class="r">−0.157</td>
+<td class="r">0.013</td>
+<td class="r">−0.152</td>
+<td class="r">0.039</td>
+</tr>
+<tr class="odd">
+<td class="l">이중차분: 빗썸</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">0.026</td>
+<td class="r">0.674</td>
+<td class="r"></td>
+<td class="r"></td>
+</tr>
+<tr class="even">
+<td class="l">이중차분: 바이낸스</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">0.028</td>
+<td class="r">0.737</td>
+<td class="r"></td>
+<td class="r"></td>
+</tr>
+<tr class="odd">
+<td class="l">삼중차분</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">−0.002</td>
+<td class="r">0.986</td>
+<td class="r">0.067</td>
+<td class="r">0.539</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 그룹 간 이중차분은 거래소별로 추정한 중소형 그룹의 상대적 변화이고, 삼중차분은 두 거래소를 함께 넣은 모형의 계수이며 그 추세 허용 모형은 빗썸의 선형 추세와 그 중소형 상호작용 항을 더한 것이다.</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 6]</span> 빗썸과 바이낸스의 그룹별 월평균 꼬리지수 α</figcaption><div class="imgbox"><img src="figures/fig-11.png" alt="[그림 6] 빗썸과 바이낸스의 그룹별 월평균 꼬리지수 α" loading="lazy" class="figure-img"></div><p class="note">주: 26개 종목의 그룹별 월평균이다. 실선은 빗썸, 점선은 바이낸스이며, 파란색은 대형 그룹, 황갈색은 중소형 그룹이다. 빨간 점선은 법 시행일(2024년 7월 19일)이다.</p></figure></div></details>
+</section>
+
+<!-- 9 ------------------------------------------------------------------>
+<section id="res-pelt">
+<h2 class="anchored"><span class="no">9</span>결과 ③ 변화점 수</h2>
+<div class="box easy"><div class="h">한눈에</div><p>시행 후 <b>중소형 그룹의 변화점이 8.3% 줄었고</b>, 거래량을 올렸다(상향) 내린(하향) 변화가 함께 줄었다. 워시 트레이딩 프로그램의 가동·중단이 줄었다면 기대되는 모양이다. 그러나 대형 그룹과의 차이는 유의하지 않았고, 거래 활성도의 저하와 함께 움직였으며, 추세를 허용하면 바이낸스 대비 효과도 사라졌다.</p></div>
+<details class="more"><summary>[표 16] 비모수 PELT 변화점 탐지 결과</summary><div><figure class="tfig figure"><figcaption><span class="cap-no">[표 16]</span> 비모수 PELT 변화점 탐지 결과</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">종목 수</th>
+<th class="r" data-quarto-table-cell-role="th">종목–월 수</th>
+<th class="r" data-quarto-table-cell-role="th">종목–월당 변화점 수</th>
+<th class="r" data-quarto-table-cell-role="th">일평균 평균</th>
+<th class="r" data-quarto-table-cell-role="th">일평균 P10</th>
+<th class="r" data-quarto-table-cell-role="th">일평균 중위수</th>
+<th class="r" data-quarto-table-cell-role="th">일평균 P90</th>
+<th class="r" data-quarto-table-cell-role="th">상향 비중(%)</th>
+<th class="r" data-quarto-table-cell-role="th">관측비율 순위상관</th>
+<th class="r" data-quarto-table-cell-role="th">MAD 순위상관</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r">1,462</td>
+<td class="r">21.6</td>
+<td class="r">0.71</td>
+<td class="r">0.39</td>
+<td class="r">0.70</td>
+<td class="r">1.03</td>
+<td class="r">46.1</td>
+<td class="r">0.63</td>
+<td class="r">−0.44</td>
+</tr>
+<tr class="even">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">344</td>
+<td class="r">26.4</td>
+<td class="r">0.87</td>
+<td class="r">0.58</td>
+<td class="r">0.86</td>
+<td class="r">1.17</td>
+<td class="r">45.5</td>
+<td class="r">0.62</td>
+<td class="r">0.07</td>
+</tr>
+<tr class="odd">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">1,118</td>
+<td class="r">20.1</td>
+<td class="r">0.66</td>
+<td class="r">0.35</td>
+<td class="r">0.66</td>
+<td class="r">0.97</td>
+<td class="r">46.4</td>
+<td class="r">0.42</td>
+<td class="r">−0.48</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 일평균은 종목-월 변화점 수를 해당 월의 일수로 나눈 값이며, 상향비중은 변화점 전후 구간 평균이 높아진 변화점의 비율을 의미. 관측비율 순위상관은 종목별 기간 평균 일평균 변화점 수와 관측비율 간, MAD 순위상관은 종목-월 일평균 변화점 수와 첫자리 MAD 간의 Spearman 순위상관계수를 나타냄.</p></figure>
+<p>변화점 수는 MAD와 음의 상관(−0.44)을 보여, 두 지표가 같은 방향으로 워시 트레이딩을 가리키지 않았다. 두 지표 모두 거래 활성도와 관련되기 때문으로 보인다.</p></div></details>
+<h3 class="anchored">시행 전후: 중소형만 감소</h3>
+<p>중소형 그룹의 일평균 변화점 수는 0.685개에서 0.628개로 줄었고(26개 중 19개 감소, p=0.022), 대형 그룹은 0.872개에서 0.866개로 변하지 않았다(p=0.834). 중소형에서는 상향 변화점이 9.4%, 하향 변화점이 7.4% 줄어 두 방향이 비슷한 비율로 함께 줄었다. 한쪽만 줄었다면 추세의 변화일 가능성이 크지만, 함께 줄었다면 “끌어올렸다가 되돌리는” 이동 자체가 줄었다는 뜻이다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 17]</span> 법 시행 전후 변화점 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">종목수</th>
+<th class="r" data-quarto-table-cell-role="th">시행전</th>
+<th class="r" data-quarto-table-cell-role="th">시행후</th>
+<th class="r" data-quarto-table-cell-role="th">p값</th>
+<th class="r" data-quarto-table-cell-role="th">상향 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">상향 시행후</th>
+<th class="r" data-quarto-table-cell-role="th">하향 시행전</th>
+<th class="r" data-quarto-table-cell-role="th">하향 시행후</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r">0.729</td>
+<td class="r">0.684</td>
+<td class="r">0.030</td>
+<td class="r">0.336</td>
+<td class="r">0.314</td>
+<td class="r">0.392</td>
+<td class="r">0.370</td>
+</tr>
+<tr class="even">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">0.872</td>
+<td class="r">0.866</td>
+<td class="r">0.834</td>
+<td class="r">0.394</td>
+<td class="r">0.397</td>
+<td class="r">0.478</td>
+<td class="r">0.469</td>
+</tr>
+<tr class="odd">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">0.685</td>
+<td class="r">0.628</td>
+<td class="r">0.022</td>
+<td class="r">0.319</td>
+<td class="r">0.289</td>
+<td class="r">0.366</td>
+<td class="r">0.339</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 상향(하향)은 변화점 뒤 구간의 평균이 앞 구간보다 높은(낮은) 변화점을 의미함. p값은 종목별 시행 전후 값에 대한 Wilcoxon 부호순위 검정 결과를 나타냄</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 7]</span> 그룹별 PELT 변화점 수의 추이</figcaption><div class="imgbox"><img src="figures/fig-12.png" alt="[그림 7] 그룹별 PELT 변화점 수의 추이" loading="lazy" class="figure-img"></div><p class="note">주: 그룹내 종목-월 일평균 변화점 수의 월별 평균. 빨간 점선은 법 시행일(2024년 7월 19일)을 나타냄</p></figure>
+<h3 class="anchored">그러나 그룹 간 차이는 유의하지 않았다</h3>
+<p>이중차분 추정치는 −0.051로 중소형이 더 줄어드는 방향이었지만 유의하지 않았다(p=0.197). 대형 그룹 안에서 이더리움은 늘고 이더리움 클래식·비트코인 캐시는 줄어 방향이 엇갈린 것도 한 이유이다. 그룹별 선형 추세를 허용하면 부호가 양(+0.096, p=0.079)으로 바뀌었다.</p>
+<p>또 <b>중소형 종목 가운데 관측비율이 많이 떨어진 종목일수록 변화점도 많이 줄었다</b>(종목별 변화량 사이 순위상관 0.83). 종목–월 관측비율을 통제하면 이중차분은 −0.018(p=0.574)로 0에 가까워진다. 다만 관측비율 자체가 시행 후 거래 위축을 반영하는 ‘결과 변수’일 수 있어, 이 통제가 시행 효과의 일부까지 지울 수 있다. 시행 전 평균 관측비율로 바꿔 통제하면 −0.065(p=0.214)로 기본 결과와 비슷하다. 벌점을 <i>k</i>=3·5·6으로 바꿔도 중소형의 감소만 유의하고 그룹 간 차이는 유의하지 않았다([부록 표-7]).</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 18]</span> PELT 변화점 수의 이중차분 추정 결과</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="l" data-quarto-table-cell-role="th"></th>
+<th class="r" data-quarto-table-cell-role="th">추정치</th>
+<th class="r" data-quarto-table-cell-role="th">표준오차</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">기본</td>
+<td class="l">이중차분(β)</td>
+<td class="r">−0.051</td>
+<td class="r">0.038</td>
+<td class="r">0.197</td>
+</tr>
+<tr class="even">
+<td class="l">그룹추세</td>
+<td class="l">추세 차이(월당)</td>
+<td class="r">−0.0067</td>
+<td class="r">0.0023</td>
+<td class="r">0.007</td>
+</tr>
+<tr class="odd">
+<td class="l"></td>
+<td class="l">시행효과</td>
+<td class="r">0.096</td>
+<td class="r">0.053</td>
+<td class="r">0.079</td>
+</tr>
+<tr class="even">
+<td class="l">시행 전 기간</td>
+<td class="l">추세 차이(월당)</td>
+<td class="r">−0.0036</td>
+<td class="r">0.0023</td>
+<td class="r">0.127</td>
+</tr>
+<tr class="odd">
+<td class="l">관측비율통제</td>
+<td class="l">시행효과</td>
+<td class="r">−0.018</td>
+<td class="r">0.032</td>
+<td class="r">0.574</td>
+</tr>
+<tr class="even">
+<td class="l">시행 전 관측비율 통제</td>
+<td class="l">시행효과</td>
+<td class="r">−0.065</td>
+<td class="r">0.051</td>
+<td class="r">0.214</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 관측비율통제는 종목–월 관측비율을, 시행 전 관측비율 통제는 종목별 시행 전 평균 관측비율(표준화)과 시행 후 더미의 곱을 기본 모형에 더한 것임. 그 밖의 추정 방법은 [표 8]과 같음</p></figure>
+<h3 class="anchored">사건과 해외 비교</h3>
+<p>법 시행(⑤)과 공포(②) 전후 3개월에는 두 그룹 모두 유의한 변화가 없었다. 유의한 변화는 수수료 무료화(③·⑥) 직후 변화점이 <b>늘어난</b> 경우였다. 바이낸스에서는 중소형의 변화점이 변하지 않아(0.855→0.852), 빗썸 중소형의 감소(0.676→0.579)는 빗썸 고유였다(거래소 이중차분 −0.094, p=0.020). 하지만 거래소별 추세를 허용하면 +0.025(p=0.511)로 사라졌고, 26개 종목에서만 그룹 간 차이가 커진 것은 비교에서 빠진 중소형 8개 종목의 변화점이 오히려 늘었기 때문이어서 표본 구성에 따라 결과가 달라진다.</p>
+<details class="more"><summary>[표 19] 주요 사건 전후 3개월의 변화점 · [표 20] 빗썸과 바이낸스 비교 · [그림 8]</summary><div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 19]</span> 주요 사건 전후 3개월의 PELT 변화점 수 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">번호</th>
+<th class="l" data-quarto-table-cell-role="th">사건</th>
+<th class="r" data-quarto-table-cell-role="th">대형 사건전</th>
+<th class="r" data-quarto-table-cell-role="th">대형 사건후</th>
+<th class="r" data-quarto-table-cell-role="th">대형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 사건전</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 사건후</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">그룹간 차이</th>
+<th class="r" data-quarto-table-cell-role="th">그룹간 p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">①</td>
+<td class="l">FTX 파산</td>
+<td class="r">0.88</td>
+<td class="r">0.85</td>
+<td class="r">0.107</td>
+<td class="r">0.73</td>
+<td class="r">0.78</td>
+<td class="r">0.110</td>
+<td class="r">0.09</td>
+<td class="r">0.059</td>
+</tr>
+<tr class="even">
+<td class="r">②</td>
+<td class="l">법 공포</td>
+<td class="r">0.83</td>
+<td class="r">0.79</td>
+<td class="r">0.624</td>
+<td class="r">0.57</td>
+<td class="r">0.60</td>
+<td class="r">0.611</td>
+<td class="r">0.07</td>
+<td class="r">0.383</td>
+</tr>
+<tr class="odd">
+<td class="r">③</td>
+<td class="l">빗썸 수수료 무료 시작</td>
+<td class="r">0.79</td>
+<td class="r">0.99</td>
+<td class="r">0.142</td>
+<td class="r">0.55</td>
+<td class="r">0.70</td>
+<td class="r">0.003</td>
+<td class="r">−0.05</td>
+<td class="r">0.919</td>
+</tr>
+<tr class="even">
+<td class="r">④</td>
+<td class="l">빗썸 수수료 유료 전환</td>
+<td class="r">0.99</td>
+<td class="r">0.88</td>
+<td class="r">0.059</td>
+<td class="r">0.70</td>
+<td class="r">0.67</td>
+<td class="r">0.187</td>
+<td class="r">0.08</td>
+<td class="r">0.216</td>
+</tr>
+<tr class="odd">
+<td class="r">⑤</td>
+<td class="l">법 시행</td>
+<td class="r">0.79</td>
+<td class="r">0.74</td>
+<td class="r">0.834</td>
+<td class="r">0.63</td>
+<td class="r">0.62</td>
+<td class="r">0.493</td>
+<td class="r">0.05</td>
+<td class="r">0.855</td>
+</tr>
+<tr class="even">
+<td class="r">⑥</td>
+<td class="l">빗썸 수수료 무료 재개</td>
+<td class="r">0.76</td>
+<td class="r">0.96</td>
+<td class="r">0.014</td>
+<td class="r">0.64</td>
+<td class="r">0.74</td>
+<td class="r">0.013</td>
+<td class="r">−0.10</td>
+<td class="r">0.529</td>
+</tr>
+<tr class="odd">
+<td class="r">⑦</td>
+<td class="l">빗썸 자전거래 방지 시스템 적용</td>
+<td class="r">0.74</td>
+<td class="r">0.96</td>
+<td class="r">0.059</td>
+<td class="r">0.62</td>
+<td class="r">0.73</td>
+<td class="r">0.010</td>
+<td class="r">−0.11</td>
+<td class="r">0.264</td>
+</tr>
+<tr class="even">
+<td class="r">⑧</td>
+<td class="l">비상계엄 선포</td>
+<td class="r">0.76</td>
+<td class="r">0.88</td>
+<td class="r">0.107</td>
+<td class="r">0.64</td>
+<td class="r">0.65</td>
+<td class="r">0.388</td>
+<td class="r">−0.11</td>
+<td class="r">0.118</td>
+</tr>
+</tbody>
+</table>
+</div></figure>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 20]</span> 빗썸과 바이낸스의 일평균 변화점 수 비교(26개 종목)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="r" data-quarto-table-cell-role="th">빗썸 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">빗썸 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">바이낸스 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">바이낸스 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">추정치</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+<th class="r" data-quarto-table-cell-role="th">추세 허용 추정치</th>
+<th class="r" data-quarto-table-cell-role="th">p</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">대형(8)</td>
+<td class="r">0.872</td>
+<td class="r">0.866</td>
+<td class="r">1.022</td>
+<td class="r">1.026</td>
+<td class="r">−0.010</td>
+<td class="r">0.715</td>
+<td class="r">0.071</td>
+<td class="r">0.193</td>
+</tr>
+<tr class="even">
+<td class="l">중소형(18)</td>
+<td class="r">0.676</td>
+<td class="r">0.579</td>
+<td class="r">0.855</td>
+<td class="r">0.852</td>
+<td class="r">−0.094</td>
+<td class="r">0.020</td>
+<td class="r">0.025</td>
+<td class="r">0.511</td>
+</tr>
+<tr class="odd">
+<td class="l">이중차분: 빗썸</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">−0.091</td>
+<td class="r">0.028</td>
+<td class="r"></td>
+<td class="r"></td>
+</tr>
+<tr class="even">
+<td class="l">이중차분: 바이낸스</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">−0.007</td>
+<td class="r">0.857</td>
+<td class="r"></td>
+<td class="r"></td>
+</tr>
+<tr class="odd">
+<td class="l">삼중차분</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">−0.083</td>
+<td class="r">0.069</td>
+<td class="r">−0.046</td>
+<td class="r">0.443</td>
+</tr>
+</tbody>
+</table>
+</div></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[그림 8]</span> 빗썸과 바이낸스의 그룹별 월평균 일평균 변화점 수</figcaption><div class="imgbox"><img src="figures/fig-13.png" alt="[그림 8] 빗썸과 바이낸스의 그룹별 월평균 일평균 변화점 수" loading="lazy" class="figure-img"></div><p class="note">주: 26개 종목의 그룹별 월평균이다. 실선은 빗썸, 점선은 바이낸스이며, 파란색은 대형 그룹, 황갈색은 중소형 그룹이다. 빨간 점선은 법 시행일(2024년 7월 19일)이다.</p></figure></div></details>
+</section>
+
+<!-- 10 ------------------------------------------------------------------>
+<section id="synth">
+<h2 class="anchored"><span class="no">10</span>종합: 다섯 개의 관문</h2>
+<p>법 시행의 효과라고 말하려면 각 지표가 다음 관문을 모두 통과해야 한다. 아래는 원고 결과를 그 관점에서 다시 정리한 것이다.</p>
+<div class="tbl">
+<table class="score caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">관문</th>
+<th class="l" data-quarto-table-cell-role="th">벤포드(초과 MAD)</th>
+<th class="l" data-quarto-table-cell-role="th">꼬리지수 α</th>
+<th class="l" data-quarto-table-cell-role="th">변화점 수</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>① 시행 후 중소형 그룹이 변했나</td>
+<td><span class="y">예</span> — 악화 0.0064→0.0084</td>
+<td><span class="y">예</span> — 하락 1.51→1.42</td>
+<td><span class="y">예</span> — 감소 0.685→0.628</td>
+</tr>
+<tr class="even">
+<td>② 대형 그룹보다 더 변했나 (기본 DiD)</td>
+<td><span class="y">예</span> — 0.0034, p&lt;0.001</td>
+<td class="nn">아니오 — p=0.591</td>
+<td class="nn">아니오 — p=0.197</td>
+</tr>
+<tr class="odd">
+<td>③ 시행 전 추세로 설명되지 않나</td>
+<td class="nn">불분명 — 추세 허용 시 p=0.641, 시행 전 추세 p=0.083</td>
+<td class="nn">— (②에서 차이 없음)</td>
+<td class="nn">불분명 — 추세 허용 시 부호 반대(+0.096)</td>
+</tr>
+<tr class="even">
+<td>④ 다른 사건 때보다 두드러졌나</td>
+<td class="nn">아니오 — 수수료 무료화 때 더 큼</td>
+<td class="nn">아니오 — 수수료 정책 시점에 더 큼</td>
+<td class="nn">아니오 — 시행 전후 유의한 변화 없음</td>
+</tr>
+<tr class="odd">
+<td>⑤ 바이낸스에는 없는 변화인가</td>
+<td class="nn">아니오 — 바이낸스에서도 같은 폭</td>
+<td>빗썸 고유이나 그룹 차이 없음</td>
+<td>빗썸 고유이나 추세 허용 시 사라짐</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="note">숫자는 원고 [표 7]·[표 8]·[표 10]·[표 12]·[표 13]·[표 15]·[표 17]·[표 18]·[표 20]·[표 21]. 벤포드의 ①은 초과 MAD 기준.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 21]</span> 실증 분석 지표 및 이중차분(DiD) 추정 결과 요약</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">분석 방법론</th>
+<th class="l" data-quarto-table-cell-role="th">대형(Pre→Post)</th>
+<th class="l" data-quarto-table-cell-role="th">중소형(Pre→Post)</th>
+<th class="r" data-quarto-table-cell-role="th">DiD 계수(β)</th>
+<th class="l" data-quarto-table-cell-role="th">그룹 추세 허용 시</th>
+<th class="l" data-quarto-table-cell-role="th">시행 전 추세 차이</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">벤포드 법칙(초과 MAD)</td>
+<td class="l">0.0040 → 0.0026</td>
+<td class="l">0.0064 → 0.0084</td>
+<td class="r">0.0034 (p&lt;0.001)</td>
+<td class="l">0.0006 (p=0.641)</td>
+<td class="l">p=0.083</td>
+</tr>
+<tr class="even">
+<td class="l">멱법칙 꼬리지수(α)</td>
+<td class="l">1.99 → 1.87</td>
+<td class="l">1.51 → 1.42</td>
+<td class="r">0.032 (p=0.591)</td>
+<td class="l">−0.045 (p=0.698)</td>
+<td class="l">p=0.368</td>
+</tr>
+<tr class="odd">
+<td class="l">PELT 일평균 변화점 수</td>
+<td class="l">0.872 → 0.866</td>
+<td class="l">0.685 → 0.628</td>
+<td class="r">-0.051 (p=0.197)</td>
+<td class="l">0.096 (p=0.079)</td>
+<td class="l">p=0.127</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 대형·중소형은 각각 벤포드 법칙은 초과 MAD, 멱법칙은 꼬리지수 α, PELT는 일평균 변화점 수의 법 시행 전후 그룹 평균. DiD 계수는 기본 이중차분 추정치, 그룹 추세 허용 시는 그룹별 선형 추세(시행 전후 전체 기간 추정)를 허용한 모형의 시행 효과, 시행 전 추세 차이는 시행 전 기간만으로 추정한 그룹 간 월별 추세 차이의 p값을 의미</p></figure>
+<div class="verdict"><b>정리</b> — 세 지표 모두 시행 전후로 무언가 변했지만, 어느 지표도 다섯 관문을 모두 통과하지 못했다. 특히 중소형 종목에서 나타난 변화들(벤포드 악화, 극단적 꼬리 증가, 변화점 감소)은 <b>워시 트레이딩의 증감보다 빗썸 중소형 종목의 거래 위축</b>과 더 잘 맞는다: 같은 시기 중소형 종목의 5분 거래대금 중위수와 관측비율이 줄었고, 거래량 분포의 범위(log<sub>10</sub>(P99/P1))는 26개 종목 모두에서 좁아졌으나 바이낸스의 같은 종목에서는 거의 변하지 않았다.</div>
+<p>또한 지표들은 법 시행 시점보다 <b>빗썸의 수수료 정책 변화</b>와 시장 국면에 더 뚜렷하게 반응하였다. 다만 사건별 비교 기간이 서로 겹치고 검정을 여러 번 반복하였으므로, 이를 수수료 정책의 인과효과가 법보다 크다는 증거로 해석하지는 않는다.</p>
+</section>
+
+<!-- 11 ------------------------------------------------------------------>
+<section id="extra">
+<h2 class="anchored"><span class="no">11</span>원고에 싣지 않은 분석</h2>
+<div class="box warn"><div class="h">예비 분석</div><p>아래는 원고 작성 과정에서 추가로 살펴보았으나 원고에는 싣지 않은 분석이다. 검토가 끝나지 않은 예비 결과이므로 참고로만 읽기 바란다.</p></div>
+<h3 class="anchored">똑같은 거래량이 반복되는 ‘봇’의 흔적</h3>
+<p>워시 트레이딩 봇은 같은 수량을 반복해서 주문하는 경우가 많다. 그래서 5분봉 가운데 유효숫자 3개 이상인 거래량 값이 한 달에 3번 이상 똑같이 나온 봉(예: XLM 3006.875, LINK 65.6865)을 ‘봇 반복’으로 세었다. 눈에 띄는 결과는 대형 종목의 봇 반복이 2024년 11월 무렵 거의 0이 되어 2025년 말까지 이어졌다는 점이다. 처음에는 법 시행이나 거래소 조치의 흔적으로 보였지만, 더 들여다보면 그렇지 않았다.</p>
+<ul>
+  <li><b>반복의 상당수는 ‘같은 원화 금액’ 주문이었다.</b> 반복 봉의 약 90%는 가격 변동이 없는 봉이었고, 40% 남짓은 원화 금액이 1만 원·5천 원·10만 원 같은 둥근 금액 근처였다. 같은 가격에서 같은 금액으로 사면 수량이 같아진다. 이런 반복은 가격이 크게 움직이면 기계적으로 사라지는데, 2024년 11월은 XRP·XLM 가격이 약 네 배 오른 급등기였다. 고정 금액 주문은 소액 정액 매수를 하는 개인일 수도 있어 그 자체로 워시 트레이딩을 가리키지 않는다.</li>
+  <li><b>소멸 시점이 종목마다 달랐다.</b> 대형 종목의 마지막 활동일은 2024년 9월 23일~11월 14일로 흩어져 있었고, 중소형 종목도 같은 달에 함께 급감했다가 2025년 1월부터 회복하였다.</li>
+  <li><b>둥근 금액을 뺀 ‘진짜 고정 수량’ 반복은 더 일찍 사라졌다.</b> 대형 종목에서 2023년 4~9월에 가장 많았고 2023년 10~11월에 거의 사라졌다. 법 공포(2023.7) 이후, 수수료 무료화(2023.10.4) 무렵이며 법 시행 1년 전이다. 바이낸스 대비로도 줄었지만(거래량·가격 수준 통제 후 p=0.015) 추세를 허용하면 10% 수준(p=0.090)이었고, 법 제정 과정에 대한 사전 대응인지 수수료 정책에 따른 봇 운영 변경인지 구분되지 않는다.</li>
+</ul>
+<h3 class="anchored">자전거래 방지 시스템 적용 전후</h3>
+<p>빗썸 공지에 따르면 이 시스템은 2024년 11월 25일 17시 30분경 Open API 지정가 주문에 적용되었고, “동일 계정 간 거래”의 위험이 있는 주문을 미리 막는다. 적용 시각 전후를 6시간 단위로 보면, 대형 종목의 봇 반복은 적용 11일~2개월 전에 이미 0이어서 시스템으로 설명되지 않았다. 중소형 종목의 급락은 적용 약 36~42시간 <b>전</b>에 시작되었고, 12월부터 다시 늘었다. 다른 계정이나 수동 주문으로 옮겨 갔을 가능성이 있다. 원고의 사건 분석(⑦)에서도 이 시점에 그룹 간 차이는 나타나지 않았다.</p>
+<h3 class="anchored">다른 후보 지표들</h3>
+<p>시가=고가=저가=종가인 봉의 거래량 비중, 같은 거래량 값의 반복 비중, 거래량과 가격 변동폭의 관계, 빗썸/바이낸스 거래량 비율의 이상치 등 여러 지표도 만들어 보았다. 그러나 대부분이 거래 활성도(관측치 수)와 순위상관 0.5~0.9로 강하게 얽혀 있어, 거래가 줄면 ‘의심스러워 보이는’ 쪽으로 움직였다. 빗썸의 가격 불변 봉 비중은 바이낸스보다 10배 이상 높았는데, 원화 호가 단위의 영향으로 보인다. 이 지표들을 묶은 복합 지표에서도 <b>법 시행 시점에 빗썸 고유의 워시 트레이딩 정황 감소는 확인되지 않았다.</b></p>
+<div class="box easy"><div class="h">교훈</div><p>계좌 정보 없이 거래량만으로 만든 지표는 거의 모두 <b>거래 활성도</b>와 <b>가격 수준</b>에 휘둘린다. 어떤 지표가 “좋아졌다”는 신호를 보이면, 먼저 같은 시기에 거래량이나 가격이 크게 변하지 않았는지부터 확인해야 한다.</p></div>
+</section>
+
+<!-- 12 ------------------------------------------------------------------>
+<section id="impl">
+<h2 class="anchored"><span class="no">12</span>시사점과 한계</h2>
+<h3 class="anchored">정책적 시사점</h3>
+<ol>
+  <li><b>법 제정만으로는 부족하다.</b> 포괄적 법률만으로 중소형·저유동성 종목의 워시 트레이딩 유인을 억제하기는 어렵다. 유동성이 낮고 거래가 띄엄띄엄한 종목에 특화된 정밀 모니터링이 필요하다.</li>
+  <li><b>수수료 정책을 감독의 관점에서 봐야 한다.</b> 지표는 법 시행보다 수수료 무료화 시점에 더 뚜렷하게 움직였다. 수수료 면제는 진성 거래를 끌어들이는 동시에 허위 거래의 비용도 0으로 만든다.</li>
+  <li><b>통계 지표를 보조 수단으로.</b> 법 제12조의 이상거래 상시감시를 위해 벤포드 적합도, 변화점 탐지, 꼬리분포 같은 지표를 탐지 성능 검증을 거쳐 이상거래 탐지 시스템(FDS)의 보조 지표로 활용할 수 있다. 다만 위의 교훈처럼 거래 활성도와 가격의 영향을 먼저 걸러내야 한다.</li>
+</ol>
+<h3 class="anchored">한계</h3>
+<ul>
+  <li><b>5분 합산 자료</b>: 체결 단위 자료보다 흔적이 희석되어 탐지력이 낮을 수 있다. 국내 거래소는 빗썸 하나이고, 해외 비교는 26개 종목에 한정된다.</li>
+  <li><b>간접 지표</b>: 세 지표는 정황을 보여 줄 뿐 계좌 간 통정매매를 직접 증명하지 못한다. 벤포드 MAD와 변화점 수는 오히려 음의 상관(−0.44)이었다. 변화점 벌점은 자기상관을 반영하지 못하는 섞은 시계열로 보정하였다.</li>
+  <li><b>겹치는 사건</b>: 수수료 정책 변화, 비상계엄, 거시 유동성 장세 등이 시행 전후에 겹쳐 있어 순수한 법적 효과만 떼어 내기 어렵다.</li>
+  <li><b>생존편향</b>: 분석기간 내내 거래된 종목만 포함하였다. 기간 중 상장·상장폐지된 종목은 빠져 있다.</li>
+</ul>
+<h3 class="anchored">향후 과제</h3>
+<p>체결 단위 호가창 자료와 계좌 수준 체결 내역을 결합한 검증, 국내외 복수 거래소와 온체인 지갑 자료를 결합한 거래소 간 이동(규제 회피) 분석, 디지털자산기본법 이후의 장기 효과 추적이 필요하다.</p>
+</section>
+
+<!-- 부록 ------------------------------------------------------------------>
+<section id="appendix">
+<h2 class="anchored"><span class="no">부록</span>원고 부록 표와 그림</h2>
+<p class="sub">원고 부록(별도 파일)의 표 7개와 그림 5개. 제목을 누르면 펼쳐진다. <button class="btn" type="button" id="openall">모두 펼치기</button></p>
+<details class="apx"><summary><span class="cap-no">[부록 표-1]</span> 종목별 5분봉 기술통계</summary><div class="apx-body"><p>[부록 표-1]은 34개 종목의 5분봉 기술통계이다. 그룹은 제Ⅲ장 1절 (2)의 구분이며, 기간 평균 시가총액과 연도별 시가총액은 [부록 표-2]에 제시하였다. 관측비율은 관측치 수를 자료가 존재하는 일수×288로 나눈 비율이고, 월평균 관측치는 종목별 월 5분봉 관측치 수의 평균이다. 거래대금은 5분봉 종가×거래량으로 산출한 근사치이며, 일평균 거래대금은 분석기간 전체 거래대금을 자료가 존재하는 일수로 나눈 값이다. 종가 중위수는 분석기간 전체 5분봉 종가의 중위수이다. 일간수익률은 KST 기준 일별 마지막 5분봉 종가의 로그수익률이며, 하루 이상 자료가 없는 구간 직후의 수익률은 제외하였다. 왜도와 첨도는 5분 거래대금 기준이고(정규분포의 첨도 = 3), log10(P99/P1)은 거래량 상위 1% 분위수와 하위 1% 분위수 비율의 상용로그이다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-1]</span> 종목별 5분봉 기술통계</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">심볼</th>
+<th class="l" data-quarto-table-cell-role="th">그룹</th>
+<th class="r" data-quarto-table-cell-role="th">관측비율(%)</th>
+<th class="r" data-quarto-table-cell-role="th">월평균 관측치</th>
+<th class="r" data-quarto-table-cell-role="th">일평균 거래대금(억원)</th>
+<th class="r" data-quarto-table-cell-role="th">5분 거래대금 중위수(백만원)</th>
+<th class="r" data-quarto-table-cell-role="th">종가 중위수(원)</th>
+<th class="r" data-quarto-table-cell-role="th">일간수익률 표준편차(%)</th>
+<th class="r" data-quarto-table-cell-role="th">왜도</th>
+<th class="r" data-quarto-table-cell-role="th">첨도</th>
+<th class="r" data-quarto-table-cell-role="th">log10 거래량 표준편차</th>
+<th class="r" data-quarto-table-cell-role="th">log10(P99/P1)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">XRP</td>
+<td class="l">대형</td>
+<td class="r">99.6</td>
+<td class="r">8,737</td>
+<td class="r">1,348.8</td>
+<td class="r">186.81</td>
+<td class="r">762.0</td>
+<td class="r">3.88</td>
+<td class="r">12.9</td>
+<td class="r">311</td>
+<td class="r">0.50</td>
+<td class="r">2.45</td>
+</tr>
+<tr class="even">
+<td class="l">ETH</td>
+<td class="l">대형</td>
+<td class="r">99.5</td>
+<td class="r">8,729</td>
+<td class="r">543.2</td>
+<td class="r">83.22</td>
+<td class="r">3,143,000</td>
+<td class="r">3.06</td>
+<td class="r">19.9</td>
+<td class="r">1,160</td>
+<td class="r">0.61</td>
+<td class="r">3.00</td>
+</tr>
+<tr class="odd">
+<td class="l">TRX</td>
+<td class="l">대형</td>
+<td class="r">97.0</td>
+<td class="r">8,508</td>
+<td class="r">47.1</td>
+<td class="r">6.26</td>
+<td class="r">168.0</td>
+<td class="r">2.44</td>
+<td class="r">50.6</td>
+<td class="r">4,418</td>
+<td class="r">0.78</td>
+<td class="r">3.87</td>
+</tr>
+<tr class="even">
+<td class="l">ETC</td>
+<td class="l">대형</td>
+<td class="r">96.8</td>
+<td class="r">8,494</td>
+<td class="r">115.8</td>
+<td class="r">10.36</td>
+<td class="r">27,180</td>
+<td class="r">3.92</td>
+<td class="r">12.0</td>
+<td class="r">279</td>
+<td class="r">0.83</td>
+<td class="r">4.14</td>
+</tr>
+<tr class="odd">
+<td class="l">ADA</td>
+<td class="l">대형</td>
+<td class="r">96.2</td>
+<td class="r">8,444</td>
+<td class="r">110.8</td>
+<td class="r">9.95</td>
+<td class="r">631.0</td>
+<td class="r">4.04</td>
+<td class="r">32.0</td>
+<td class="r">1,986</td>
+<td class="r">0.86</td>
+<td class="r">4.34</td>
+</tr>
+<tr class="even">
+<td class="l">LINK</td>
+<td class="l">대형</td>
+<td class="r">90.3</td>
+<td class="r">7,921</td>
+<td class="r">55.3</td>
+<td class="r">5.06</td>
+<td class="r">18,740</td>
+<td class="r">4.15</td>
+<td class="r">25.3</td>
+<td class="r">1,758</td>
+<td class="r">0.89</td>
+<td class="r">4.32</td>
+</tr>
+<tr class="odd">
+<td class="l">BCH</td>
+<td class="l">대형</td>
+<td class="r">89.6</td>
+<td class="r">7,864</td>
+<td class="r">48.2</td>
+<td class="r">4.55</td>
+<td class="r">441,200</td>
+<td class="r">3.86</td>
+<td class="r">12.3</td>
+<td class="r">307</td>
+<td class="r">0.92</td>
+<td class="r">4.58</td>
+</tr>
+<tr class="even">
+<td class="l">XLM</td>
+<td class="l">대형</td>
+<td class="r">82.9</td>
+<td class="r">7,274</td>
+<td class="r">72.1</td>
+<td class="r">3.46</td>
+<td class="r">167.5</td>
+<td class="r">3.82</td>
+<td class="r">26.2</td>
+<td class="r">1,135</td>
+<td class="r">1.01</td>
+<td class="r">4.75</td>
+</tr>
+<tr class="odd">
+<td class="l">WAVES</td>
+<td class="l">중소형</td>
+<td class="r">76.7</td>
+<td class="r">6,732</td>
+<td class="r">26.8</td>
+<td class="r">2.22</td>
+<td class="r">2,487</td>
+<td class="r">4.86</td>
+<td class="r">41.0</td>
+<td class="r">2,838</td>
+<td class="r">1.02</td>
+<td class="r">4.70</td>
+</tr>
+<tr class="even">
+<td class="l">QTUM</td>
+<td class="l">중소형</td>
+<td class="r">75.6</td>
+<td class="r">6,631</td>
+<td class="r">15.7</td>
+<td class="r">1.25</td>
+<td class="r">3,712</td>
+<td class="r">4.26</td>
+<td class="r">33.5</td>
+<td class="r">1,972</td>
+<td class="r">1.02</td>
+<td class="r">4.59</td>
+</tr>
+<tr class="odd">
+<td class="l">BSV</td>
+<td class="l">중소형</td>
+<td class="r">72.3</td>
+<td class="r">6,344</td>
+<td class="r">19.9</td>
+<td class="r">1.68</td>
+<td class="r">60,000</td>
+<td class="r">4.29</td>
+<td class="r">19.5</td>
+<td class="r">768</td>
+<td class="r">0.98</td>
+<td class="r">4.61</td>
+</tr>
+<tr class="even">
+<td class="l">VET</td>
+<td class="l">중소형</td>
+<td class="r">67.8</td>
+<td class="r">5,952</td>
+<td class="r">8.7</td>
+<td class="r">0.79</td>
+<td class="r">33.7</td>
+<td class="r">3.89</td>
+<td class="r">26.8</td>
+<td class="r">1,458</td>
+<td class="r">1.08</td>
+<td class="r">4.65</td>
+</tr>
+<tr class="odd">
+<td class="l">MTL</td>
+<td class="l">중소형</td>
+<td class="r">67.3</td>
+<td class="r">5,902</td>
+<td class="r">13.8</td>
+<td class="r">1.00</td>
+<td class="r">1,635</td>
+<td class="r">4.27</td>
+<td class="r">78.6</td>
+<td class="r">12,106</td>
+<td class="r">1.15</td>
+<td class="r">4.83</td>
+</tr>
+<tr class="even">
+<td class="l">ZIL</td>
+<td class="l">중소형</td>
+<td class="r">61.4</td>
+<td class="r">5,384</td>
+<td class="r">8.7</td>
+<td class="r">0.84</td>
+<td class="r">30.4</td>
+<td class="r">4.10</td>
+<td class="r">72.0</td>
+<td class="r">8,775</td>
+<td class="r">1.10</td>
+<td class="r">4.82</td>
+</tr>
+<tr class="odd">
+<td class="l">STRAX</td>
+<td class="l">중소형</td>
+<td class="r">61.3</td>
+<td class="r">5,351</td>
+<td class="r">19.2</td>
+<td class="r">1.60</td>
+<td class="r">526.5</td>
+<td class="r">5.15</td>
+<td class="r">18.6</td>
+<td class="r">736</td>
+<td class="r">1.20</td>
+<td class="r">6.04</td>
+</tr>
+<tr class="even">
+<td class="l">WAXP</td>
+<td class="l">중소형</td>
+<td class="r">56.0</td>
+<td class="r">4,912</td>
+<td class="r">5.9</td>
+<td class="r">0.58</td>
+<td class="r">74.2</td>
+<td class="r">4.00</td>
+<td class="r">25.1</td>
+<td class="r">1,054</td>
+<td class="r">1.13</td>
+<td class="r">4.91</td>
+</tr>
+<tr class="odd">
+<td class="l">ORBS</td>
+<td class="l">중소형</td>
+<td class="r">55.5</td>
+<td class="r">4,869</td>
+<td class="r">10.2</td>
+<td class="r">0.69</td>
+<td class="r">40.4</td>
+<td class="r">4.24</td>
+<td class="r">14.8</td>
+<td class="r">343</td>
+<td class="r">1.19</td>
+<td class="r">5.05</td>
+</tr>
+<tr class="even">
+<td class="l">KNC</td>
+<td class="l">중소형</td>
+<td class="r">55.3</td>
+<td class="r">4,855</td>
+<td class="r">6.6</td>
+<td class="r">0.58</td>
+<td class="r">865.0</td>
+<td class="r">4.72</td>
+<td class="r">68.2</td>
+<td class="r">6,533</td>
+<td class="r">1.06</td>
+<td class="r">4.81</td>
+</tr>
+<tr class="odd">
+<td class="l">GLM</td>
+<td class="l">중소형</td>
+<td class="r">55.2</td>
+<td class="r">4,847</td>
+<td class="r">12.1</td>
+<td class="r">0.86</td>
+<td class="r">368.0</td>
+<td class="r">5.22</td>
+<td class="r">24.2</td>
+<td class="r">960</td>
+<td class="r">1.22</td>
+<td class="r">5.11</td>
+</tr>
+<tr class="even">
+<td class="l">SNT</td>
+<td class="l">중소형</td>
+<td class="r">53.1</td>
+<td class="r">4,659</td>
+<td class="r">14.5</td>
+<td class="r">1.08</td>
+<td class="r">39.7</td>
+<td class="r">4.99</td>
+<td class="r">23.6</td>
+<td class="r">1,021</td>
+<td class="r">1.17</td>
+<td class="r">5.09</td>
+</tr>
+<tr class="odd">
+<td class="l">ENJ</td>
+<td class="l">중소형</td>
+<td class="r">52.1</td>
+<td class="r">4,573</td>
+<td class="r">4.4</td>
+<td class="r">0.51</td>
+<td class="r">405.7</td>
+<td class="r">4.53</td>
+<td class="r">60.7</td>
+<td class="r">6,197</td>
+<td class="r">1.11</td>
+<td class="r">4.90</td>
+</tr>
+<tr class="even">
+<td class="l">ANKR</td>
+<td class="l">중소형</td>
+<td class="r">51.0</td>
+<td class="r">4,477</td>
+<td class="r">6.9</td>
+<td class="r">0.62</td>
+<td class="r">37.3</td>
+<td class="r">4.45</td>
+<td class="r">85.3</td>
+<td class="r">10,066</td>
+<td class="r">1.16</td>
+<td class="r">4.82</td>
+</tr>
+<tr class="odd">
+<td class="l">POWR</td>
+<td class="l">중소형</td>
+<td class="r">50.7</td>
+<td class="r">4,445</td>
+<td class="r">9.7</td>
+<td class="r">1.00</td>
+<td class="r">297.0</td>
+<td class="r">4.62</td>
+<td class="r">19.4</td>
+<td class="r">583</td>
+<td class="r">1.14</td>
+<td class="r">4.90</td>
+</tr>
+<tr class="even">
+<td class="l">THETA</td>
+<td class="l">중소형</td>
+<td class="r">50.4</td>
+<td class="r">4,418</td>
+<td class="r">6.5</td>
+<td class="r">0.75</td>
+<td class="r">1,556</td>
+<td class="r">4.55</td>
+<td class="r">37.3</td>
+<td class="r">2,781</td>
+<td class="r">1.10</td>
+<td class="r">4.58</td>
+</tr>
+<tr class="odd">
+<td class="l">MBL</td>
+<td class="l">중소형</td>
+<td class="r">49.7</td>
+<td class="r">4,363</td>
+<td class="r">6.6</td>
+<td class="r">0.59</td>
+<td class="r">4.34</td>
+<td class="r">4.50</td>
+<td class="r">26.9</td>
+<td class="r">1,203</td>
+<td class="r">1.21</td>
+<td class="r">5.02</td>
+</tr>
+<tr class="even">
+<td class="l">ICX</td>
+<td class="l">중소형</td>
+<td class="r">49.6</td>
+<td class="r">4,352</td>
+<td class="r">4.6</td>
+<td class="r">0.49</td>
+<td class="r">290.8</td>
+<td class="r">4.14</td>
+<td class="r">45.8</td>
+<td class="r">4,665</td>
+<td class="r">1.13</td>
+<td class="r">4.84</td>
+</tr>
+<tr class="odd">
+<td class="l">IOST</td>
+<td class="l">중소형</td>
+<td class="r">47.7</td>
+<td class="r">4,188</td>
+<td class="r">3.5</td>
+<td class="r">0.24</td>
+<td class="r">10.8</td>
+<td class="r">3.93</td>
+<td class="r">50.3</td>
+<td class="r">4,069</td>
+<td class="r">1.17</td>
+<td class="r">4.92</td>
+</tr>
+<tr class="even">
+<td class="l">ZRX</td>
+<td class="l">중소형</td>
+<td class="r">46.9</td>
+<td class="r">4,112</td>
+<td class="r">8.7</td>
+<td class="r">0.70</td>
+<td class="r">426.0</td>
+<td class="r">4.85</td>
+<td class="r">26.2</td>
+<td class="r">1,266</td>
+<td class="r">1.17</td>
+<td class="r">4.85</td>
+</tr>
+<tr class="odd">
+<td class="l">STEEM</td>
+<td class="l">중소형</td>
+<td class="r">46.6</td>
+<td class="r">4,090</td>
+<td class="r">9.8</td>
+<td class="r">0.75</td>
+<td class="r">292.0</td>
+<td class="r">4.24</td>
+<td class="r">36.9</td>
+<td class="r">2,151</td>
+<td class="r">1.19</td>
+<td class="r">5.18</td>
+</tr>
+<tr class="even">
+<td class="l">CRO</td>
+<td class="l">중소형</td>
+<td class="r">46.4</td>
+<td class="r">4,075</td>
+<td class="r">11.1</td>
+<td class="r">0.67</td>
+<td class="r">149.0</td>
+<td class="r">4.04</td>
+<td class="r">33.1</td>
+<td class="r">1,689</td>
+<td class="r">1.20</td>
+<td class="r">5.03</td>
+</tr>
+<tr class="odd">
+<td class="l">BAT</td>
+<td class="l">중소형</td>
+<td class="r">44.1</td>
+<td class="r">3,873</td>
+<td class="r">3.4</td>
+<td class="r">0.43</td>
+<td class="r">329.0</td>
+<td class="r">4.01</td>
+<td class="r">42.3</td>
+<td class="r">3,779</td>
+<td class="r">1.16</td>
+<td class="r">4.67</td>
+</tr>
+<tr class="even">
+<td class="l">ELF</td>
+<td class="l">중소형</td>
+<td class="r">42.5</td>
+<td class="r">3,728</td>
+<td class="r">6.5</td>
+<td class="r">0.71</td>
+<td class="r">416.5</td>
+<td class="r">3.93</td>
+<td class="r">41.5</td>
+<td class="r">3,606</td>
+<td class="r">1.20</td>
+<td class="r">5.05</td>
+</tr>
+<tr class="odd">
+<td class="l">FCT2</td>
+<td class="l">중소형</td>
+<td class="r">40.6</td>
+<td class="r">3,560</td>
+<td class="r">5.0</td>
+<td class="r">0.45</td>
+<td class="r">69.6</td>
+<td class="r">4.07</td>
+<td class="r">28.6</td>
+<td class="r">1,338</td>
+<td class="r">1.20</td>
+<td class="r">5.09</td>
+</tr>
+<tr class="even">
+<td class="l">CHR</td>
+<td class="l">중소형</td>
+<td class="r">36.9</td>
+<td class="r">3,236</td>
+<td class="r">3.0</td>
+<td class="r">0.40</td>
+<td class="r">238.6</td>
+<td class="r">4.64</td>
+<td class="r">179.0</td>
+<td class="r">48,702</td>
+<td class="r">1.20</td>
+<td class="r">4.74</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 표-2]</span> 분석대상 34개 가상자산의 연도별 시가총액</summary><div class="apx-body"><p>[부록 표-2]는 코인마켓캡(CoinMarketCap)의 일별 시가총액(원화 환산, UTC 기준 일자)으로 구한 연도별 시가총액이다. 연말은 12월 31일 시가총액, 기간 평균은 2022년 6월 1일~2025년 12월 31일 일별 시가총액의 평균이며, 순위는 기간 평균 기준이다. 원화 환산값이 누락된 일부 일자(2022년 6월 16~17일 등)는 해당일의 달러 시가총액에 원/달러 환산비를 곱하여 보완하였다. 스트라티스(STRAX)는 2024년 3월 토큰 전환으로 코인마켓캡의 식별자가 바뀌어 전환 전후의 자료를 연결하였고, 피르마체인(FCT2)은 코인마켓캡에서 FCT로 표기된다. 일자가 UTC 기준이어서 KST 기준인 거래 자료와 일자의 경계가 9시간 다르지만, 본문에서는 기간 평균만 사용하므로 그 영향은 무시할 만하다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-2]</span> 분석대상 34개 가상자산의 연도별 시가총액</figcaption><div class="unit">(단위: 억원)</div><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">순위</th>
+<th class="l" data-quarto-table-cell-role="th">코인명칭</th>
+<th class="l" data-quarto-table-cell-role="th">심볼</th>
+<th class="r" data-quarto-table-cell-role="th">연말 2022</th>
+<th class="r" data-quarto-table-cell-role="th">연말 2023</th>
+<th class="r" data-quarto-table-cell-role="th">연말 2024</th>
+<th class="r" data-quarto-table-cell-role="th">연말 2025</th>
+<th class="r" data-quarto-table-cell-role="th">기간 평균</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">1</td>
+<td class="l">이더리움</td>
+<td class="l">ETH</td>
+<td class="r">1,848,112</td>
+<td class="r">3,549,527</td>
+<td class="r">5,902,170</td>
+<td class="r">5,153,117</td>
+<td class="r">4,024,745</td>
+</tr>
+<tr class="even">
+<td class="r">2</td>
+<td class="l">엑스알피(리플)</td>
+<td class="l">XRP</td>
+<td class="r">215,953</td>
+<td class="r">430,869</td>
+<td class="r">1,755,671</td>
+<td class="r">1,606,558</td>
+<td class="r">881,358</td>
+</tr>
+<tr class="odd">
+<td class="r">3</td>
+<td class="l">에이다</td>
+<td class="l">ADA</td>
+<td class="r">107,330</td>
+<td class="r">272,045</td>
+<td class="r">435,899</td>
+<td class="r">172,152</td>
+<td class="r">247,361</td>
+</tr>
+<tr class="even">
+<td class="r">4</td>
+<td class="l">트론</td>
+<td class="l">TRX</td>
+<td class="r">63,247</td>
+<td class="r">123,104</td>
+<td class="r">322,141</td>
+<td class="r">387,360</td>
+<td class="r">191,337</td>
+</tr>
+<tr class="odd">
+<td class="r">5</td>
+<td class="l">체인링크</td>
+<td class="l">LINK</td>
+<td class="r">35,698</td>
+<td class="r">109,917</td>
+<td class="r">187,633</td>
+<td class="r">124,194</td>
+<td class="r">104,433</td>
+</tr>
+<tr class="even">
+<td class="r">6</td>
+<td class="l">비트코인 캐시</td>
+<td class="l">BCH</td>
+<td class="r">23,607</td>
+<td class="r">65,786</td>
+<td class="r">126,342</td>
+<td class="r">172,163</td>
+<td class="r">84,308</td>
+</tr>
+<tr class="odd">
+<td class="r">7</td>
+<td class="l">스텔라루멘</td>
+<td class="l">XLM</td>
+<td class="r">23,442</td>
+<td class="r">47,161</td>
+<td class="r">147,643</td>
+<td class="r">93,516</td>
+<td class="r">72,581</td>
+</tr>
+<tr class="even">
+<td class="r">8</td>
+<td class="l">이더리움 클래식</td>
+<td class="l">ETC</td>
+<td class="r">27,475</td>
+<td class="r">41,070</td>
+<td class="r">55,225</td>
+<td class="r">25,553</td>
+<td class="r">42,393</td>
+</tr>
+<tr class="odd">
+<td class="r">9</td>
+<td class="l">크로노스</td>
+<td class="l">CRO</td>
+<td class="r">17,776</td>
+<td class="r">32,357</td>
+<td class="r">55,065</td>
+<td class="r">50,305</td>
+<td class="r">39,213</td>
+</tr>
+<tr class="even">
+<td class="r">10</td>
+<td class="l">비체인</td>
+<td class="l">VET</td>
+<td class="r">14,443</td>
+<td class="r">32,230</td>
+<td class="r">51,277</td>
+<td class="r">12,882</td>
+<td class="r">27,355</td>
+</tr>
+<tr class="odd">
+<td class="r">11</td>
+<td class="l">쎄타 네트워크</td>
+<td class="l">THETA</td>
+<td class="r">9,108</td>
+<td class="r">16,188</td>
+<td class="r">32,557</td>
+<td class="r">3,795</td>
+<td class="r">15,750</td>
+</tr>
+<tr class="even">
+<td class="r">12</td>
+<td class="l">비트코인에스브이</td>
+<td class="l">BSV</td>
+<td class="r">10,042</td>
+<td class="r">24,271</td>
+<td class="r">14,652</td>
+<td class="r">4,973</td>
+<td class="r">12,035</td>
+</tr>
+<tr class="odd">
+<td class="r">13</td>
+<td class="l">질리카</td>
+<td class="l">ZIL</td>
+<td class="r">3,171</td>
+<td class="r">5,572</td>
+<td class="r">5,716</td>
+<td class="r">1,321</td>
+<td class="r">4,686</td>
+</tr>
+<tr class="even">
+<td class="r">14</td>
+<td class="l">베이직어텐션토큰</td>
+<td class="l">BAT</td>
+<td class="r">3,133</td>
+<td class="r">4,945</td>
+<td class="r">5,109</td>
+<td class="r">4,443</td>
+<td class="r">4,550</td>
+</tr>
+<tr class="odd">
+<td class="r">15</td>
+<td class="l">엔진코인</td>
+<td class="l">ENJ</td>
+<td class="r">3,042</td>
+<td class="r">4,928</td>
+<td class="r">5,498</td>
+<td class="r">763</td>
+<td class="r">4,278</td>
+</tr>
+<tr class="even">
+<td class="r">16</td>
+<td class="l">퀀텀</td>
+<td class="l">QTUM</td>
+<td class="r">2,418</td>
+<td class="r">5,045</td>
+<td class="r">4,661</td>
+<td class="r">2,051</td>
+<td class="r">3,904</td>
+</tr>
+<tr class="odd">
+<td class="r">17</td>
+<td class="l">골렘</td>
+<td class="l">GLM</td>
+<td class="r">2,246</td>
+<td class="r">3,093</td>
+<td class="r">5,375</td>
+<td class="r">3,129</td>
+<td class="r">3,781</td>
+</tr>
+<tr class="even">
+<td class="r">18</td>
+<td class="l">제로엑스</td>
+<td class="l">ZRX</td>
+<td class="r">1,586</td>
+<td class="r">4,062</td>
+<td class="r">5,690</td>
+<td class="r">1,720</td>
+<td class="r">3,560</td>
+</tr>
+<tr class="odd">
+<td class="r">19</td>
+<td class="l">앵커</td>
+<td class="l">ANKR</td>
+<td class="r">1,871</td>
+<td class="r">3,692</td>
+<td class="r">4,937</td>
+<td class="r">896</td>
+<td class="r">3,520</td>
+</tr>
+<tr class="even">
+<td class="r">20</td>
+<td class="l">웨이브</td>
+<td class="l">WAVES</td>
+<td class="r">1,823</td>
+<td class="r">3,923</td>
+<td class="r">2,598</td>
+<td class="r">1,181</td>
+<td class="r">3,129</td>
+</tr>
+<tr class="odd">
+<td class="r">21</td>
+<td class="l">엘프</td>
+<td class="l">ELF</td>
+<td class="r">1,041</td>
+<td class="r">5,371</td>
+<td class="r">4,766</td>
+<td class="r">1,026</td>
+<td class="r">2,942</td>
+</tr>
+<tr class="even">
+<td class="r">22</td>
+<td class="l">아이콘</td>
+<td class="l">ICX</td>
+<td class="r">1,680</td>
+<td class="r">3,373</td>
+<td class="r">2,760</td>
+<td class="r">837</td>
+<td class="r">2,533</td>
+</tr>
+<tr class="odd">
+<td class="r">23</td>
+<td class="l">왁스</td>
+<td class="l">WAXP</td>
+<td class="r">1,229</td>
+<td class="r">3,092</td>
+<td class="r">2,178</td>
+<td class="r">498</td>
+<td class="r">2,111</td>
+</tr>
+<tr class="even">
+<td class="r">24</td>
+<td class="l">이오스트</td>
+<td class="l">IOST</td>
+<td class="r">1,582</td>
+<td class="r">2,409</td>
+<td class="r">1,994</td>
+<td class="r">790</td>
+<td class="r">2,082</td>
+</tr>
+<tr class="odd">
+<td class="r">25</td>
+<td class="l">크로미아</td>
+<td class="l">CHR</td>
+<td class="r">926</td>
+<td class="r">1,983</td>
+<td class="r">2,676</td>
+<td class="r">495</td>
+<td class="r">1,711</td>
+</tr>
+<tr class="even">
+<td class="r">26</td>
+<td class="l">스테이터스네트워크토큰</td>
+<td class="l">SNT</td>
+<td class="r">922</td>
+<td class="r">2,251</td>
+<td class="r">2,360</td>
+<td class="r">942</td>
+<td class="r">1,584</td>
+</tr>
+<tr class="odd">
+<td class="r">27</td>
+<td class="l">카이버 네트워크</td>
+<td class="l">KNC</td>
+<td class="r">947</td>
+<td class="r">1,479</td>
+<td class="r">1,447</td>
+<td class="r">630</td>
+<td class="r">1,560</td>
+</tr>
+<tr class="even">
+<td class="r">28</td>
+<td class="l">파워렛저</td>
+<td class="l">POWR</td>
+<td class="r">736</td>
+<td class="r">2,431</td>
+<td class="r">2,249</td>
+<td class="r">679</td>
+<td class="r">1,487</td>
+</tr>
+<tr class="odd">
+<td class="r">29</td>
+<td class="l">스트라티스</td>
+<td class="l">STRAX</td>
+<td class="r">706</td>
+<td class="r">1,984</td>
+<td class="r">2,215</td>
+<td class="r">591</td>
+<td class="r">1,390</td>
+</tr>
+<tr class="even">
+<td class="r">30</td>
+<td class="l">오브스</td>
+<td class="l">ORBS</td>
+<td class="r">766</td>
+<td class="r">1,605</td>
+<td class="r">1,441</td>
+<td class="r">618</td>
+<td class="r">1,250</td>
+</tr>
+<tr class="odd">
+<td class="r">31</td>
+<td class="l">스팀</td>
+<td class="l">STEEM</td>
+<td class="r">778</td>
+<td class="r">1,496</td>
+<td class="r">1,981</td>
+<td class="r">503</td>
+<td class="r">1,195</td>
+</tr>
+<tr class="even">
+<td class="r">32</td>
+<td class="l">메탈</td>
+<td class="l">MTL</td>
+<td class="r">587</td>
+<td class="r">1,353</td>
+<td class="r">1,299</td>
+<td class="r">456</td>
+<td class="r">1,081</td>
+</tr>
+<tr class="odd">
+<td class="r">33</td>
+<td class="l">무비블록</td>
+<td class="l">MBL</td>
+<td class="r">441</td>
+<td class="r">1,068</td>
+<td class="r">901</td>
+<td class="r">314</td>
+<td class="r">729</td>
+</tr>
+<tr class="even">
+<td class="r">34</td>
+<td class="l">피르마체인</td>
+<td class="l">FCT2</td>
+<td class="r">290</td>
+<td class="r">656</td>
+<td class="r">588</td>
+<td class="r">201</td>
+<td class="r">486</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 그림-1]</span> 시행 전후 거래량의 첫 자리 분포와 벤포드 분포</summary><div class="apx-body"><p>[부록 그림-1]은 왼쪽부터 34개 종목 전체, 대형 그룹, 중소형 그룹의 5분봉 거래량을 합산한 첫 자리 분포이며, × 표시와 점선은 벤포드 분포의 이론 비율이다. 이 그림과 본문의 합산 MAD는 시행일(2024년 7월 19일)을 기준으로 시행 전후를 나눈 것으로, 시행월(2024년 7월)을 제외하는 이후 분석의 구분과 다르다.</p><figure class="pfig figure"><figcaption><span class="cap-no">[부록 그림-1]</span> 시행 전후 거래량의 첫 자리 분포와 벤포드 분포</figcaption><div class="imgbox"><img src="figures/fig-14.png" alt="[부록 그림-1] 시행 전후 거래량의 첫 자리 분포와 벤포드 분포" loading="lazy" class="figure-img"></div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 표-3]</span> 그룹별 5분 거래량의 상위 집중도</summary><div class="apx-body"><p>[부록 표-3]는 그룹별 5분 거래량의 상위 집중도이다. 왜도와 첨도는 [부록 표-1]의 5분 거래대금 기준 값의 그룹 평균이다. 상위 1%(10%) 비중은 종목–월별로 거래량이 해당 분위수 이상인 5분 구간의 거래량 합계가 그 달 전체 거래량에서 차지하는 비율이며, P99/P50은 종목–월별 상위 1% 분위수와 중위수 비율의 종목별 중위수이다. 시행 전후 비교는 시행월(2024년 7월)을 제외한 종목별 월평균값에 대한 Wilcoxon 부호순위 검정 결과이다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-3]</span> 그룹별 5분 거래량의 상위 집중도</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">그룹</th>
+<th class="r" data-quarto-table-cell-role="th">종목수</th>
+<th class="r" data-quarto-table-cell-role="th">왜도</th>
+<th class="r" data-quarto-table-cell-role="th">첨도</th>
+<th class="r" data-quarto-table-cell-role="th">상위 1% 비중(%)</th>
+<th class="r" data-quarto-table-cell-role="th">상위 10% 비중(%)</th>
+<th class="r" data-quarto-table-cell-role="th">P99/P50</th>
+<th class="r" data-quarto-table-cell-role="th">상위 1% 비중 시행 전(%)</th>
+<th class="r" data-quarto-table-cell-role="th">상위 1% 비중 시행 후(%)</th>
+<th class="r" data-quarto-table-cell-role="th">증가 종목 수</th>
+<th class="r" data-quarto-table-cell-role="th">p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">23.9</td>
+<td class="r">1,419</td>
+<td class="r">14.4</td>
+<td class="r">49.4</td>
+<td class="r">18.6</td>
+<td class="r">14.1</td>
+<td class="r">15.0</td>
+<td class="r">5/8</td>
+<td class="r">0.234</td>
+</tr>
+<tr class="even">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">44.6</td>
+<td class="r">5,025</td>
+<td class="r">24.8</td>
+<td class="r">66.0</td>
+<td class="r">62.3</td>
+<td class="r">23.5</td>
+<td class="r">26.5</td>
+<td class="r">22/26</td>
+<td class="r">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r"></td>
+<td class="r">21.3</td>
+<td class="r">23.8</td>
+<td class="r">27/34</td>
+<td class="r">&lt;0.001</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 그림-2]</span> 거래량 CCDF와 멱법칙 적합 예시</summary><div class="apx-body"><p>[부록 그림-2]는 유동성 상·하위 대표 종목의 거래량 CCDF와 멱법칙 적합 예시이다. 가로축은 5분 거래량을 해당 월 중위수로 나눈 값이며 두 축 모두 로그 척도이고, 빨간 선은 xmin 이상 구간에 적합한 멱법칙이다.</p><figure class="pfig figure"><figcaption><span class="cap-no">[부록 그림-2]</span> 거래량 CCDF와 멱법칙 적합 예시</figcaption><div class="imgbox"><img src="figures/fig-15.png" alt="[부록 그림-2] 거래량 CCDF와 멱법칙 적합 예시" loading="lazy" class="figure-img"></div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 그림-3]</span> 종목–월 꼬리지수 α</summary><div class="apx-body"><p>[부록 그림-3]은 종목–월 꼬리지수 α이다. 종목은 관측비율 순으로 위에서 아래로 정렬하였다. 붉은색일수록 α가 작아 꼬리가 두껍고 흰색은 α=2이며, 검은 파선은 법 시행일(2024년 7월 19일)이다.</p><figure class="pfig figure"><figcaption><span class="cap-no">[부록 그림-3]</span> 종목–월 꼬리지수 α</figcaption><div class="imgbox"><img src="figures/fig-16.png" alt="[부록 그림-3] 종목–월 꼬리지수 α" loading="lazy" class="figure-img"></div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 그림-4]</span> 그룹별 시간대별 거래량 비중</summary><div class="apx-body"><p>[부록 그림-4]는 종목별로 시간대별 거래량 비중을 구한 뒤 그룹 내에서 평균한 것이다. 회색 수평선은 균등 배분 시의 비중(100/24 ≈ 4.2%)이다.</p><figure class="pfig figure"><figcaption><span class="cap-no">[부록 그림-4]</span> 그룹별 시간대별 거래량 비중</figcaption><div class="imgbox"><img src="figures/fig-17.png" alt="[부록 그림-4] 그룹별 시간대별 거래량 비중" loading="lazy" class="figure-img"></div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 표-4]</span> 그룹별 10분 무거래 구간 비율</summary><div class="apx-body"><p>[부록 표-4]의 무거래 구간 비율은 1 − (거래가 있는 10분 구간 수)/(자료가 존재하는 일수 × 144)이다. 시행 전후는 법 시행일(2024년 7월 19일)을 기준으로 구분하였으며, p값은 종목별 시행 전후 값에 대한 Wilcoxon 부호순위 검정 결과이다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-4]</span> 그룹별 10분 무거래 구간 비율</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">그룹</th>
+<th class="r" data-quarto-table-cell-role="th">종목수</th>
+<th class="r" data-quarto-table-cell-role="th">평균(%)</th>
+<th class="r" data-quarto-table-cell-role="th">최소(%)</th>
+<th class="r" data-quarto-table-cell-role="th">최대(%)</th>
+<th class="r" data-quarto-table-cell-role="th">시행 전(%)</th>
+<th class="r" data-quarto-table-cell-role="th">시행 후(%)</th>
+<th class="r" data-quarto-table-cell-role="th">증가 종목 수</th>
+<th class="r" data-quarto-table-cell-role="th">p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">대형</td>
+<td class="r">8</td>
+<td class="r">2.3</td>
+<td class="r">0.4</td>
+<td class="r">7.6</td>
+<td class="r">2.8</td>
+<td class="r">1.6</td>
+<td class="r">3/8</td>
+<td class="r">0.141</td>
+</tr>
+<tr class="even">
+<td class="l">중소형</td>
+<td class="r">26</td>
+<td class="r">30.3</td>
+<td class="r">11.3</td>
+<td class="r">47.4</td>
+<td class="r">29.6</td>
+<td class="r">31.3</td>
+<td class="r">15/26</td>
+<td class="r">0.347</td>
+</tr>
+<tr class="odd">
+<td class="l">전체</td>
+<td class="r">34</td>
+<td class="r">23.7</td>
+<td class="r">0.4</td>
+<td class="r">47.4</td>
+<td class="r">23.3</td>
+<td class="r">24.3</td>
+<td class="r">18/34</td>
+<td class="r">0.561</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 표-5]</span> β 값에 따른 EDM 변화점 탐지 결과(보정 표본)</summary><div class="apx-body"><p>[부록 표-5]은 EDM의 벌점 β에 따른 변화점 탐지 결과이다. 보정 표본은 종목당 무작위로 뽑은 6개월(총 204개 종목–월)이며, 섞은 시계열은 전처리된 시계열의 시간 순서를 무작위로 재배열한 것이다. 월평균 변화점 수는 일평균 변화점 수에 30을 곱한 값이고, 굵은 글씨는 채택한 β이다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-5]</span> β 값에 따른 EDM 변화점 탐지 결과(보정 표본)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">β</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열: 변화점 0개 비율(%)</th>
+<th class="r" data-quarto-table-cell-role="th">실제 시계열: 변화점 0개 비율(%)</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열: 월평균 변화점 수</th>
+<th class="r" data-quarto-table-cell-role="th">실제 시계열: 월평균 변화점 수</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열 0개 비율(%): 대형</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열 0개 비율(%): 중소형</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">0.002</td>
+<td class="r">6.9</td>
+<td class="r">0.5</td>
+<td class="r">380.9</td>
+<td class="r">342.0</td>
+<td class="r">22.9</td>
+<td class="r">1.9</td>
+</tr>
+<tr class="even">
+<td class="r">0.01</td>
+<td class="r">49.0</td>
+<td class="r">27.5</td>
+<td class="r">20.4</td>
+<td class="r">49.7</td>
+<td class="r">87.5</td>
+<td class="r">37.2</td>
+</tr>
+<tr class="odd">
+<td class="r">0.02</td>
+<td class="r">82.8</td>
+<td class="r">65.2</td>
+<td class="r">1.13</td>
+<td class="r">5.90</td>
+<td class="r">97.9</td>
+<td class="r">78.2</td>
+</tr>
+<tr class="even">
+<td class="r">0.025</td>
+<td class="r">92.6</td>
+<td class="r">80.4</td>
+<td class="r">0.28</td>
+<td class="r">2.24</td>
+<td class="r">97.9</td>
+<td class="r">91.0</td>
+</tr>
+<tr class="odd">
+<td class="r"><strong>0.0275</strong></td>
+<td class="r"><strong>95.6</strong></td>
+<td class="r"><strong>84.8</strong></td>
+<td class="r"><strong>0.16</strong></td>
+<td class="r"><strong>1.91</strong></td>
+<td class="r"><strong>97.9</strong></td>
+<td class="r"><strong>94.9</strong></td>
+</tr>
+<tr class="even">
+<td class="r">0.04</td>
+<td class="r">98.5</td>
+<td class="r">94.1</td>
+<td class="r">0.06</td>
+<td class="r">0.39</td>
+<td class="r">97.9</td>
+<td class="r">98.7</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 표-6]</span> 벌점 계수 k에 따른 PELT 변화점 탐지 결과(보정 표본)</summary><div class="apx-body"><p>[부록 표-6]은 PELT의 벌점 계수 k에 따른 같은 결과이다. 벌점은 k × log n이며(n은 시계열의 관측치 수), 그 밖의 사항은 [부록 표-5]과 같다. 굵은 글씨는 채택한 k이다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-6]</span> 벌점 계수 k에 따른 PELT 변화점 탐지 결과(보정 표본)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">k</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열: 변화점 0개 비율(%)</th>
+<th class="r" data-quarto-table-cell-role="th">실제 시계열: 변화점 0개 비율(%)</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열: 월평균 변화점 수</th>
+<th class="r" data-quarto-table-cell-role="th">실제 시계열: 월평균 변화점 수</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열 0개 비율(%): 대형</th>
+<th class="r" data-quarto-table-cell-role="th">섞은 시계열 0개 비율(%): 중소형</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">3</td>
+<td class="r">69.6</td>
+<td class="r">0.0</td>
+<td class="r">0.71</td>
+<td class="r">33.1</td>
+<td class="r">62.5</td>
+<td class="r">71.8</td>
+</tr>
+<tr class="even">
+<td class="r"><strong>4</strong></td>
+<td class="r"><strong>97.5</strong></td>
+<td class="r"><strong>0.0</strong></td>
+<td class="r"><strong>0.03</strong></td>
+<td class="r"><strong>20.8</strong></td>
+<td class="r"><strong>97.9</strong></td>
+<td class="r"><strong>97.4</strong></td>
+</tr>
+<tr class="odd">
+<td class="r">5</td>
+<td class="r">99.5</td>
+<td class="r">0.0</td>
+<td class="r">0.00</td>
+<td class="r">14.5</td>
+<td class="r">100.0</td>
+<td class="r">99.4</td>
+</tr>
+<tr class="even">
+<td class="r">6</td>
+<td class="r">100.0</td>
+<td class="r">0.5</td>
+<td class="r">0.00</td>
+<td class="r">11.2</td>
+<td class="r">100.0</td>
+<td class="r">100.0</td>
+</tr>
+<tr class="odd">
+<td class="r">8</td>
+<td class="r">100.0</td>
+<td class="r">2.0</td>
+<td class="r">0.00</td>
+<td class="r">7.5</td>
+<td class="r">100.0</td>
+<td class="r">100.0</td>
+</tr>
+<tr class="even">
+<td class="r">12</td>
+<td class="r">100.0</td>
+<td class="r">3.9</td>
+<td class="r">0.00</td>
+<td class="r">4.6</td>
+<td class="r">100.0</td>
+<td class="r">100.0</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 그림-5]</span> 종목–월 PELT 일평균 변화점 수</summary><div class="apx-body"><p>[부록 그림-5]는 PELT(k=4)로 탐지한 종목–월 일평균 변화점 수이다. 종목은 관측비율 순으로 위에서 아래로 정렬하였으며, 검은 파선은 법 시행일(2024년 7월 19일)이다.</p><figure class="pfig figure"><figcaption><span class="cap-no">[부록 그림-5]</span> 종목–월 PELT 일평균 변화점 수</figcaption><div class="imgbox"><img src="figures/fig-18.png" alt="[부록 그림-5] 종목–월 PELT 일평균 변화점 수" loading="lazy" class="figure-img"></div></figure></div></details>
+<details class="apx"><summary><span class="cap-no">[부록 표-7]</span> 벌점 계수에 따른 시행 전후 비교</summary><div class="apx-body"><p>[부록 표-7]은 벌점 계수에 따른 시행 전후 비교이다. k=4(굵은 글씨)가 주된 분석이며, 그 밖의 사항은 본문 [표 17]과 같다.</p><figure class="tfig figure"><figcaption><span class="cap-no">[부록 표-7]</span> 벌점 계수에 따른 시행 전후 비교</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="r" data-quarto-table-cell-role="th">k</th>
+<th class="r" data-quarto-table-cell-role="th">대형 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">대형 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">대형 감소 종목</th>
+<th class="r" data-quarto-table-cell-role="th">대형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 시행 전</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 시행 후</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 감소 종목</th>
+<th class="r" data-quarto-table-cell-role="th">중소형 p값</th>
+<th class="r" data-quarto-table-cell-role="th">이중차분 추정치</th>
+<th class="r" data-quarto-table-cell-role="th">이중차분 p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="r">3</td>
+<td class="r">1.311</td>
+<td class="r">1.284</td>
+<td class="r">4/8</td>
+<td class="r">0.624</td>
+<td class="r">1.130</td>
+<td class="r">1.034</td>
+<td class="r">20/26</td>
+<td class="r">0.004</td>
+<td class="r">−0.069</td>
+<td class="r">0.193</td>
+</tr>
+<tr class="even">
+<td class="r"><strong>4</strong></td>
+<td class="r"><strong>0.872</strong></td>
+<td class="r"><strong>0.866</strong></td>
+<td class="r"><strong>4/8</strong></td>
+<td class="r"><strong>0.834</strong></td>
+<td class="r"><strong>0.685</strong></td>
+<td class="r"><strong>0.628</strong></td>
+<td class="r"><strong>19/26</strong></td>
+<td class="r"><strong>0.022</strong></td>
+<td class="r"><strong>−0.051</strong></td>
+<td class="r"><strong>0.197</strong></td>
+</tr>
+<tr class="odd">
+<td class="r">5</td>
+<td class="r">0.641</td>
+<td class="r">0.641</td>
+<td class="r">5/8</td>
+<td class="r">1.000</td>
+<td class="r">0.478</td>
+<td class="r">0.431</td>
+<td class="r">19/26</td>
+<td class="r">0.012</td>
+<td class="r">−0.047</td>
+<td class="r">0.173</td>
+</tr>
+<tr class="even">
+<td class="r">6</td>
+<td class="r">0.506</td>
+<td class="r">0.513</td>
+<td class="r">3/8</td>
+<td class="r">0.624</td>
+<td class="r">0.359</td>
+<td class="r">0.327</td>
+<td class="r">17/26</td>
+<td class="r">0.040</td>
+<td class="r">−0.040</td>
+<td class="r">0.190</td>
+</tr>
+</tbody>
+</table>
+</div></figure></div></details>
+</section>
+
+<!-- 용어 ------------------------------------------------------------------>
+<section id="glossary">
+<h2 class="anchored"><span class="no">＋</span>용어 풀이</h2>
+<dl class="gloss">
+  <dt>종목–월</dt><dd>한 종목의 한 달 치 자료. 이 연구의 기본 분석 단위(34개 종목 × 43개월 = 1,462개).</dd>
+  <dt>관측비율</dt><dd>하루 288개 5분 구간 가운데 거래가 있었던 구간의 비율. 거래 활성도의 지표.</dd>
+  <dt>MAD · 초과 MAD</dt><dd>첫 자리 비율과 벤포드 비율의 차이를 평균한 값. 초과 MAD는 관측치 수 때문에 생기는 몫(E[MAD])을 뺀 값.</dd>
+  <dt>χ² 적합도 검정</dt><dd>관측 빈도와 기대 빈도의 차이를 보는 검정. 표본이 크면 사소한 차이도 유의해진다(과잉 검정력).</dd>
+  <dt>CCDF</dt><dd>“이 값보다 클 확률” P(X&gt;x)을 그린 곡선. 로그-로그 축에서 멱법칙은 직선이 된다.</dd>
+  <dt>꼬리지수 α · Hill 추정량</dt><dd>CCDF가 줄어드는 속도. 작을수록 큰 값이 자주 나온다. Hill 추정량은 그 최우도 추정량.</dd>
+  <dt>Pareto–Lévy 영역</dt><dd>1&lt;α&lt;2. 금융시장 거래 규모에서 흔히 관찰되는 범위.</dd>
+  <dt>KS 거리</dt><dd>두 누적분포 사이의 최대 차이. 꼬리 시작점을 정하는 데 썼다.</dd>
+  <dt>변화점 · PELT</dt><dd>시계열의 성질(수준·분포)이 바뀌는 지점. PELT는 벌점을 고려한 최적 분할을 빠르게 찾는 알고리즘.</dd>
+  <dt>벌점 k</dt><dd>변화점 하나를 추가할 때 치르는 비용(k × ln n). 클수록 변화점을 적게 찾는다.</dd>
+  <dt>Wilcoxon 부호순위 검정</dt><dd>짝지은 전후 차이의 크기 순위를 이용해 0을 중심으로 대칭인지 보는 비모수 검정. 8개 종목이 모두 같은 방향이어도 p값은 약 0.014가 최소이다.</dd>
+  <dt>Wilcoxon 순위합 검정</dt><dd>두 독립 집단(예: 대형과 중소형의 변화량)을 순위로 비교하는 비모수 검정.</dd>
+  <dt>이중차분(DiD)</dt><dd>처치군의 전후 변화에서 대조군의 전후 변화를 빼서 공통 충격을 제거하는 방법.</dd>
+  <dt>평행추세 가정</dt><dd>처치가 없었다면 두 집단이 같은 기울기로 움직였을 것이라는 가정. DiD가 효과를 나타내기 위한 조건.</dd>
+  <dt>이벤트 스터디</dt><dd>기준 시점(여기서는 2024년 상반기) 대비 각 기간의 그룹 간 차이를 하나씩 추정해 시행 전 차이와 시행 후 변화를 함께 보는 방법.</dd>
+  <dt>삼중차분</dt><dd>빗썸의 그룹 간 이중차분이 바이낸스의 그룹 간 이중차분과 다른지 보는 방법.</dd>
+  <dt>군집 표준오차</dt><dd>같은 종목의 월별 오차가 서로 상관될 수 있음을 고려해 종목 단위로 계산한 표준오차.</dd>
+  <dt>Holm 보정</dt><dd>여러 번 검정할 때 우연히 유의해지는 것을 막기 위해 p값 기준을 단계적으로 엄격하게 하는 방법.</dd>
+  <dt>p값</dt><dd>효과가 없다고 가정할 때 지금만큼 또는 더 극단적인 결과가 나올 확률. 0.05보다 작으면 관례상 ‘유의’라고 한다. 유의하지 않다는 것은 효과가 없다는 증명이 아니라 증거가 부족하다는 뜻이다.</dd>
+</dl>
+</section>
+
+<div class="wt-foot">
+<p>원고: 이준호·최범전, 「가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향: 거래 데이터 기반 실증 분석」(Working paper, 2026년 11월). 표와 원고 그림은 원고에서 그대로 옮겼고, ‘해설 그림’과 11절은 이 페이지를 위해 추가한 것이다.</p>
+<p>자료: 빗썸 5분봉(크로스앵글), 바이낸스 USDT 5분봉(data.binance.vision), 코인마켓캡 시가총액. 이 페이지는 연구 내용의 해설이며, 금융감독원의 공식 견해가 아니다.</p>
+</div>
+
+</div>
+<nav class="wt-toc" aria-label="목차">
+  <div class="t">목차</div>
+  <a href="#summary">요약</a>
+  <a href="#why">1. 왜 이 연구인가</a>
+  <a href="#data">2. 데이터와 종목 구분</a>
+  <a href="#benford-m">3. 지표 ① 벤포드 법칙</a>
+  <a href="#tail-m">4. 지표 ② 멱법칙 꼬리지수</a>
+  <a href="#pelt-m">5. 지표 ③ 변화점 탐지</a>
+  <a href="#design">6. 법의 효과를 가려내는 방법</a>
+  <a href="#res-benford">7. 결과 ① 벤포드</a>
+  <a href="#res-tail">8. 결과 ② 꼬리지수</a>
+  <a href="#res-pelt">9. 결과 ③ 변화점</a>
+  <a href="#synth">10. 종합</a>
+  <a href="#extra">11. 원고에 싣지 않은 분석</a>
+  <a href="#impl">12. 시사점과 한계</a>
+  <a href="#appendix">부록</a>
+  <a href="#glossary">용어 풀이</a>
+</nav>
+</div></div>
+<script>
+(function(){
+  var open=document.getElementById('openall');
+  if(open) open.addEventListener('click',function(){
+    var d=document.querySelectorAll('.wt #appendix details'), any=[].some.call(d,function(x){return !x.open});
+    [].forEach.call(d,function(x){x.open=any}); open.textContent=any?'모두 접기':'모두 펼치기';
+  });
+  var links=[].slice.call(document.querySelectorAll('.wt-toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(l,j){l.classList.toggle('on',i===j)})}})},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){s&&io.observe(s)});
+  }
+})();
+</script>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -1,13 +1,14 @@
 [
   {
-    "listing": "/blog.html",
+    "listing": "/research.html",
     "items": [
-      "/posts/smoothing/smoothing1.html"
+      "/research/wash-trading/index.html"
     ]
   },
   {
-    "listing": "/archive.html",
+    "listing": "/blog.html",
     "items": [
+      "/posts/smoothing/smoothing2.html",
       "/posts/smoothing/smoothing1.html"
     ]
   }

@@ -1,27 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://morner75.github.io/research.html</loc>
+    <lastmod>2026-11-04T09:04:29.705Z</lastmod>
+  </url>
+  <url>
     <loc>https://morner75.github.io/blog.html</loc>
-    <lastmod>2024-03-15T05:45:16.947Z</lastmod>
-  </url>
-  <url>
-    <loc>https://morner75.github.io/CV_KOR.html</loc>
-    <lastmod>2024-03-18T11:45:14.163Z</lastmod>
-  </url>
-  <url>
-    <loc>https://morner75.github.io/index.html</loc>
-    <lastmod>2024-04-20T06:19:03.897Z</lastmod>
-  </url>
-  <url>
-    <loc>https://morner75.github.io/archive.html</loc>
-    <lastmod>2024-03-15T05:45:16.947Z</lastmod>
-  </url>
-  <url>
-    <loc>https://morner75.github.io/CV_ENG.html</loc>
-    <lastmod>2024-03-18T11:46:46.191Z</lastmod>
+    <lastmod>2026-11-04T09:00:57.301Z</lastmod>
   </url>
   <url>
     <loc>https://morner75.github.io/posts/smoothing/smoothing1.html</loc>
-    <lastmod>2024-03-19T04:59:16.793Z</lastmod>
+    <lastmod>2026-11-04T09:04:29.705Z</lastmod>
+  </url>
+  <url>
+    <loc>https://morner75.github.io/research/wash-trading/index.html</loc>
+    <lastmod>2026-11-04T09:04:29.715Z</lastmod>
+  </url>
+  <url>
+    <loc>https://morner75.github.io/index_en.html</loc>
+    <lastmod>2026-11-04T09:04:29.705Z</lastmod>
+  </url>
+  <url>
+    <loc>https://morner75.github.io/index.html</loc>
+    <lastmod>2026-11-04T09:04:29.705Z</lastmod>
+  </url>
+  <url>
+    <loc>https://morner75.github.io/posts/smoothing/smoothing2.html</loc>
+    <lastmod>2026-11-04T09:04:29.705Z</lastmod>
+  </url>
+  <url>
+    <loc>https://morner75.github.io/CV_ENG.html</loc>
+    <lastmod>2026-11-04T09:04:29.690Z</lastmod>
+  </url>
+  <url>
+    <loc>https://morner75.github.io/CV_KOR.html</loc>
+    <lastmod>2026-11-04T09:04:29.690Z</lastmod>
   </url>
 </urlset>
