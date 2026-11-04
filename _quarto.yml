@@ -3,7 +3,7 @@ project:
 
 website:
   title: "Practical Bayesian Extremist"
-  description: "This is Jumho Lee;s personal Blog."
+  description: "This is Junho Lee's personal Blog."
   navbar:
     left:
       - text: Blog

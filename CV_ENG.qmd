@@ -15,10 +15,10 @@ page-layout: full
 
 ### Education
 
-Doctor of Philosohpy in Statistics, University of Edinburgh, UK, <br>
+Doctor of Philosophy in Statistics, University of Edinburgh, UK, <br>
 *"Bayesian analysis of non-stationary extremes", 2022.*
 
-Master of Science in  Statistics & Oprerational Research, University of Edinburgh, <br>
+Master of Science in  Statistics & Operational Research, University of Edinburgh, <br>
 UK, *"A primer on Benford's Law", 2017.* 
 
 Master of Arts in Economics, Yonsei University, South Korea, <br>
@@ -30,20 +30,26 @@ Bachelor of Arts in Economics, Yonsei University, South Korea, 2001.
 
 ### Publications
 
-[Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, qlae002.](https://doi.org/10.1093/jrsssc/qlae002)
+[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
+
+Lee, J. & Choi, B. (2026). The impact of the Virtual Asset User Protection Act on wash trading in the domestic virtual asset market: An empirical study based on transaction data. Working paper.
+
+[Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, 73(3), 581–597.](https://doi.org/10.1093/jrsssc/qlae002)
+
+[Yoon, Y., Lee, J., & Hwang, J. (2024). A study on corporate greenhouse gas emission and loan provision. Journal of Financial Regulation and Supervision, 11(1), 67–101.](https://doi.org/10.23229/fss.2024.11.1.003)
 
 [Lee, J., Kim, J. & Choi, K. (2023). Joint climate stress-test, FSS working paper 2023-1.](https://www.fss.or.kr/fss/bbs/B0000083/view.do?nttId=132378&menuNo=200398&pageIndex=1)
 
 [Yoon, Y., Lee, J., & Hwang, J. (2023). A study on the relationship between corporate carbon emissions and stock market returns. Journal of Financial Regulation and Supervision, 10(2), 1–44.](http://doi.org/10.23229/fss.2023.10.2.001)
 
-[Lee, J. & de Carvalho, M. (2019). Technological improvements or climate change? Bayesian modeling of time‑varying conformance to Benford’s Law. Plos One, 14(4), e0213300.](https://doi.org/10.1371/journal.pone.0213300)
+[Lee, J. & de Carvalho, M. (2019). Technological improvements or climate change? Bayesian modeling of time‑varying conformance to Benford’s Law. PLOS ONE, 14(4), e0213300.](https://doi.org/10.1371/journal.pone.0213300)
 
 
 ### Talks/Posters
 
 Lee, Junho (2024), "Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service", a talk at NFSC-KOICA international conference, 'Vietnam's financial market: Opportunities and challenges', Dec 2023, Dalat, Vietnam. 
 
-Lee, J., & Kim, J. (2023). “Climate stress‑testing for banking and insurance sectors in South Korea”. a talk at SPGMI_KPMG Webinar, March 2023, on‑line.
+Lee, J., & Kim, J. (2023). “Climate stress‑testing for banking and insurance sectors in South Korea”. a talk at SPGMI-KPMG Webinar, March 2023, on‑line.
 
 Lee, J., & de Carvalho, M. (2021). “Bayesian Semiparametric Inferences for Covariate‑adjusted Extreme‑value Copula with application to Cryptocurrency Markets”. a talk at XXV Congress of the Portuguese Statistical Society, November 2021, Portugal.
 
@@ -67,7 +73,9 @@ Lee, J., & de Carvalho, M. (2018). “Modelling Time‑Varying Conformance to Be
 **Financial Supervisory Service** (2003 -- present)
 
 
-* Developing fraud detection models in stock markets, Lead Examiner, 2024 -- present.
+* Team Head, Virtual Asset Investigation Analysis Team, Virtual Asset Investigation Department, Jan 2026 -- present.
+
+* Leading a KOICA-project of developing Early Warning System in Vietnam, Project Manager, 2024 -- present.
 
 * Stress‑testing of financial companies and scenario analysis of climate‑change, Lead Manager, 2021 -- 2023.
 

@@ -15,28 +15,34 @@ page-layout: full
 
 ### Education
 
-영국 에든버러 통계학 박사, 2022. <br>
+영국 에든버러대학교 통계학 박사, 2022. <br>
 학위논문: *"Bayesian analysis of non-stationary extremes"*
 
-영국 에든버러대학교 통계학·OR 석사 2017. <br>
+영국 에든버러대학교 통계학·OR 석사, 2017. <br>
 학위논문: *"A primer on Benford's Law"* 
 
 연세대학교 경제학 석사, 2003.<br>
 학위논문: *"장단기 원/달러 환율에 대한 연구: Time-domain과 Frequency-domain 비교"*
 
-한국방송통신대학교 법학사 2010. <br>
-연세대학교 경제학사 2001.
+한국방송통신대학교 법학사, 2010. <br>
+연세대학교 경제학사, 2001.
 
 
 ### Publications
 
-[Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, qlae002.](https://doi.org/10.1093/jrsssc/qlae002)
+[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
+
+이준호·최범전 (2026). 가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향: 거래 데이터 기반 실증 분석. Working paper.
+
+[Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, 73(3), 581–597.](https://doi.org/10.1093/jrsssc/qlae002)
+
+[윤양인·이준호·황재학 (2024). 기업의 온실가스 배출과 신용공급에 관한 연구. 금융감독연구, 11(1), 67-101.](https://doi.org/10.23229/fss.2024.11.1.003)
 
 [이준호·김정일·최광신 (2023). 금융권 공동 기후 스트레스테스트, FSS working paper 2023-1.](https://www.fss.or.kr/fss/bbs/B0000083/view.do?nttId=132378&menuNo=200398&pageIndex=1)
 
-[윤양인·이준호·황재학,(2023). 기업의 탄소배출과 주가수익률간 관계에 관한 연구. 금융감독연구, 10(2), 1-44..](http://doi.org/10.23229/fss.2023.10.2.001)
+[윤양인·이준호·황재학 (2023). 기업의 탄소배출과 주가수익률간 관계에 관한 연구. 금융감독연구, 10(2), 1-44.](http://doi.org/10.23229/fss.2023.10.2.001)
 
-[Lee, J. & de Carvalho, M. (2019). Technological improvements or climate change? Bayesian modeling of time‑varying conformance to Benford’s Law. Plos One, 14(4), e0213300.](https://doi.org/10.1371/journal.pone.0213300)
+[Lee, J. & de Carvalho, M. (2019). Technological improvements or climate change? Bayesian modeling of time‑varying conformance to Benford’s Law. PLOS ONE, 14(4), e0213300.](https://doi.org/10.1371/journal.pone.0213300)
 
 
 ### Talks/Posters
@@ -60,6 +66,8 @@ Lee, J., & de Carvalho, M. (2018). “Modelling Time‑Varying Conformance to Be
 ### Work Experience
 
 **금융감독원** (2003 ~ 현재)
+
+* 가상자산조사국 가상자산조사분석팀장, 2026.1 -- 현재.
 
 * 불공정거래 조사 및 시세조종탐지/자금추적 모형 개발 (조사2국), 수석검사역, 2024 -- 현재.
 
