@@ -39,13 +39,11 @@ $$
 ```{r, fig.width=8, fig.height=4}
 library(tidyverse)
 library(zoo)
-library(getMFdata)
 
-data(usdkrw)
-
-usdkrw <- 
-  usdkrw %>% 
-  mutate(yearmon=as.yearmon(yearmon))
+usdkrw <-
+  read_csv("../../data/usdkrw.csv", show_col_types=FALSE) %>%
+  filter(!is.na(USDKRW_M)) %>%
+  transmute(yearmon=as.yearmon(yearM), usdkrw=USDKRW_M)
 
 ggplot(data=usdkrw,aes(yearmon,usdkrw))+
   geom_line()+
@@ -58,13 +56,11 @@ ggplot(data=usdkrw,aes(yearmon,usdkrw))+
 library(tidyverse)
 library(zoo)
 library(plotly)
-library(getMFdata)
 
-data(usdkrw)
-
-usdkrw <- 
-  usdkrw %>% 
-  mutate(yearmon=as.yearmon(yearmon))
+usdkrw <-
+  read_csv("../../data/usdkrw.csv", show_col_types=FALSE) %>%
+  filter(!is.na(USDKRW_M)) %>%
+  transmute(yearmon=as.yearmon(yearM), usdkrw=USDKRW_M)
 
 plot_ly(data=usdkrw,x=~yearmon,y=~usdkrw) %>% 
   add_lines()
