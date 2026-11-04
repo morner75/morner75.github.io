@@ -17,6 +17,11 @@ DEFAULT_SOURCE = Path("/home/morner/writing/wash_trade/html/index.html")
 OUT_DIR = Path(__file__).resolve().parents[1] / "research" / "wash-trading"
 FIG_DIR = OUT_DIR / "figures"
 PUBLISHED = "2026-11-04"
+# 블로그와 CV에서는 원고를 Working paper로 표기한다.
+RELABEL = {
+    "금융감독연구 투고 원고(2026년 11월)": "Working paper(2026년 11월)",
+    "(금융감독연구 투고본, 2026년 11월)": "(Working paper, 2026년 11월)",
+}
 
 SCRIPT = """<script>
 (function(){
@@ -66,6 +71,10 @@ def yaml_str(value):
 def main():
     source = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_SOURCE
     html = source.read_text(encoding="utf-8")
+    for old, new in RELABEL.items():
+        if old not in html:
+            sys.exit(f"원본에서 찾지 못함: {old}")
+        html = html.replace(old, new)
 
     description = take(r'<meta name="description" content="([^"]+)"', html, "description").group(1)
     body = take(r"<main>(.*)</main>", html, "main").group(1)

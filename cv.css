@@ -1,0 +1,8 @@
+/* CV 페이지 전용 스타일: 본문과 제목을 한 단계 작게 표시한다. */
+main.content {
+  font-size: 0.875rem;
+}
+
+main.content h3 {
+  font-size: 1.15rem;
+}

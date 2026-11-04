@@ -47,7 +47,7 @@ Lee, J. & Choi, B. (2026). The impact of the Virtual Asset User Protection Act o
 
 ### Talks/Posters
 
-Lee, Junho (2024), "Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service", a talk at NFSC-KOICA international conference, 'Vietnam's financial market: Opportunities and challenges', Dec 2023, Dalat, Vietnam. 
+Lee, Junho (2023), "Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service", a talk at NFSC-KOICA international conference, 'Vietnam's financial market: Opportunities and challenges', Dec 2023, Dalat, Vietnam. 
 
 Lee, J., & Kim, J. (2023). “Climate stress‑testing for banking and insurance sectors in South Korea”. a talk at SPGMI-KPMG Webinar, March 2023, on‑line.
 
@@ -73,9 +73,11 @@ Lee, J., & de Carvalho, M. (2018). “Modelling Time‑Varying Conformance to Be
 **Financial Supervisory Service** (2003 -- present)
 
 
-* Team Head, Virtual Asset Investigation Analysis Team, Virtual Asset Investigation Department, Jan 2026 -- present.
+* Virtual asset market analysis and market fraud investigation (Virtual Asset Investigation Analysis Team), Team Head, 2026 -- present.
 
-* Leading a KOICA-project of developing Early Warning System in Vietnam, Project Manager, 2024 -- present.
+* Leading a KOICA-project of developing Early Warning System in Vietnam, Project Manager, 2024 -- 2025.
+
+* Developing fraud detection models in stock markets, Lead Examiner, 2024.
 
 * Stress‑testing of financial companies and scenario analysis of climate‑change, Lead Manager, 2021 -- 2023.
 
