@@ -1,0 +1,212 @@
+---
+title: "가속도 센서로 송아지 설사의 조짐을 미리 알아챌 수 있을까"
+subtitle: "연구 해설 · animal - open space 5 (2026) 100158"
+description: "젖소 송아지 45마리의 설사 발생 전후 7일을 센서, 임상 점수, 영상 관찰로 비교한 연구의 쉬운 해설"
+date: 2026-08-18
+date-format: "YYYY년 M월"
+categories: ["통계 분석", "선형혼합모형", "센서 데이터"]
+image: figures/fig-3.jpg
+lang: ko
+page-layout: full
+toc: false
+css:
+  - ../research.css
+  - ../wash-trading/wash-trading.css
+resources:
+  - figures/*.jpg
+---
+
+```{=html}
+<div class="wt"><div class="wt-grid">
+<div class="wt-main">
+
+<div class="hero" id="summary">
+  <div class="byline">H. Kang, J. Lee, V. Sandilands, S. Jarvis, M.J. Haskell</div>
+  <p class="lead">설사가 눈에 보이기 전에 송아지의 움직임이 먼저 달라진다면, 다리와 목에 단 가속도 센서로 병을 더 일찍 알아챌 수 있지 않을까? 영국 에든버러 대학교 실험 농장의 젖소 송아지 69마리를 16일간 관찰하고, 설사가 나타난 45마리의 발병 전후 7일을 비교하였다.</p>
+  <div class="verdict"><b>한 줄 결론</b> — 설사를 보인 송아지의 누워 있는 시간과 걸음 수는 발병 전후 며칠 사이에 유의하게 달라졌고, 그 변화는 임상 증상보다 앞서 나타나는 모습을 보였다. 다만 건강한 송아지와 비교한 연구는 아니어서, <b>센서가 질병 조기 발견에 유용할 가능성</b>을 보여 준 것이며 경보의 정확도까지 검증한 것은 아니다.</div>
+  <div class="stats">
+    <div class="stat"><div class="n">69</div><div class="l">관찰한 송아지<br>(16일간)</div></div>
+    <div class="stat"><div class="n">45</div><div class="l">임상 증상을 보여<br>분석한 송아지</div></div>
+    <div class="stat"><div class="n">7일</div><div class="l">분석 구간<br>(발병 3일 전~3일 후)</div></div>
+    <div class="stat"><div class="n">2종</div><div class="l">가속도 센서<br>(뒷다리·목)</div></div>
+    <div class="stat"><div class="n">1,104</div><div class="l">임상 평가<br>횟수</div></div>
+  </div>
+  <details class="mtoc"><summary>목차</summary><ol>
+    <li><a href="#why">왜 이 연구인가</a></li><li><a href="#data">어떻게 관찰했나</a></li>
+    <li><a href="#model">어떻게 분석했나</a></li><li><a href="#results">무엇이 달라졌나</a></li>
+    <li><a href="#order">어떤 신호가 먼저 나타났나</a></li><li><a href="#variance">변동의 대부분은 개체 차이</a></li>
+    <li><a href="#impl">시사점과 한계</a></li><li><a href="#glossary">용어 풀이</a></li></ol></details>
+</div>
+
+<section id="why">
+<h2><span class="no">1</span>왜 이 연구인가</h2>
+<p>신생 송아지 설사(neonatal calf diarrhoea, NCD)는 젖소 송아지에게 가장 흔한 질병 가운데 하나로, 폐사와 발병이 많아 농장 경영에도 큰 부담이 된다. 빨리 발견해 치료하면 송아지의 고통을 덜고 병이 퍼지는 것도 막을 수 있다.</p>
+<p>그런데 빨리 발견하기는 점점 어려워지고 있다. 자동 착유기와 자동 포유기가 늘고 사육 규모가 커지면서 사람이 개체를 살펴볼 기회가 줄었기 때문이다. 사람의 평가에는 평가자마다 판단이 달라질 수 있다는 한계도 있고, 여러 마리를 함께 키우는 군사(群飼) 환경에서는 시간도 많이 든다.</p>
+<p>이 연구는 몸에 다는 가속도 센서를 그 대안으로 시험하였다. <b>센서로 잰 활동량이 임상 증상보다 먼저 달라지는가</b>가 핵심 질문이다.</p>
+</section>
+
+<section id="data">
+<h2><span class="no">2</span>어떻게 관찰했나</h2>
+<p>2024년 9월부터 12월까지 에든버러 대학교의 Langhill 실험 농장에서 진행하였다. 설사는 대개 생후 3주 안에 나타나므로 생후 3~23일의 송아지를 골랐다. 개별 칸에서 자란 송아지를 생후 4~7일에 세 개의 군사 칸으로 옮겨 칸마다 22~25마리씩 키웠다. 하나의 송아지를 세 가지 방식으로 동시에 기록한 점이 이 연구의 특징이다.</p>
+<div class="cards">
+  <div class="card"><span class="tag">사람의 평가</span><div class="t">임상 점수</div><p>훈련된 평가자 1명이 매일 아침 직장온도, 피부 탄력, 분변 상태, 침울함 등을 0~3점으로 매겼다. 체중은 1, 9, 17일째에 쟀다.</p></div>
+  <div class="card"><span class="tag">연속 기록</span><div class="t">가속도 센서 2종</div><p>뒷다리의 IceQube는 누워 있는 시간, 걸음 수, 움직임 지수를, 목걸이의 GoChip은 걸음 수, 가속도, 움직임 지수를 기록하였다.</p></div>
+  <div class="card"><span class="tag">간헐 관찰</span><div class="t">영상 스캔</div><p>낮 동안 2시간 간격으로 하루 세 번, 2시간 구간에서 10분마다 행동을 기록하였다. 서기, 눕기, 먹기, 사회적 행동 등을 구분하였다.</p></div>
+</div>
+<h3>기준일: 설사 0일(Dd 0)</h3>
+<p>송아지마다 아픈 시점이 다르므로 달력 날짜로는 비교할 수 없다. 그래서 분변 점수가 처음 1점 이상이 된 날을 <b>Dd 0</b>으로 잡고, 그 앞뒤 3일(Dd −3 ~ Dd 3)을 맞추어 비교하였다. 발병이 일찍 시작된 송아지는 발병 전 자료가 없을 수 있어, Dd −3에는 24마리, Dd 0에는 45마리처럼 날마다 관측 수가 다르다.</p>
+<details class="more"><summary>임상 점수 기준 (Wisconsin 점수와 Lowe et al., 2021)</summary><div>
+<figure class="tfig"><div class="tbl"><table class="score">
+<thead><tr><th class="l">점수</th><th class="l">피부 탄력(복원 시간)</th><th class="l">직장온도</th><th class="l">분변 상태</th><th class="l">침울함</th></tr></thead>
+<tbody>
+<tr><td>0 (정상)</td><td>0초</td><td>37.8–38.3℃</td><td>정상</td><td>기민하고 활발함</td></tr>
+<tr><td>1 (경증)</td><td>1–3초</td><td>38.4–38.8℃</td><td>반고형, 페이스트 상태</td><td>반응이 다소 둔함, 귀가 처짐</td></tr>
+<tr><td>2 (중등도)</td><td>4–5초</td><td>38.9–39.4℃</td><td>묽지만 깔짚 위에 머무름</td><td>무기력함, 머리와 귀가 처짐, 비틀거림</td></tr>
+<tr><td>3 (중증)</td><td>6초 이상</td><td>39.5℃ 이상</td><td>물 같아 깔짚 사이로 스며듦</td><td>심한 침울함, 일어서기를 꺼림</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 1 가운데 일부. 눈·코 분비물과 엉덩이 오염 점수도 함께 평가하였다.</p></figure>
+</div></details>
+</section>
+
+<section id="model">
+<h2><span class="no">3</span>어떻게 분석했나</h2>
+<p>같은 송아지를 날마다 반복해서 재고, 송아지들은 칸에 묶여 있다. 이런 자료의 관측치는 서로 독립이 아니므로 <b>선형혼합모형</b>을 썼다. 날짜(Dd)의 효과를 고정효과로 추정하고, 칸과 송아지, 칸 안의 날짜를 임의효과로 두었다.</p>
+<div class="eq">y<sub>pcd</sub> = α + μ<sub>d</sub> + φ<sub>p</sub> + γ<sub>c</sub> + ω<sub>pd</sub> + ε<sub>pcd</sub></div>
+<p class="note">y: 반응변수, μ<sub>d</sub>: 날짜의 고정효과, φ<sub>p</sub>: 칸, γ<sub>c</sub>: 송아지, ω<sub>pd</sub>: 칸 안의 날짜, ε<sub>pcd</sub>: 잔차. 임의효과와 잔차는 평균 0인 정규분포를 따른다고 가정한다.</p>
+<div class="box easy"><div class="h">쉽게 말하면</div><p>원래 활발한 송아지와 원래 조용한 송아지의 차이를 모형이 따로 떼어 내므로, “이 송아지가 평소보다 덜 움직였는가”에 가까운 비교가 된다. 센서 자료는 치우침이 커서 로그로 변환한 뒤 분석하였다. 유의수준은 P &lt; 0.05이고, 분석에는 R의 lme4, lmerTest, emmeans 패키지를 사용하였다.</p></div>
+</section>
+
+<section id="results">
+<h2><span class="no">4</span>무엇이 달라졌나</h2>
+<p>아래 표의 값은 “7일 사이에 평균이 달라졌는가”를 묻는 검정 결과이다. 임상 증상, 센서, 영상의 세 자료 모두에서 일부 지표가 유의하게 달라졌다.</p>
+<figure class="tfig"><figcaption><span class="cap-no">[표 1]</span> 날짜 효과 검정 결과(Dd −3 ~ Dd 3)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">자료</th><th class="l">변수</th><th class="r">F</th><th class="r">P</th></tr></thead>
+<tbody>
+<tr><td class="l">임상</td><td class="l">분변 점수</td><td class="r">24.599</td><td class="r y">&lt;0.001</td></tr>
+<tr><td class="l">임상</td><td class="l">임상 총점</td><td class="r">10.126</td><td class="r y">&lt;0.001</td></tr>
+<tr><td class="l">임상</td><td class="l">직장온도 점수</td><td class="r">3.086</td><td class="r y">0.006</td></tr>
+<tr><td class="l">임상</td><td class="l">침울함 점수</td><td class="r">0.972</td><td class="r">0.481</td></tr>
+<tr><td class="l">IceQube</td><td class="l">서 있는 시간</td><td class="r">4.166</td><td class="r y">&lt;0.001</td></tr>
+<tr><td class="l">IceQube</td><td class="l">누워 있는 시간</td><td class="r">3.579</td><td class="r y">0.002</td></tr>
+<tr><td class="l">IceQube</td><td class="l">걸음 수</td><td class="r">3.668</td><td class="r">0.063</td></tr>
+<tr><td class="l">GoChip</td><td class="l">걸음 수</td><td class="r">3.602</td><td class="r y">0.002</td></tr>
+<tr><td class="l">GoChip</td><td class="l">누적 가속도</td><td class="r">2.145</td><td class="r">0.051</td></tr>
+<tr><td class="l">영상</td><td class="l">누워 있는 비율</td><td class="r">3.231</td><td class="r y">0.004</td></tr>
+<tr><td class="l">영상</td><td class="l">활동 행동 비율</td><td class="r">3.289</td><td class="r y">0.004</td></tr>
+<tr><td class="l">영상</td><td class="l">서 있는 비율</td><td class="r">2.822</td><td class="r y">0.011</td></tr>
+<tr><td class="l">영상</td><td class="l">먹는 행동 비율</td><td class="r">2.420</td><td class="r y">0.027</td></tr>
+<tr><td class="l">영상</td><td class="l">사회적 행동 비율</td><td class="r">0.326</td><td class="r">0.922</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 5, 6, 8에서 주요 변수를 옮김. 붉은 글씨는 P &lt; 0.05. 체중은 첫날 43.9 kg에서 마지막 날 58.5 kg으로 늘었고(P &lt; 0.001), 우유 섭취량은 날짜에 따라 달라지지 않았다(P = 0.874). 다만 하루 7 L로 제한 급여하였다.</p></figure>
+
+<h3>임상 증상: 발병일에 급등</h3>
+<p>임상 총점은 Dd −1의 약 1.8점에서 Dd 0의 약 4.8점으로 뛰었다. 발병 전의 총점은 대부분 직장온도 점수이고, 직장온도 점수는 Dd −2부터 조금씩 올랐다.</p>
+<figure class="pfig"><figcaption><span class="cap-no">[그림 1]</span> 발병 전후의 평균 임상 점수</figcaption><div class="imgbox"><img src="figures/fig-1.jpg" alt="발병 전후 7일의 평균 임상 점수. 임상 총점과 분변 점수가 발병일에 크게 오른다." loading="lazy"></div><p class="note">주: 수직 점선이 발병일(Dd 0)이고 오차 막대는 ±SD이다. 원 논문의 그림은 흑백이며, (a)의 선은 발병 후 기준으로 위에서부터 임상 총점, 직장온도, 분변 점수이다. (b)는 피부 탄력, 침울함, 기침, 눈 분비물, 엉덩이 오염 점수이다.</p></figure>
+
+<h3>센서: 누운 시간과 걸음 수의 변화</h3>
+<p>IceQube의 누워 있는 시간은 Dd −3에서 Dd −2 사이에 약 1시간 늘었다가 이후 서서히 줄었다. 걸음 수는 두 센서 모두 Dd −3부터 발병 무렵까지 줄어든 뒤, 발병 후에 다시 늘었다.</p>
+<figure class="pfig"><figcaption><span class="cap-no">[그림 2]</span> 센서로 잰 활동량: (a) 누운 시간, (b) 걸음 수(IceQube), (c) 걸음 수, (d) 누적 가속도(GoChip)</figcaption><div class="imgbox"><img src="figures/fig-2.jpg" alt="센서 자료의 발병 전후 변화. 누운 시간은 Dd −2에 가장 길고, 걸음 수는 Dd −3부터 발병 무렵까지 줄어든다." loading="lazy"></div><p class="note">주: 수직 점선이 발병일이고 오차 막대는 ±SD이다. 평균의 변화보다 개체 간 편차가 훨씬 큰 점에 유의해야 한다.</p></figure>
+
+<h3>영상 관찰: 비슷한 흐름</h3>
+<p>영상에서도 비슷한 흐름이 보였다. 누워 있는 비율은 Dd −1까지 조금 늘었다가 줄었고, 서 있는 비율은 그 반대로 움직였다. 사회적 행동은 관찰 자체가 드물어 유의한 변화를 찾지 못하였다. 센서로 잰 누운 시간과 영상의 누운 비율의 상관은 r = 0.52로 중간 정도였고, 이는 영상 관찰 시간이 제한적이었던 탓으로 볼 수 있다.</p>
+<figure class="pfig"><figcaption><span class="cap-no">[그림 3]</span> 영상 스캔으로 본 행동 비율</figcaption><div class="imgbox"><img src="figures/fig-3.jpg" alt="영상 관찰에서 서기, 눕기, 먹기, 활동 행동의 비율. 눕기가 약 70%로 가장 많고 날짜별 변화는 작다." loading="lazy"></div><p class="note">주: 수직 점선이 발병일이고 오차 막대는 ±SD이다.</p></figure>
+<details class="more"><summary>[그림 4] 센서 변수 사이의 상관</summary><div>
+<p>두 센서의 걸음 수 상관은 r = 0.68이다. 다리와 목이라는 부착 위치와 측정 방식이 달라, 같은 “걸음 수”라도 완전히 같은 양을 재는 것은 아니다. 같은 센서 안에서 걸음 수와 움직임 지수의 상관은 더 강하였다(IceQube r = 0.98, GoChip r = 0.90).</p>
+<figure class="pfig"><div class="imgbox"><img src="figures/fig-4.jpg" alt="IceQube와 GoChip 센서 변수 사이의 산점도 행렬과 피어슨 상관계수" loading="lazy"></div></figure>
+<p>임상 총점은 IceQube의 움직임 지수(r = −0.45), 걸음 수(r = −0.48), GoChip의 걸음 수(r = −0.36)와 음의 상관을 보였다. 아플수록 덜 움직인다는 뜻이다.</p>
+</div></details>
+</section>
+
+<section id="order">
+<h2><span class="no">5</span>어떤 신호가 먼저 나타났나</h2>
+<p>이 연구의 핵심 메시지이다. 논문은 평균의 변화를 시간 순으로 놓고 보면 센서 신호가 분변 변화보다 앞선다고 해석한다.</p>
+<ul class="timeline">
+  <li><span class="d">Dd −3부터</span>걸음 수와 누적 가속도 감소<span class="x">센서에서 가장 먼저 보이는 변화</span></li>
+  <li><span class="d">Dd −3 → −2</span>누운 시간 약 1시간 증가<span class="x">IceQube. 이후에는 서서히 감소</span></li>
+  <li class="fee"><span class="d">Dd −2부터</span>직장온도 점수 상승<span class="x">임상 지표 가운데 가장 이른 변화</span></li>
+  <li class="law"><span class="d">Dd 0</span>분변 점수 1점 이상, 임상 총점 급등<span class="x">눈에 보이는 설사의 시작</span></li>
+  <li><span class="d">Dd 0 이후</span>걸음 수 회복 시작<span class="x">GoChip은 Dd 0 이후, IceQube는 Dd 1 이후</span></li>
+</ul>
+<div class="box warn"><div class="h">읽을 때 주의할 점</div><p>이 순서는 날짜별 <b>평균의 흐름</b>을 읽은 것이다. [표 1]은 7일 전체에 차이가 있는지를 본 검정이고, “Dd −2가 Dd −3과 다르다”처럼 날짜를 짝지어 비교한 결과는 논문의 표에 없다. 또한 Dd 0은 분변 점수로 정의한 날이므로, 분변 점수가 Dd 0에 오르는 것은 정의상 당연한 결과이다.</p></div>
+</section>
+
+<section id="variance">
+<h2><span class="no">6</span>변동의 대부분은 개체 차이</h2>
+<p>분산 성분을 나누어 보면 실용적으로 중요한 사실이 드러난다. 센서 값의 차이는 날짜나 칸의 환경보다 <b>어떤 송아지인가</b>에 크게 좌우되었다.</p>
+<figure class="tfig"><figcaption><span class="cap-no">[표 2]</span> 잔차 분산 대비 분산 성분의 비율(주요 변수)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">센서</th><th class="l">변수</th><th class="r">송아지</th><th class="r">칸</th><th class="r">칸 × 날짜</th></tr></thead>
+<tbody>
+<tr><td class="l">GoChip</td><td class="l">누적 가속도</td><td class="r"><b>2.09</b></td><td class="r">0.00</td><td class="r">0.00</td></tr>
+<tr><td class="l">GoChip</td><td class="l">걸음 수</td><td class="r"><b>1.87</b></td><td class="r">0.34</td><td class="r">0.00</td></tr>
+<tr><td class="l">IceQube</td><td class="l">걸음 수</td><td class="r"><b>1.03</b></td><td class="r">0.18</td><td class="r">0.02</td></tr>
+<tr><td class="l">IceQube</td><td class="l">움직임 지수</td><td class="r"><b>0.96</b></td><td class="r">0.17</td><td class="r">0.04</td></tr>
+<tr><td class="l">IceQube</td><td class="l">누운 시간</td><td class="r"><b>0.44</b></td><td class="r">0.00</td><td class="r">0.00</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 7. 값이 2이면 해당 성분의 분산이 잔차 분산의 두 배라는 뜻이다.</p></figure>
+<div class="box easy"><div class="h">왜 중요한가</div><p>원래 많이 걷는 송아지와 적게 걷는 송아지의 차이가 크면, “하루 몇 걸음 이하면 경보” 같은 단일 기준은 잘 맞지 않는다. 송아지마다 <b>자신의 평소 수준</b>을 먼저 학습하고 거기서 벗어나는 정도를 봐야 한다. 논문이 정상 행동 자료의 축적과 기계학습을 다음 과제로 꼽는 이유이다.</p></div>
+</section>
+
+<section id="impl">
+<h2><span class="no">7</span>시사점과 한계</h2>
+<h3>시사점</h3>
+<ul>
+  <li>연속 기록 센서는 사람이 임상 평가에서 발견하기 전에 변화를 포착할 가능성이 있다. 일부 송아지에서는 하루 정도 일찍 정보를 줄 수 있다는 것이 논문의 해석이다.</li>
+  <li>간헐적인 관찰보다 연속 기록이 작고 시간에 따라 변하는 행동 변화를 잡는 데 유리해 보인다.</li>
+  <li>실제 농장에서 쓰려면 개체 차이를 반영한 기준과, 농장 직원이 바로 해석할 수 있는 형태의 결과가 필요하다.</li>
+</ul>
+<h3>논문이 밝힌 한계</h3>
+<ul>
+  <li><b>건강한 대조군과의 비교는 없다.</b> 설사를 보인 45마리 안에서 날짜별 변화만 보았다.</li>
+  <li><b>병원체 검사는 일부만 하였다.</b> 증상이 심한 6마리만 검사하였고 모두 크립토스포리디움으로 진단되었다. 나머지의 원인은 알 수 없다.</li>
+  <li><b>자료 손실이 있었다.</b> 저장 용량 한계와 오류 등으로 19마리의 센서 자료 일부가 빠졌다. 특히 GoChip은 18마리에서 손실이 났다.</li>
+  <li><b>영상 관찰은 낮 시간의 일부에 그쳤고</b>, 포유기에서 실제로 우유를 받은 방문과 그렇지 않은 방문을 구분할 수 없었다.</li>
+</ul>
+<h3>이 해설에서 덧붙이는 주의점</h3>
+<ul>
+  <li><b>경보 성능은 알 수 없다.</b> 대조군이 없으므로 민감도, 특이도, 오경보 빈도는 추정되지 않았다. 건강한 송아지에게서도 같은 변화가 나타나는지는 후속 연구로 확인해야 한다.</li>
+  <li><b>평균의 변화에 비해 개체 간 편차가 크다.</b> 집단 평균의 변화가 곧 개별 송아지를 판별할 수 있다는 뜻은 아니다.</li>
+  <li><b>발병 전 표본이 더 작다.</b> Dd −3은 24마리로 Dd 0의 45마리보다 적어, 날짜별 평균을 낸 송아지 구성이 조금씩 다르다.</li>
+  <li><b>변수를 많이 검정하였다.</b> 다중검정 보정은 보고되지 않았으므로 경계에 있는 결과는 신중히 읽어야 한다.</li>
+</ul>
+</section>
+
+<section id="glossary">
+<h2>용어 풀이</h2>
+<dl class="gloss">
+  <dt>NCD</dt><dd>신생 송아지 설사(neonatal calf diarrhoea).</dd>
+  <dt>Dd(설사일)</dt><dd>분변 점수가 처음 1점 이상이 된 날을 0으로 삼아 센 날짜. Dd −2는 발병 이틀 전이다.</dd>
+  <dt>3축 가속도 센서</dt><dd>세 방향의 움직임을 재는 장치. 여기서 누운 시간, 걸음 수 등을 계산한다.</dd>
+  <dt>선형혼합모형(LMM)</dt><dd>고정효과와 임의효과를 함께 넣어, 같은 개체를 반복 측정한 자료의 상관을 반영하는 회귀모형.</dd>
+  <dt>임의효과</dt><dd>개별 송아지나 칸처럼 집단에서 뽑혔다고 보고, 그 변동의 크기(분산)를 추정하는 효과.</dd>
+  <dt>분산 성분</dt><dd>전체 변동을 송아지, 칸, 잔차 등 원인별로 나눈 것.</dd>
+  <dt>피부 탄력 검사(tent test)</dt><dd>피부를 집었다 놓아 돌아오는 시간을 재는 탈수 검사. 오래 걸릴수록 탈수가 심하다.</dd>
+  <dt>p값</dt><dd>효과가 없다고 가정할 때 지금만큼 또는 더 극단적인 결과가 나올 확률. 유의하지 않다는 것은 효과가 없다는 증명이 아니라 증거가 부족하다는 뜻이다.</dd>
+</dl>
+</section>
+
+<div class="wt-foot">
+<p>논문: Kang, H., Lee, J., Sandilands, V., Jarvis, S. &amp; Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. <i>animal - open space</i>, 5, 100158. <a href="https://doi.org/10.1016/j.anopes.2026.100158">doi:10.1016/j.anopes.2026.100158</a>. 원자료: <a href="https://zenodo.org/records/17559544">Zenodo</a>.</p>
+<p>그림 1~4는 논문에서 그대로 옮겼고(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), 설명과 표는 이 페이지를 위해 번역·발췌하였다. 이준호의 기여: 통계 분석(formal analysis), 데이터 정리(data curation). 이 페이지는 연구 내용의 해설이며, 소속 기관의 공식 견해가 아니다.</p>
+</div>
+
+</div>
+<nav class="wt-toc" aria-label="목차">
+  <div class="t">목차</div>
+  <a href="#summary">요약</a>
+  <a href="#why">1. 왜 이 연구인가</a>
+  <a href="#data">2. 어떻게 관찰했나</a>
+  <a href="#model">3. 어떻게 분석했나</a>
+  <a href="#results">4. 무엇이 달라졌나</a>
+  <a href="#order">5. 어떤 신호가 먼저 나타났나</a>
+  <a href="#variance">6. 변동의 대부분은 개체 차이</a>
+  <a href="#impl">7. 시사점과 한계</a>
+  <a href="#glossary">용어 풀이</a>
+</nav>
+</div></div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.wt-toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(l,j){l.classList.toggle('on',i===j)})}})},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){s&&io.observe(s)});
+  }
+})();
+</script>
+```
