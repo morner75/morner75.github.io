@@ -1,0 +1,214 @@
+---
+title: "온실가스를 많이 배출하는 기업의 차입은 줄고 있을까"
+subtitle: "연구 해설 · 금융감독연구 11(1), 67-101 (2024)"
+description: "국내 기업 7,036개 회사-연도 자료로 온실가스 배출량과 차입금의 관계가 배출권 계획기간과 만기에 따라 어떻게 달라졌는지 본 연구의 쉬운 해설"
+date: 2024-04-17
+date-format: "YYYY년 M월"
+categories: ["기후금융", "온실가스", "신용공여"]
+image: figures/coef-maturity.svg
+lang: ko
+page-layout: full
+toc: false
+css:
+  - ../research.css
+  - ../wash-trading/wash-trading.css
+resources:
+  - figures/*.svg
+---
+
+```{=html}
+<div class="wt"><div class="wt-grid">
+<div class="wt-main">
+
+<div class="hero" id="summary">
+  <div class="byline">윤양인(서울과학기술대학교), 이준호(금융감독원), 황재학(금융감독원)</div>
+  <p class="lead">금융기관은 온실가스를 많이 내뿜는 기업에 돈을 덜 빌려주기 시작했을까? 2011년부터 2022년까지 국내 기업의 온실가스 배출량과 재무제표상 차입금을 연결해, 그 관계가 배출권거래제 계획기간과 차입금 만기에 따라 어떻게 달라졌는지 분석하였다.</p>
+  <div class="verdict"><b>한 줄 결론</b> — 전체 기간으로 보면 배출량이 많은 기업의 차입금이 오히려 많았다. 그러나 이 관계는 최근으로 올수록 약해졌고, 제3차 계획기간(2021~2022년)에는 <b>단기차입금과 뚜렷한 음(−)의 관계</b>가 나타났다. 금융기관이 배출량을 여신 판단에 반영하기 시작했다는 간접적인 신호이며, 직접 증거는 아니다.</div>
+  <div class="stats">
+    <div class="stat"><div class="n">12년</div><div class="l">분석 기간<br>(2011~2022)</div></div>
+    <div class="stat"><div class="n">931</div><div class="l">분석 대상<br>회사</div></div>
+    <div class="stat"><div class="n">7,036</div><div class="l">회사-연도<br>관측치</div></div>
+    <div class="stat"><div class="n">+0.50</div><div class="l">제3차 기간<br>장기차입금 계수</div></div>
+    <div class="stat"><div class="n">−0.69</div><div class="l">제3차 기간<br>단기차입금 계수</div></div>
+  </div>
+  <details class="mtoc"><summary>목차</summary><ol>
+    <li><a href="#why">왜 이 연구인가</a></li><li><a href="#data">데이터</a></li>
+    <li><a href="#model">분석 방법</a></li><li><a href="#res-time">결과 ① 시간에 따른 변화</a></li>
+    <li><a href="#res-maturity">결과 ② 만기에 따른 차이</a></li><li><a href="#robust">결과는 얼마나 튼튼한가</a></li>
+    <li><a href="#verdict">가설별 판정</a></li><li><a href="#impl">시사점과 한계</a></li>
+    <li><a href="#glossary">용어 풀이</a></li></ol></details>
+</div>
+
+<section id="why">
+<h2><span class="no">1</span>왜 이 연구인가</h2>
+<p>자본시장에서는 배출량을 두고 두 가설이 맞서 왔다. <b>탄소위험 프리미엄 가설</b>은 고배출 기업이 탄소 관련 위험에 노출되어 있어 투자자가 더 높은 수익률을 요구한다고 본다. <b>그린 프리미엄 가설</b>은 반대로 저배출 기업이 초과수익을 낸다고 본다.</p>
+<p>그런데 기업에 직접 돈을 공급하는 금융기관의 행동은 상대적으로 덜 연구되었다. 금융회사는 온실가스를 직접 많이 배출하지는 않지만, 고배출 기업에 대한 대출을 줄이는 방식으로 감축을 유도할 수 있다. 일본 상장기업을 분석한 Takahashi and Shino(2023)는 일본 은행들이 고배출 기업에 대한 대출을 줄이고 있음을 보였다. 이 연구는 그 방법을 일부 준용해 국내 자료로 같은 질문을 던졌다.</p>
+<h3>세 가지 가설</h3>
+<div class="cards">
+  <div class="card"><span class="tag">가설 1</span><div class="t">음(−)의 관계</div><p>배출량이 많을수록 금융기관 대출액이 적을 것이다.</p></div>
+  <div class="card"><span class="tag">가설 2</span><div class="t">최근일수록 강화</div><p>제2차, 제3차 계획기간으로 갈수록 음의 관계가 강해질 것이다.</p></div>
+  <div class="card"><span class="tag">가설 3</span><div class="t">만기와 무관</div><p>장기와 단기 어느 쪽이 더 줄지 미리 알기 어려워, 차이가 없다는 영가설로 두었다.</p></div>
+</div>
+<h3>배출권거래제 계획기간</h3>
+<p>가설 2의 기준은 배출권의 유상할당이다. 배출에 실제 비용이 붙기 시작하면 금융기관이 이를 더 고려할 것이라고 본 것이다.</p>
+<ul class="timeline">
+  <li><span class="d">2015–2017</span>제1차 계획기간<span class="x">배출권을 모두 무상으로 할당. 분석에서는 그 이전(2011~2014년)과 묶었다.</span></li>
+  <li class="fee"><span class="d">2018–2020</span>제2차 계획기간<span class="x">일부 유상할당 시작</span></li>
+  <li class="law"><span class="d">2021–2025</span>제3차 계획기간<span class="x">유상할당 비중 확대. 표본에는 2021~2022년만 포함</span></li>
+</ul>
+</section>
+
+<section id="data">
+<h2><span class="no">2</span>데이터</h2>
+<p>배출량은 국가온실가스 종합관리시스템(NGMS)이 공시하는 연도별·회사별 값을 썼다. 2011년 자료부터 공시되며, 제3의 독립 기관이 검증한 정보이다. 차입금을 포함한 재무자료는 KIS-Value에서 받았다. 재무제표를 공개하지 않는 관측치, 합병·분할 등으로 총자산이 50% 이상 변동한 회사, 상장폐지된 회사는 제외하였다.</p>
+<div class="box warn"><div class="h">가장 중요한 데이터 제약</div><p>은행별·기업별 대출 자료를 구할 수 없어 <b>재무제표상 차입금</b>을 신용공여의 대용치로 썼다. 금융기관의 대출액이 주로 포함되는 항목이지만, 대출 그 자체는 아니다.</p></div>
+<figure class="tfig"><figcaption><span class="cap-no">[표 1]</span> 계획기간별 관측치와 주요 업종</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">구분</th><th class="l">내용</th><th class="r">관측치</th></tr></thead>
+<tbody>
+<tr><td class="l">제1차 및 이전</td><td class="l">2011~2017년</td><td class="r">3,333</td></tr>
+<tr><td class="l">제2차</td><td class="l">2018~2020년</td><td class="r">2,147</td></tr>
+<tr><td class="l">제3차</td><td class="l">2021~2022년</td><td class="r">1,556</td></tr>
+<tr><td class="l">제조업</td><td class="l">637개 회사, 평균 배출량 611천tCO₂-eq</td><td class="r">5,179</td></tr>
+<tr><td class="l">전기·가스·증기</td><td class="l">65개 회사, 평균 배출량 5,722천tCO₂-eq</td><td class="r">512</td></tr>
+<tr><td class="l">운수업</td><td class="l">88개 회사, 평균 배출량 71천tCO₂-eq</td><td class="r">498</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 1, 2에서 발췌. 전체는 13개 업종, 931개 회사, 7,036개 관측치이며 제조업이 약 74%를 차지한다.</p></figure>
+</section>
+
+<section id="model">
+<h2><span class="no">3</span>분석 방법</h2>
+<p>기본 모형은 차입금의 로그값을 배출량의 로그값과 통제변수에 회귀한다.</p>
+<div class="eq">ln(차입금)<sub>it</sub> = β<sub>1</sub> ln(배출량)<sub>it</sub> + β<sub>2</sub> ln(자산)<sub>it</sub> + β<sub>3</sub> 매출증가율<sub>it</sub><br>+ β<sub>4</sub> 부채비율<sub>it</sub> + β<sub>5</sub> ROA<sub>it</sub> + β<sub>6</sub> 운전자본비율<sub>it</sub> + 고정효과 + e<sub>it</sub></div>
+<div class="box easy"><div class="h">계수를 읽는 법</div><p>양쪽 모두 로그이므로 β<sub>1</sub> = 0.3은 “규모, 수익성 등이 같다면 배출량이 1% 많은 기업의 차입금이 약 0.3% 많다”는 뜻이다. 큰 기업은 배출도 많고 차입도 많으므로 규모 통제가 특히 중요하다. 통제변수 없이는 0.858이던 계수가 자산만 넣어도 0.338로 줄어든다.</p></div>
+<p>같은 모형을 세 가지 고정효과 조합으로 추정하였다. 고정효과가 없는 모형, 연도와 업종을 따로 넣은 모형(개별), 연도×업종 조합을 넣은 모형(결합)이다. 고정효과를 넣을수록 “같은 해, 같은 업종 안의 기업끼리 비교”에 가까워진다.</p>
+<ul>
+  <li><b>가설 2:</b> 표본을 계획기간별로 나누어 추정하고, 전체 표본에 2021년 이후 더미와 배출량의 교차항을 넣어 차이를 직접 검정하였다.</li>
+  <li><b>가설 3:</b> 종속변수를 장기차입금(유동성 장기차입금 포함)과 단기차입금으로 바꾸어 추정하였다.</li>
+</ul>
+</section>
+
+<section id="res-time">
+<h2><span class="no">4</span>결과 ① 시간에 따른 변화</h2>
+<p>전체 기간에서는 가설 1과 반대로 <b>양(+)의 관계</b>가 나타났다. 논문은 시설투자 수요와 그에 따른 조업도 증가 등을 이유로 꼽는다. 하지만 계획기간별로 나누면 계수가 차례로 작아지고, 고정효과를 넣은 제3차 기간에는 부호가 음으로 바뀐다. 다만 이 값은 통계적으로 유의하지 않다.</p>
+<figure class="tfig"><figcaption><span class="cap-no">[표 2]</span> 배출량 계수: 전체 차입금(괄호는 t값)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">기간</th><th class="r">고정효과 없음</th><th class="r">개별 고정효과</th><th class="r">결합 고정효과</th></tr></thead>
+<tbody>
+<tr><td class="l">전체(2011~2022)</td><td class="r">0.293*** (4.531)</td><td class="r">0.120* (1.646)</td><td class="r">0.116 (1.573)</td></tr>
+<tr><td class="l">제1차 및 이전</td><td class="r">0.382*** (4.262)</td><td class="r">0.246** (2.462)</td><td class="r">0.254** (2.517)</td></tr>
+<tr><td class="l">제2차</td><td class="r">0.243** (2.044)</td><td class="r">0.050 (0.371)</td><td class="r">0.051 (0.376)</td></tr>
+<tr><td class="l">제3차</td><td class="r">0.133 (0.884)</td><td class="r">−0.057 (−0.330)</td><td class="r">−0.069 (−0.397)</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 5~8의 통제변수 포함 모형. *, **, ***는 각각 10%, 5%, 1% 수준에서 유의함을 뜻한다.</p></figure>
+<figure class="pfig"><figcaption><span class="cap-no">[해설 그림 1]</span> 계획기간별 배출량 계수와 95% 구간(전체 차입금, 결합 고정효과)</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" role="img" aria-label="계획기간별 배출량 계수. 제1차 및 이전 0.25, 제2차 0.05, 제3차 −0.07로 작아지지만 구간은 서로 겹친다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="760" height="210" fill="#fff"/><line x1="206.4" x2="206.4" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="206.4" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−1.0</text><line x1="297.3" x2="297.3" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="297.3" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−0.5</text><line x1="388.2" x2="388.2" y1="14" y2="176" stroke="#6f6e67" stroke-width="1.5"/><text x="388.2" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.0</text><line x1="479.1" x2="479.1" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="479.1" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.5</text><line x1="570.0" x2="570.0" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="570.0" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">1.0</text><g><title>제1차 및 이전: 계수 0.254, t값 2.517, 95% 구간 0.06 ~ 0.45</title><rect x="0" y="14.0" width="760" height="54" fill="transparent"/><text x="154" y="46.0" text-anchor="end" font-size="15" fill="#3e3f3a">제1차 및 이전</text><line x1="398.4" x2="470.3" y1="41.0" y2="41.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="434.4" cy="41.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="588" y="46.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.25</tspan><tspan fill="#6f6e67"> [0.06, 0.45]</tspan></text></g><g><title>제2차: 계수 0.051, t값 0.376, 95% 구간 −0.21 ~ 0.32</title><rect x="0" y="68.0" width="760" height="54" fill="transparent"/><text x="154" y="100.0" text-anchor="end" font-size="15" fill="#3e3f3a">제2차</text><line x1="349.1" x2="445.8" y1="95.0" y2="95.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="397.5" cy="95.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="588" y="100.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.05</tspan><tspan fill="#6f6e67"> [−0.21, 0.32]</tspan></text></g><g><title>제3차: 계수 −0.069, t값 −0.397, 95% 구간 −0.41 ~ 0.27</title><rect x="0" y="122.0" width="760" height="54" fill="transparent"/><text x="154" y="154.0" text-anchor="end" font-size="15" fill="#3e3f3a">제3차</text><line x1="313.7" x2="437.6" y1="149.0" y2="149.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="375.6" cy="149.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="588" y="154.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.07</tspan><tspan fill="#6f6e67"> [−0.41, 0.27]</tspan></text></g></svg></div><p class="note">주: 이 페이지를 위해 [표 2]의 계수와 t값으로 그렸다. 구간은 계수 ± 1.96 × (계수 ÷ t)로 계산한 근사값이다. 점에 마우스를 올리면 값이 보인다.</p></figure>
+<div class="box warn"><div class="h">기간 차이를 직접 검정하면</div><p>그림처럼 세 구간은 서로 겹친다. 2021년 이후 더미의 교차항은 연도 고정효과가 없을 때 −0.031로 10% 수준에서만 유의하고(t = −1.681), 연도 고정효과를 넣으면 유의하지 않다(0.008, −0.042). 계수가 작아지는 추세는 일관되지만, 기간 간 차이가 통계적으로 확실하다고 말하기는 어렵다. 논문도 이를 한계로 밝히고 있다.</p></div>
+</section>
+
+<section id="res-maturity">
+<h2><span class="no">5</span>결과 ② 만기에 따른 차이</h2>
+<p>이 연구에서 가장 또렷한 결과이다. 전체 차입금에서는 사라진 관계가 만기를 나누면 <b>서로 반대 방향</b>으로 나타난다.</p>
+<figure class="pfig"><figcaption><span class="cap-no">[해설 그림 2]</span> 제3차 계획기간의 만기별 배출량 계수와 95% 구간(결합 고정효과)</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" role="img" aria-label="제3차 계획기간의 만기별 배출량 계수. 장기 0.50, 전체 −0.07, 단기 −0.69로 장기와 단기의 방향이 반대이다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="760" height="210" fill="#fff"/><line x1="206.4" x2="206.4" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="206.4" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−1.0</text><line x1="297.3" x2="297.3" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="297.3" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−0.5</text><line x1="388.2" x2="388.2" y1="14" y2="176" stroke="#6f6e67" stroke-width="1.5"/><text x="388.2" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.0</text><line x1="479.1" x2="479.1" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="479.1" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.5</text><line x1="570.0" x2="570.0" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"/><text x="570.0" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">1.0</text><g><title>장기차입금: 계수 0.500, t값 2.187, 95% 구간 0.05 ~ 0.95</title><rect x="0" y="14.0" width="760" height="54" fill="transparent"/><text x="154" y="46.0" text-anchor="end" font-size="15" fill="#3e3f3a">장기차입금</text><line x1="397.6" x2="560.6" y1="41.0" y2="41.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="479.1" cy="41.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="588" y="46.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.50</tspan><tspan fill="#6f6e67"> [0.05, 0.95]</tspan></text></g><g><title>전체 차입금: 계수 −0.069, t값 −0.397, 95% 구간 −0.41 ~ 0.27</title><rect x="0" y="68.0" width="760" height="54" fill="transparent"/><text x="154" y="100.0" text-anchor="end" font-size="15" fill="#3e3f3a">전체 차입금</text><line x1="313.7" x2="437.6" y1="95.0" y2="95.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="375.6" cy="95.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="588" y="100.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.07</tspan><tspan fill="#6f6e67"> [−0.41, 0.27]</tspan></text></g><g><title>단기차입금: 계수 −0.694, t값 −3.101, 95% 구간 −1.13 ~ −0.26</title><rect x="0" y="122.0" width="760" height="54" fill="transparent"/><text x="154" y="154.0" text-anchor="end" font-size="15" fill="#3e3f3a">단기차입금</text><line x1="182.2" x2="341.8" y1="149.0" y2="149.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="262.0" cy="149.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="588" y="154.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.69</tspan><tspan fill="#6f6e67"> [−1.13, −0.26]</tspan></text></g></svg></div><p class="note">주: 이 페이지를 위해 [표 2], [표 3]의 계수와 t값으로 그렸다. 구간 계산 방법은 [해설 그림 1]과 같다.</p></figure>
+<figure class="tfig"><figcaption><span class="cap-no">[표 3]</span> 배출량 계수: 만기별 차입금(괄호는 t값)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">종속변수</th><th class="l">기간</th><th class="r">고정효과 없음</th><th class="r">개별 고정효과</th><th class="r">결합 고정효과</th></tr></thead>
+<tbody>
+<tr><td class="l">장기차입금</td><td class="l">전체</td><td class="r">0.907*** (10.62)</td><td class="r">0.710*** (7.292)</td><td class="r">0.723*** (7.359)</td></tr>
+<tr><td class="l">장기차입금</td><td class="l">제3차</td><td class="r">0.687*** (3.475)</td><td class="r">0.501** (2.203)</td><td class="r">0.500** (2.187)</td></tr>
+<tr><td class="l">단기차입금</td><td class="l">제1차 및 이전</td><td class="r">−0.624*** (−4.834)</td><td class="r">−0.240* (−1.769)</td><td class="r">−0.237* (−1.727)</td></tr>
+<tr><td class="l">단기차입금</td><td class="l">제3차</td><td class="r">−0.951*** (−4.682)</td><td class="r">−0.679*** (−3.044)</td><td class="r">−0.694*** (−3.101)</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 10~13. 논문은 장기차입금의 제1차·제2차 기간과 단기차입금의 전체·제2차 기간 결과를 표로 싣지 않았다.</p></figure>
+<div class="cards">
+  <div class="card"><div class="t">장기차입금</div><p>양의 관계가 유지된다. 시설자금처럼 생산과 배출에 직접 연결되는 자금은 쉽게 줄이기 어렵기 때문으로 해석된다. 다만 계수와 유의성은 전체 기간보다 낮다.</p></div>
+  <div class="card"><div class="t">단기차입금</div><p>배출량이 1% 많은 기업의 단기차입금이 약 0.7% 적다. 제1차 이전(약 −0.24)보다 음의 관계가 크게 강해졌다.</p></div>
+  <div class="card"><div class="t">논문의 해석</div><p>금융기관이 장기 시설자금을 급격히 줄이기는 어려워, 만기가 짧은 차입금을 줄여 금융배출량을 낮추려 한다는 것이다.</p></div>
+</div>
+</section>
+
+<section id="robust">
+<h2><span class="no">6</span>결과는 얼마나 튼튼한가</h2>
+<p>같은 회사의 오차가 해마다 상관될 수 있으므로, 회사 단위 강건 표준오차로도 다시 추정하였다. 논문은 결과가 대부분 같았다고 하면서 다음 차이를 각주로 밝혔다.</p>
+<ul>
+  <li>전체 기간의 고정효과 모형(표 5의 컬럼 4, 5)은 유의성이 없어졌다.</li>
+  <li>제1차 및 이전의 고정효과 모형(표 6의 컬럼 2, 3)은 유의확률이 12% 수준이었다.</li>
+  <li>제1차 및 이전의 단기차입금 고정효과 모형(표 12의 컬럼 2, 3)은 유의성이 없어졌다.</li>
+  <li><b>제3차 기간의 단기차입금(표 13)은 유의한 음의 관계가 유지되었다.</b></li>
+</ul>
+<p>즉, 고정효과를 넣은 모형에서 표준오차를 바꾸어도 유의한 음의 관계가 유지된 것으로 논문이 밝힌 결과는 제3차 단기차입금이다. 위의 표는 모두 논문 본문의 표에 실린 값이며, 강건 표준오차를 적용한 값이 아니다.</p>
+</section>
+
+<section id="verdict">
+<h2><span class="no">7</span>가설별 판정</h2>
+<figure class="tfig"><div class="tbl"><table class="score">
+<thead><tr><th class="l">가설</th><th class="l">판정</th><th class="l">근거</th></tr></thead>
+<tbody>
+<tr><td>1. 음의 관계</td><td>지지되지 않음</td><td>전체 기간에서는 양의 관계. 제3차 기간의 음의 계수는 유의하지 않다.</td></tr>
+<tr><td>2. 최근일수록 강화</td><td>부분 지지</td><td>계수는 일관되게 작아지지만, 연도 고정효과를 넣은 직접 검정에서는 유의하지 않다.</td></tr>
+<tr><td>3. 만기와 무관</td><td>차이가 있음</td><td>제3차 기간에 장기는 양, 단기는 음이다. 다만 두 계수의 차이를 직접 검정한 것은 아니다.</td></tr>
+</tbody></table></div><p class="note">주: 판정 문구는 이 해설에서 정리한 것이다.</p></figure>
+</section>
+
+<section id="impl">
+<h2><span class="no">8</span>시사점과 한계</h2>
+<h3>시사점</h3>
+<ul>
+  <li><b>기업:</b> 배출량이 자금조달에 점점 더 중요한 요소가 되고 있으므로 감축 노력이 필요하다.</li>
+  <li><b>금융감독:</b> 금융기관이 단기 여신만 과도하게 줄이면 쏠림 현상과 특정 차주의 일시적 자금 경색이 생길 수 있다. 논문은 2020년 ELS발 증권사 유동성 위기와 2022년 레고랜드 사태를 단기 자금시장 경색 사례로 든다.</li>
+  <li><b>제안:</b> 감독당국은 금융배출량을 측정하고, 고탄소 업종의 여신 감축이 만기 구조상 한쪽에 쏠리지 않는지 모니터링할 필요가 있다.</li>
+</ul>
+<h3>논문이 밝힌 한계</h3>
+<ul>
+  <li><b>공시 시차:</b> 배출량은 연도 말 이후 3~5개월 뒤에 공시되어 연도 말 자금공급에 모두 반영되지 않을 수 있다.</li>
+  <li><b>내생성과 누락변수:</b> 통제변수가 충분하지 않을 수 있고, 담보 제공 여력은 자료 제약으로 넣지 못하였다.</li>
+  <li><b>수요와 공급의 혼재:</b> 기업이 자금 수요를 줄인 결과가 금융기관의 공급 결정과 섞여 있을 수 있다.</li>
+  <li><b>녹색 여신 미구분:</b> 고배출 기업이 저감 시설 투자를 위해 장기 자금을 늘렸을 가능성을 구분하지 못하였다.</li>
+  <li><b>모형별 결과 차이:</b> 표본 분리와 교차항 검정의 결론이 달라, 기간 간 차이가 없다는 해석도 가능하다.</li>
+</ul>
+<h3>이 해설에서 덧붙이는 주의점</h3>
+<ul>
+  <li><b>감축인가, 만기 구성의 변화인가.</b> 제3차 기간에 전체 차입금의 계수는 유의하지 않다. 장기는 많고 단기는 적다는 결과는 차입 총량의 축소가 아니라 만기 구성의 차이일 수도 있다.</li>
+  <li><b>차입금이 없는 기업이 섞여 있다.</b> 로그 차입금의 하위 1% 값이 0이고, 단기차입금의 표준편차(10.85)도 크다. 계수에는 차입 금액의 차이뿐 아니라 차입이 있는지 없는지의 차이도 섞여 있을 수 있다.</li>
+  <li><b>제3차 기간은 2년뿐이다.</b> 2021~2022년 자료만 포함되어 있어 추세가 이어질지는 이후 자료로 확인해야 한다.</li>
+  <li><b>기업 간 비교이다.</b> 한 기업의 배출량이 변할 때 차입이 어떻게 변했는지를 본 것이 아니므로(기업 고정효과 없음), 인과 효과로 읽어서는 안 된다.</li>
+</ul>
+</section>
+
+<section id="glossary">
+<h2>용어 풀이</h2>
+<dl class="gloss">
+  <dt>신용공여</dt><dd>대출, 보증 등 금융기관이 기업에 신용을 제공하는 행위. 이 연구에서는 재무제표상 차입금으로 측정하였다.</dd>
+  <dt>금융배출량</dt><dd>금융기관의 투자와 대출을 받은 실물 경제 주체가 배출하는 온실가스를 측정하는 개념(PCAF).</dd>
+  <dt>배출권 계획기간</dt><dd>배출권 할당 방식과 유상할당 비율 등을 단계적으로 정하는 기간 단위.</dd>
+  <dt>유상할당</dt><dd>배출권을 무상으로 나눠 주지 않고 기업이 비용을 내고 취득하게 하는 방식.</dd>
+  <dt>고정효과</dt><dd>연도나 업종처럼 집단 전체에 공통된 차이를 더미변수로 제거하는 방법.</dd>
+  <dt>강건 표준오차</dt><dd>같은 회사의 오차가 서로 상관될 수 있음을 고려해 회사 단위로 계산한 표준오차.</dd>
+  <dt>극단치 처리(winsorizing)</dt><dd>상하위 1%를 벗어난 값을 그 경계값으로 바꾸어 극단치의 영향을 줄이는 방법.</dd>
+  <dt>시스템 리스크</dt><dd>금융 시스템의 전부 또는 일부가 손상되어 실물경제에 부정적인 결과를 초래할 수 있는 금융서비스 중단 위험.</dd>
+</dl>
+</section>
+
+<div class="wt-foot">
+<p>논문: 윤양인·이준호·황재학 (2024). 기업의 온실가스 배출과 신용공급에 관한 연구. 『금융감독연구』, 11(1), 67-101. <a href="https://doi.org/10.23229/fss.2024.11.1.003">doi:10.23229/fss.2024.11.1.003</a> (KCI에서 원문 제공).</p>
+<p>표의 수치는 논문에서 발췌했고, 해설 그림과 설명은 이 페이지를 위해 새로 작성하였다. 이 연구는 금융감독원의 공동연구 연구비 지원으로 수행되었으며, 연구 결과와 이 해설은 필자들의 개인적인 견해로 각 소속기관의 공식 견해가 아니다.</p>
+</div>
+
+</div>
+<nav class="wt-toc" aria-label="목차">
+  <div class="t">목차</div>
+  <a href="#summary">요약</a>
+  <a href="#why">1. 왜 이 연구인가</a>
+  <a href="#data">2. 데이터</a>
+  <a href="#model">3. 분석 방법</a>
+  <a href="#res-time">4. 결과 ① 시간에 따른 변화</a>
+  <a href="#res-maturity">5. 결과 ② 만기에 따른 차이</a>
+  <a href="#robust">6. 결과는 얼마나 튼튼한가</a>
+  <a href="#verdict">7. 가설별 판정</a>
+  <a href="#impl">8. 시사점과 한계</a>
+  <a href="#glossary">용어 풀이</a>
+</nav>
+</div></div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.wt-toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(l,j){l.classList.toggle('on',i===j)})}})},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){s&&io.observe(s)});
+  }
+})();
+</script>
+```
