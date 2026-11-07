@@ -1,0 +1,221 @@
+---
+title: "탄소를 많이 배출하는 기업의 주가수익률은 더 높을까"
+subtitle: "연구 해설 · 금융감독연구 10(2), 1-44 (2023)"
+description: "국내 상장기업 2,350개 회사-연도 자료로 탄소배출 지표와 주가수익률의 관계, 업종 차이, 2018년 전후 변화를 분석한 연구의 쉬운 해설"
+date: 2023-10-12
+date-format: "YYYY년 M월"
+categories: ["기후금융", "탄소배출", "주가수익률"]
+image: figures/coef-sales.svg
+lang: ko
+page-layout: full
+toc: false
+css:
+  - ../research.css
+  - ../wash-trading/wash-trading.css
+resources:
+  - figures/*.svg
+---
+
+```{=html}
+<div class="wt"><div class="wt-grid">
+<div class="wt-main">
+
+<div class="hero" id="summary">
+  <div class="byline">윤양인(서울과학기술대학교), 이준호(금융감독원), 황재학(금융감독원)</div>
+  <p class="lead">탄소를 많이 배출하는 기업의 주식은 위험을 보상받아 수익률이 높을까, 아니면 규제 비용 때문에 낮을까? 2011년부터 2020년까지 국내 상장기업의 탄소배출 지표와 주가수익률의 관계를 분석하고, 배출권 유상할당이 시작된 2018년 전후를 비교하였다.</p>
+  <div class="verdict"><b>한 줄 결론</b> — 배출량 자체나 그 변화는 수익률과 뚜렷한 관계가 없었다. 반면 매출액이나 순이익 대비 배출량(탄소집약도)은 전체 기간에 수익률과 양(+)의 관계를 보여 탄소 프리미엄 가설에 가까웠다. 그러나 이 관계는 2017년까지 나타났고, <b>제2차 계획기간(2018~2020년)에는 통계적으로 사라졌다</b>.</div>
+  <div class="stats">
+    <div class="stat"><div class="n">10년</div><div class="l">분석 기간<br>(2011~2020)</div></div>
+    <div class="stat"><div class="n">2,350</div><div class="l">회사-연도<br>관측치</div></div>
+    <div class="stat"><div class="n">5개</div><div class="l">탄소배출<br>지표</div></div>
+    <div class="stat"><div class="n">+0.18</div><div class="l">2011~2017년<br>매출액 집약도 계수</div></div>
+    <div class="stat"><div class="n">−0.04</div><div class="l">2018~2020년<br>매출액 집약도 계수</div></div>
+  </div>
+  <details class="mtoc"><summary>목차</summary><ol>
+    <li><a href="#why">왜 이 연구인가</a></li><li><a href="#data">데이터</a></li>
+    <li><a href="#model">분석 방법</a></li><li><a href="#res-all">결과 ① 어떤 지표가 관계있나</a></li>
+    <li><a href="#res-time">결과 ② 2018년 전후</a></li><li><a href="#res-industry">결과 ③ 고탄소 업종</a></li>
+    <li><a href="#robust">결과는 얼마나 튼튼한가</a></li><li><a href="#verdict">가설별 판정</a></li>
+    <li><a href="#impl">시사점과 한계</a></li><li><a href="#glossary">용어 풀이</a></li></ol></details>
+</div>
+
+<section id="why">
+<h2><span class="no">1</span>왜 이 연구인가</h2>
+<p>탄소 감축 비용으로 기업이 부실해지고 금융회사 손실로 이어질 수 있는 위험을 <b>이행리스크</b>라고 한다. 그래서 감독당국과 중앙은행은 고탄소 기업의 증권 가치가 떨어질 때 금융회사가 손실을 감내할 수 있는지 점검한다.</p>
+<p>그런데 투자자가 고탄소 기업에 이미 더 높은 수익률을 요구하고 있다면, 고탄소 기업에 대한 익스포저가 반드시 손실을 키운다고 말하기 어렵다. 어느 쪽이 맞는지는 감독 측면에서도 중요한 문제이다.</p>
+<div class="cards">
+  <div class="card"><span class="tag">양(+)의 관계</span><div class="t">탄소 위험 프리미엄</div><p>고탄소 기업은 규제와 에너지 가격 등의 위험에 노출되어 있어 투자자가 더 높은 수익률을 요구한다(Bolton and Kacperczyk, 2021).</p></div>
+  <div class="card"><span class="tag">음(−)의 관계</span><div class="t">그린 프리미엄</div><p>시장이 탄소 위험을 과소평가하거나 선호가 녹색 자산으로 옮겨 가면 저탄소 기업의 수익률이 더 높다.</p></div>
+  <div class="card"><span class="tag">국내 연구</span><div class="t">결과가 엇갈림</div><p>양의 관계(신동현, 2019)와 음의 관계(박정환·노정희, 2017)가 모두 보고되었다. 분석 기간과 표본이 서로 다르다.</p></div>
+</div>
+<h3>세 가지 가설</h3>
+<ul>
+  <li><b>가설 1:</b> 탄소배출과 주가수익률 사이에는 음(−)의 관계가 있다. 규제 비용이 재무성과를 해칠 것으로 보았다.</li>
+  <li><b>가설 2:</b> 고탄소 업종은 다른 업종보다 수익률이 탄소배출에 민감하게 반응한다.</li>
+  <li><b>가설 3:</b> 배출권 유상할당이 시작된 제2차 계획기간(2018년) 전후로 관계가 달라진다.</li>
+</ul>
+</section>
+
+<section id="data">
+<h2><span class="no">2</span>데이터</h2>
+<p>탄소배출량은 국가온실가스 종합관리시스템(NGMS)의 2011~2020년 공시 자료를 썼다. 검증기관 정보까지 공개되어 기업이 자발적으로 응답하는 자료보다 신뢰성이 높다고 보았다. 주가수익률과 재무정보는 KIS-Value에서 받았다. 금융업을 제외한 최종 표본은 <b>2,350개 회사-연도</b>이며, 제조업이 약 86%(2,012개)를 차지한다.</p>
+<p>표본은 2017년 이전이 1,499개, 2018년 이후가 851개이다. 전년도 자료가 필요한 변화량과 변화율 분석에는 2,025개를 썼다.</p>
+<div class="box easy"><div class="h">탄소를 재는 다섯 가지 방법</div><p>이 연구의 특징은 같은 배출 정보를 여러 지표로 나누어 본 것이다. 각 기업의 전년도 배출량이 해당 연도 중에 공시되므로, 시차를 두어 다음 해 수익률과 연결하였다.</p></div>
+<figure class="tfig"><figcaption><span class="cap-no">[표 1]</span> 탄소배출 지표</figcaption><div class="tbl"><table class="score">
+<thead><tr><th class="l">지표</th><th class="l">의미</th><th class="l">정의</th></tr></thead>
+<tbody>
+<tr><td>배출량</td><td>수준</td><td>연간 온실가스 배출량</td></tr>
+<tr><td>변화량</td><td>변화</td><td>전년 대비 배출량 차이</td></tr>
+<tr><td>변화율</td><td>변화</td><td>전년 대비 배출량 증감률</td></tr>
+<tr><td>매출액 집약도</td><td>집약도</td><td>배출량 ÷ 매출액(십억 원)</td></tr>
+<tr><td>순이익 집약도</td><td>집약도</td><td>배출량 ÷ 당기순이익(백만 원)</td></tr>
+</tbody></table></div></figure>
+</section>
+
+<section id="model">
+<h2><span class="no">3</span>분석 방법</h2>
+<p>주가수익률을 탄소 지표 하나와 통제변수에 회귀하였다. 다섯 지표를 한 모형에 함께 넣지 않고 하나씩 넣어 각각 추정하였다.</p>
+<div class="eq">수익률<sub>it</sub> = β<sub>1</sub> 탄소지표<sub>i,t−1</sub> + β<sub>2</sub> ln(자산)<sub>it</sub> + β<sub>3</sub> ROE<sub>it</sub><br>+ β<sub>4</sub> 부채비율<sub>it</sub> + β<sub>5</sub> BTM<sub>it</sub> + β<sub>6</sub> 무형자산비율<sub>it</sub> + 연도·업종 고정효과 + e<sub>it</sub></div>
+<ul>
+  <li><b>가설 2:</b> 평균 배출량 상위 4개 업종 더미와 탄소 지표의 교차항을 넣고, 표본도 나누어 추정하였다.</li>
+  <li><b>가설 3:</b> 2018년 이후 더미와 탄소 지표의 교차항을 넣고, 표본도 나누어 추정하였다.</li>
+  <li><b>표준오차:</b> 회사 단위 강건 표준오차를 사용하였다.</li>
+  <li><b>업종 고정효과:</b> 업종별 관측치가 적어 기본 모형은 제조업과 비제조업의 두 분류를 썼다.</li>
+</ul>
+<div class="box easy"><div class="h">계수의 크기를 읽는 법</div><p>논문의 수익률은 월평균 수익률에 100,000을 곱한 단위이다(부록의 예: 10% 하락은 −10,000). 표본 전체의 표준편차를 이용해 환산하면, 전체 기간의 매출액 집약도 계수 0.089는 집약도가 1표준편차 높을 때 월 수익률이 약 0.12%포인트 높다는 뜻이다. 이 환산은 이 해설에서 계산한 근사값이다.</p></div>
+</section>
+
+<section id="res-all">
+<h2><span class="no">4</span>결과 ① 어떤 지표가 관계있나</h2>
+<p>가설 1의 예상과 달리 음의 관계는 나타나지 않았다. 배출량과 그 변화는 유의하지 않았고, <b>집약도 지표만 양의 관계</b>를 보였다. 투자자가 절대량보다 재무성과에 견준 배출 수준에 반응한다는 것이 논문의 해석이다.</p>
+<figure class="tfig"><figcaption><span class="cap-no">[표 2]</span> 탄소 지표와 주가수익률: 전체 기간</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">지표</th><th class="r">계수</th><th class="r">t값</th><th class="r">관측치</th></tr></thead>
+<tbody>
+<tr><td class="l">배출량</td><td class="r">0.049</td><td class="r">1.377</td><td class="r">2,350</td></tr>
+<tr><td class="l">변화량</td><td class="r">−0.418</td><td class="r">−1.404</td><td class="r">2,025</td></tr>
+<tr><td class="l">변화율</td><td class="r">−426.721</td><td class="r">−0.843</td><td class="r">2,025</td></tr>
+<tr><td class="l">매출액 집약도</td><td class="r y">0.089**</td><td class="r">2.085</td><td class="r">2,350</td></tr>
+<tr><td class="l">순이익 집약도</td><td class="r y">2.023*</td><td class="r">1.839</td><td class="r">2,350</td></tr>
+<tr><td class="l">순이익 집약도(흑자 기업)</td><td class="r y">5.087***</td><td class="r">4.510</td><td class="r">1,809</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 6. 회사 단위 강건 표준오차, 연도·업종 고정효과 포함. *, **, ***는 각각 10%, 5%, 1% 수준에서 유의함을 뜻한다. 지표마다 단위가 달라 계수의 크기를 서로 직접 비교할 수는 없다.</p></figure>
+<p>논문은 양의 관계를 두 갈래로 읽는다. 투자자가 탄소 위험의 대가를 요구했다는 해석과, 제2차 기간까지는 무상할당 비중이 높아 배출권거래제가 큰 부담이 아니라고 판단했다는 해석이다.</p>
+</section>
+
+<section id="res-time">
+<h2><span class="no">5</span>결과 ② 2018년 전후</h2>
+<p>이 연구의 핵심 결과이다. 2018년 이후 더미의 교차항이 음으로 유의하고, 표본을 나누면 2017년까지 뚜렷하던 양의 관계가 2018년 이후에는 유의하지 않다.</p>
+<figure class="pfig"><figcaption><span class="cap-no">[해설 그림 1]</span> 매출액 집약도 계수와 95% 구간</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 184" role="img" aria-label="매출액 집약도 계수. 전체 기간 0.09, 2011~2017년 0.18은 유의하지만 2018~2020년 −0.04는 0을 포함한다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="620" height="184" fill="#fff"/><line x1="118.0" x2="118.0" y1="10" y2="154" stroke="#dfd7ca" stroke-width="1"/><text x="118.0" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">−0.2</text><line x1="232.7" x2="232.7" y1="10" y2="154" stroke="#6f6e67" stroke-width="1.5"/><text x="232.7" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">0.0</text><line x1="347.3" x2="347.3" y1="10" y2="154" stroke="#dfd7ca" stroke-width="1"/><text x="347.3" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">0.2</text><line x1="462.0" x2="462.0" y1="10" y2="154" stroke="#dfd7ca" stroke-width="1"/><text x="462.0" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">0.4</text><g><title>전체 기간: 계수 0.089, t값 2.085, 95% 구간 0.01 ~ 0.17</title><rect x="0" y="10.0" width="620" height="48" fill="transparent"/><text x="106" y="39.0" text-anchor="end" font-size="15" fill="#3e3f3a">전체 기간</text><line x1="235.7" x2="331.7" y1="34.0" y2="34.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="283.7" cy="34.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="474" y="39.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.09</tspan><tspan fill="#6f6e67"> [0.01, 0.17]</tspan></text></g><g><title>2011~2017년: 계수 0.183, t값 2.660, 95% 구간 0.05 ~ 0.32</title><rect x="0" y="58.0" width="620" height="48" fill="transparent"/><text x="106" y="87.0" text-anchor="end" font-size="15" fill="#3e3f3a">2011~2017년</text><line x1="260.3" x2="414.9" y1="82.0" y2="82.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="337.6" cy="82.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="474" y="87.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.18</tspan><tspan fill="#6f6e67"> [0.05, 0.32]</tspan></text></g><g><title>2018~2020년: 계수 −0.042, t값 −0.729, 95% 구간 −0.15 ~ 0.07</title><rect x="0" y="106.0" width="620" height="48" fill="transparent"/><text x="106" y="135.0" text-anchor="end" font-size="15" fill="#3e3f3a">2018~2020년</text><line x1="143.8" x2="273.3" y1="130.0" y2="130.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="208.6" cy="130.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="474" y="135.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.04</tspan><tspan fill="#6f6e67"> [−0.15, 0.07]</tspan></text></g></svg></div></figure>
+<figure class="pfig"><figcaption><span class="cap-no">[해설 그림 2]</span> 순이익 집약도 계수와 95% 구간</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 184" role="img" aria-label="순이익 집약도 계수. 전체 기간 2.02, 2011~2017년 3.20이며 2018~2020년 0.33은 0을 포함한다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="620" height="184" fill="#fff"/><line x1="118.0" x2="118.0" y1="10" y2="154" stroke="#dfd7ca" stroke-width="1"/><text x="118.0" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">−4</text><line x1="232.7" x2="232.7" y1="10" y2="154" stroke="#6f6e67" stroke-width="1.5"/><text x="232.7" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">0</text><line x1="347.3" x2="347.3" y1="10" y2="154" stroke="#dfd7ca" stroke-width="1"/><text x="347.3" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">4</text><line x1="462.0" x2="462.0" y1="10" y2="154" stroke="#dfd7ca" stroke-width="1"/><text x="462.0" y="174" text-anchor="middle" font-size="14" fill="#6f6e67">8</text><g><title>전체 기간: 계수 2.023, t값 1.839, 95% 구간 −0.13 ~ 4.18</title><rect x="0" y="10.0" width="620" height="48" fill="transparent"/><text x="106" y="39.0" text-anchor="end" font-size="15" fill="#3e3f3a">전체 기간</text><line x1="228.9" x2="352.5" y1="34.0" y2="34.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="290.7" cy="34.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="474" y="39.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">2.02</tspan><tspan fill="#6f6e67"> [−0.13, 4.18]</tspan></text></g><g><title>2011~2017년: 계수 3.198, t값 2.087, 95% 구간 0.19 ~ 6.20</title><rect x="0" y="58.0" width="620" height="48" fill="transparent"/><text x="106" y="87.0" text-anchor="end" font-size="15" fill="#3e3f3a">2011~2017년</text><line x1="238.2" x2="410.4" y1="82.0" y2="82.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="324.3" cy="82.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="474" y="87.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">3.20</tspan><tspan fill="#6f6e67"> [0.19, 6.20]</tspan></text></g><g><title>2018~2020년: 계수 0.329, t값 0.242, 95% 구간 −2.34 ~ 2.99</title><rect x="0" y="106.0" width="620" height="48" fill="transparent"/><text x="106" y="135.0" text-anchor="end" font-size="15" fill="#3e3f3a">2018~2020년</text><line x1="165.7" x2="318.5" y1="130.0" y2="130.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"/><circle cx="242.1" cy="130.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="474" y="135.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.33</tspan><tspan fill="#6f6e67"> [−2.34, 2.99]</tspan></text></g></svg></div><p class="note">주: 이 페이지를 위해 논문 표 6, 12의 계수와 t값으로 그렸다. 구간은 계수 ± 1.96 × (계수 ÷ t)로 계산한 근사값이다. 점에 마우스를 올리면 값이 보인다.</p></figure>
+<figure class="tfig"><figcaption><span class="cap-no">[표 3]</span> 기간 효과: 집약도 계수(괄호는 t값)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">추정</th><th class="r">매출액 집약도</th><th class="r">순이익 집약도</th><th class="r">순이익 집약도(흑자)</th></tr></thead>
+<tbody>
+<tr><td class="l">교차항 모형: 기본 계수</td><td class="r">0.193*** (2.925)</td><td class="r">3.365** (2.189)</td><td class="r">7.845*** (4.929)</td></tr>
+<tr><td class="l">교차항 모형: × 2018년 이후</td><td class="r">−0.252*** (−2.777)</td><td class="r">−3.442* (−1.767)</td><td class="r">−6.994*** (−3.327)</td></tr>
+<tr><td class="l">표본 분리: 2011~2017년</td><td class="r">0.183*** (2.660)</td><td class="r">3.198** (2.087)</td><td class="r">7.735*** (4.939)</td></tr>
+<tr><td class="l">표본 분리: 2018~2020년</td><td class="r">−0.042 (−0.729)</td><td class="r">0.329 (0.242)</td><td class="r">1.064 (0.724)</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 11, 12. 배출량, 변화량, 변화율은 교차항이 유의하지 않았다.</p></figure>
+<div class="box warn"><div class="h">“음의 관계로 바뀌었다”기보다 “양의 관계가 사라졌다”</div><p>논문은 매출액 집약도의 2018년 이후 합산 계수를 −0.059(= 0.193 − 0.252)로 계산해 음의 관계로 해석한다. 하지만 합산 계수 자체의 유의성은 제시되지 않았고, 표본을 나눈 추정치도 −0.042로 유의하지 않다. 순이익 집약도는 표본 분리 추정치가 오히려 양수이다. 그래서 이 페이지에서는 양의 관계가 약해졌거나 사라졌다고 표현하였다.</p></div>
+<p>논문은 이 변화의 배경으로 유상할당 도입과 2018년 7월 확정된 「2030 온실가스 감축로드맵 수정안」을 든다. 이 무렵부터 투자자가 감축 비용 부담을 인식했을 수 있다는 것이다.</p>
+</section>
+
+<section id="res-industry">
+<h2><span class="no">6</span>결과 ③ 고탄소 업종</h2>
+<p>관측치당 평균 배출량 상위 4개 업종을 고탄소 업종으로 분류하였다. 코크스·석유정제, 1차 금속, 비금속 광물, 전기·가스·증기 업종이다. 4위와 5위(통신업) 사이의 차이가 크다는 점이 기준이 되었다.</p>
+<p>결과는 일관되지 않았다. 교차항은 대부분 유의하지 않았고, 순이익 집약도의 교차항만 유의한 값을 보였는데(4.232**), 흑자 기업으로 좁히면 사라졌다(0.021). 표본을 나누어도 고탄소 업종의 순이익 집약도(2.605**, 흑자 3.989**)와 일반 업종의 값(−1.21, 흑자 4.017**)이 뚜렷하게 구분되지 않는다. 논문도 고탄소 업종의 특성을 일반화하기에는 충분하지 않다고 보았다.</p>
+</section>
+
+<section id="robust">
+<h2><span class="no">7</span>결과는 얼마나 튼튼한가</h2>
+<figure class="tfig"><figcaption><span class="cap-no">[표 4]</span> 추가 분석</figcaption><div class="tbl"><table class="score">
+<thead><tr><th class="l">분석</th><th class="l">결과</th></tr></thead>
+<tbody>
+<tr><td>Heckman 2단계</td><td>보고 대상 기업만 표본에 들어오는 선택 편의를 조정해도 전체 기간은 양의 관계가 유지되었다(0.086, p = 0.039). 제2차 기간은 유의하지 않았다(−0.065, p = 0.272).</td></tr>
+<tr><td>업종 대분류 고정효과</td><td>기본 결과와 비슷하였다(매출액 집약도 0.100**, 순이익 집약도 1.903*, 흑자 5.060***).</td></tr>
+<tr><td>업종 중분류 고정효과</td><td>매출액 집약도(0.055)와 순이익 집약도(1.146)의 유의성이 사라졌다. 흑자 기업의 순이익 집약도(4.131***)만 유지되었다.</td></tr>
+<tr><td>2018년 이후, 업종 세분화</td><td>대분류와 중분류 모두 양의 관계가 나타나지 않아 기본 결과와 같았다.</td></tr>
+<tr><td>무상할당 초과 기업</td><td>무상할당량이 배출량보다 많은 기업을 구분해도 유의한 결과가 없었다.</td></tr>
+</tbody></table></div><p class="note">주: 논문 표 13~16과 본문. Heckman 분석의 표본은 공시 항목이 있는 1,613개이다.</p></figure>
+<p>2018년 이후 양의 관계가 나타나지 않는다는 결과는 여러 설정에서 유지되었다. 반면 전체 기간의 양의 관계는 업종을 잘게 나눌수록 약해졌다.</p>
+</section>
+
+<section id="verdict">
+<h2><span class="no">8</span>가설별 판정</h2>
+<figure class="tfig"><div class="tbl"><table class="score">
+<thead><tr><th class="l">가설</th><th class="l">판정</th><th class="l">근거</th></tr></thead>
+<tbody>
+<tr><td>1. 음의 관계</td><td>지지되지 않음</td><td>집약도는 양의 관계이고, 배출량과 변화 지표는 유의하지 않다.</td></tr>
+<tr><td>2. 고탄소 업종 민감</td><td>일관되지 않음</td><td>유의한 교차항이 일부 있으나 흑자 기업으로 좁히면 사라진다.</td></tr>
+<tr><td>3. 2018년 전후 차이</td><td>지지</td><td>집약도 교차항이 음으로 유의하고, 표본 분리에서도 양의 관계가 사라진다.</td></tr>
+</tbody></table></div><p class="note">주: 판정 문구는 이 해설에서 정리한 것이다.</p></figure>
+</section>
+
+<section id="impl">
+<h2><span class="no">9</span>시사점과 한계</h2>
+<h3>시사점</h3>
+<ul>
+  <li><b>기업:</b> 유상할당이 늘고 배출권 가격이 오르면 탄소 비용이 재무성과에 주는 부담이 커질 수 있다. 논문은 제3차 계획기간에 시장 반응이 더 강해질 수 있다고 내다본다.</li>
+  <li><b>금융회사:</b> 탄소 관련 위험관리를 강화할 필요가 있다. 전체 상장사에 적용하기 어렵다면 고탄소 업종 익스포저부터 단계적으로 도입할 수 있다.</li>
+  <li><b>금융감독당국:</b> 금융회사의 탄소리스크 관리 체계를 유도하고, 그 영향을 독자적으로 측정할 감독 수단을 갖출 필요가 있다.</li>
+</ul>
+<h3>논문이 밝힌 한계</h3>
+<ul>
+  <li><b>연 단위 분석:</b> 탄소 정보는 여러 경로와 시점으로 시장에 알려지므로, 정보가 반영되는 시점을 정밀하게 분석하기 어렵다.</li>
+  <li><b>감축 노력 미반영:</b> RE100, 탄소중립 선언과 이행 계획의 차이를 측정하지 못했고, 무형자산은 기술력의 대용치일 뿐이다.</li>
+  <li><b>코로나19:</b> 조업도 감소와 주식시장 급변이 표본 말기에 포함되어 있다. 연도 고정효과로 일부만 통제된다.</li>
+  <li><b>모집단:</b> 규제 대상으로 배출량을 보고한 기업만 분석하였다.</li>
+</ul>
+<h3>이 해설에서 덧붙이는 주의점</h3>
+<ul>
+  <li><b>업종 분류에 민감하다.</b> 기본 모형의 업종 고정효과는 제조업과 비제조업뿐이다. 중분류를 쓰면 전체 표본의 유의성이 약해지므로, 양의 관계에 업종 간 차이가 일부 섞여 있을 수 있다.</li>
+  <li><b>순이익 집약도는 해석이 까다롭다.</b> 순손실 기업은 값이 음수가 되고 이익이 0에 가까우면 값이 크게 흔들린다. 전체 표본과 흑자 표본의 계수 차이(2.023, 5.087)도 이와 관련될 수 있다.</li>
+  <li><b>실현 수익률과 요구 수익률은 다르다.</b> 양의 관계만으로 위험 보상이라고 단정할 수는 없다. 논문이 함께 제시한 무상할당 해석처럼 다른 설명도 가능하다.</li>
+  <li><b>2018년 이후는 3년이다.</b> 851개 관측치로, 유의성이 사라진 데에는 표본이 작아진 영향도 있을 수 있다.</li>
+</ul>
+</section>
+
+<section id="glossary">
+<h2>용어 풀이</h2>
+<dl class="gloss">
+  <dt>이행리스크</dt><dd>저탄소 경제로 옮겨 가는 과정의 규제와 비용 때문에 기업과 금융회사가 입을 수 있는 손실 위험.</dd>
+  <dt>탄소집약도</dt><dd>매출액이나 순이익 같은 재무성과 한 단위당 탄소배출량.</dd>
+  <dt>탄소 위험 프리미엄</dt><dd>탄소 관련 위험을 부담하는 대가로 투자자가 요구하는 추가 수익률.</dd>
+  <dt>그린 프리미엄</dt><dd>저탄소 기업에 투자해 얻는 초과수익. 이 논문에서는 탄소배출과 수익률의 음의 관계에 대응한다.</dd>
+  <dt>유상할당</dt><dd>배출권을 무상으로 나눠 주지 않고 기업이 비용을 내고 취득하게 하는 방식. 제2차 계획기간부터 일부 도입되었다.</dd>
+  <dt>교차항</dt><dd>두 변수의 곱. 어떤 변수의 효과가 집단이나 기간에 따라 달라지는지 보는 데 쓴다.</dd>
+  <dt>BTM</dt><dd>시가총액 대비 회계상 자본의 비율. 성장성 평가를 통제하기 위해 넣었다.</dd>
+  <dt>Heckman 2단계</dt><dd>표본에 포함될 확률을 먼저 추정해 표본 선택 편의를 조정하는 방법.</dd>
+  <dt>강건 표준오차</dt><dd>같은 회사의 오차가 서로 상관될 수 있음을 고려해 회사 단위로 계산한 표준오차.</dd>
+</dl>
+</section>
+
+<div class="wt-foot">
+<p>논문: 윤양인·이준호·황재학 (2023). 기업의 탄소배출과 주가수익률간 관계에 관한 연구. 『금융감독연구』, 10(2), 1-44. <a href="https://doi.org/10.23229/fss.2023.10.2.001">doi:10.23229/fss.2023.10.2.001</a> (KCI에서 원문 제공). 후속 연구: <a href="../ghg-credit/index.html">기업의 온실가스 배출과 신용공급에 관한 연구</a>.</p>
+<p>표의 수치는 논문에서 발췌했고, 해설 그림과 설명은 이 페이지를 위해 새로 작성하였다. 이 연구는 금융감독원의 공동연구 연구비 지원으로 수행되었으며, 연구 결과와 이 해설은 필자들의 개인적인 견해로 각 소속기관의 공식 견해가 아니다.</p>
+</div>
+
+</div>
+<nav class="wt-toc" aria-label="목차">
+  <div class="t">목차</div>
+  <a href="#summary">요약</a>
+  <a href="#why">1. 왜 이 연구인가</a>
+  <a href="#data">2. 데이터</a>
+  <a href="#model">3. 분석 방법</a>
+  <a href="#res-all">4. 결과 ① 어떤 지표가 관계있나</a>
+  <a href="#res-time">5. 결과 ② 2018년 전후</a>
+  <a href="#res-industry">6. 결과 ③ 고탄소 업종</a>
+  <a href="#robust">7. 결과는 얼마나 튼튼한가</a>
+  <a href="#verdict">8. 가설별 판정</a>
+  <a href="#impl">9. 시사점과 한계</a>
+  <a href="#glossary">용어 풀이</a>
+</nav>
+</div></div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.wt-toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(l,j){l.classList.toggle('on',i===j)})}})},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){s&&io.observe(s)});
+  }
+})();
+</script>
+```
