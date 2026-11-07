@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="국내 기업 7,036개 회사-연도 자료로 온실가스 배출량과 차입금의 관계가 배출권 계획기간과 만기에 따라 어떻게 달라졌는지 본 연구의 쉬운 해설">
+
+<title>온실가스를 많이 배출하는 기업의 차입은 줄고 있을까 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../research.css">
+<link rel="stylesheet" href="../wash-trading/wash-trading.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">온실가스를 많이 배출하는 기업의 차입은 줄고 있을까</h1>
+<p class="subtitle lead">연구 해설 · 금융감독연구 11(1), 67-101 (2024)</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">기후금융</div>
+    <div class="quarto-category">온실가스</div>
+    <div class="quarto-category">신용공여</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    국내 기업 7,036개 회사-연도 자료로 온실가스 배출량과 차입금의 관계가 배출권 계획기간과 만기에 따라 어떻게 달라졌는지 본 연구의 쉬운 해설
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">공개</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">2024년 4월</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="wt"><div class="wt-grid">
+<div class="wt-main">
+
+<div class="hero" id="summary">
+  <div class="byline">윤양인(서울과학기술대학교), 이준호(금융감독원), 황재학(금융감독원)</div>
+  <p class="lead">금융기관은 온실가스를 많이 내뿜는 기업에 돈을 덜 빌려주기 시작했을까? 2011년부터 2022년까지 국내 기업의 온실가스 배출량과 재무제표상 차입금을 연결해, 그 관계가 배출권거래제 계획기간과 차입금 만기에 따라 어떻게 달라졌는지 분석하였다.</p>
+  <div class="verdict"><b>한 줄 결론</b> — 전체 기간으로 보면 배출량이 많은 기업의 차입금이 오히려 많았다. 그러나 이 관계는 최근으로 올수록 약해졌고, 제3차 계획기간(2021~2022년)에는 <b>단기차입금과 뚜렷한 음(−)의 관계</b>가 나타났다. 금융기관이 배출량을 여신 판단에 반영하기 시작했다는 간접적인 신호이며, 직접 증거는 아니다.</div>
+  <div class="stats">
+    <div class="stat"><div class="n">12년</div><div class="l">분석 기간<br>(2011~2022)</div></div>
+    <div class="stat"><div class="n">931</div><div class="l">분석 대상<br>회사</div></div>
+    <div class="stat"><div class="n">7,036</div><div class="l">회사-연도<br>관측치</div></div>
+    <div class="stat"><div class="n">+0.50</div><div class="l">제3차 기간<br>장기차입금 계수</div></div>
+    <div class="stat"><div class="n">−0.69</div><div class="l">제3차 기간<br>단기차입금 계수</div></div>
+  </div>
+  <details class="mtoc"><summary>목차</summary><ol>
+    <li><a href="#why">왜 이 연구인가</a></li><li><a href="#data">데이터</a></li>
+    <li><a href="#model">분석 방법</a></li><li><a href="#res-time">결과 ① 시간에 따른 변화</a></li>
+    <li><a href="#res-maturity">결과 ② 만기에 따른 차이</a></li><li><a href="#robust">결과는 얼마나 튼튼한가</a></li>
+    <li><a href="#verdict">가설별 판정</a></li><li><a href="#impl">시사점과 한계</a></li>
+    <li><a href="#glossary">용어 풀이</a></li></ol></details>
+</div>
+
+<section id="why">
+<h2 class="anchored"><span class="no">1</span>왜 이 연구인가</h2>
+<p>자본시장에서는 배출량을 두고 두 가설이 맞서 왔다. <b>탄소위험 프리미엄 가설</b>은 고배출 기업이 탄소 관련 위험에 노출되어 있어 투자자가 더 높은 수익률을 요구한다고 본다. <b>그린 프리미엄 가설</b>은 반대로 저배출 기업이 초과수익을 낸다고 본다.</p>
+<p>그런데 기업에 직접 돈을 공급하는 금융기관의 행동은 상대적으로 덜 연구되었다. 금융회사는 온실가스를 직접 많이 배출하지는 않지만, 고배출 기업에 대한 대출을 줄이는 방식으로 감축을 유도할 수 있다. 일본 상장기업을 분석한 Takahashi and Shino(2023)는 일본 은행들이 고배출 기업에 대한 대출을 줄이고 있음을 보였다. 이 연구는 그 방법을 일부 준용해 국내 자료로 같은 질문을 던졌다.</p>
+<h3 class="anchored">세 가지 가설</h3>
+<div class="cards">
+  <div class="card"><span class="tag">가설 1</span><div class="t">음(−)의 관계</div><p>배출량이 많을수록 금융기관 대출액이 적을 것이다.</p></div>
+  <div class="card"><span class="tag">가설 2</span><div class="t">최근일수록 강화</div><p>제2차, 제3차 계획기간으로 갈수록 음의 관계가 강해질 것이다.</p></div>
+  <div class="card"><span class="tag">가설 3</span><div class="t">만기와 무관</div><p>장기와 단기 어느 쪽이 더 줄지 미리 알기 어려워, 차이가 없다는 영가설로 두었다.</p></div>
+</div>
+<h3 class="anchored">배출권거래제 계획기간</h3>
+<p>가설 2의 기준은 배출권의 유상할당이다. 배출에 실제 비용이 붙기 시작하면 금융기관이 이를 더 고려할 것이라고 본 것이다.</p>
+<ul class="timeline">
+  <li><span class="d">2015–2017</span>제1차 계획기간<span class="x">배출권을 모두 무상으로 할당. 분석에서는 그 이전(2011~2014년)과 묶었다.</span></li>
+  <li class="fee"><span class="d">2018–2020</span>제2차 계획기간<span class="x">일부 유상할당 시작</span></li>
+  <li class="law"><span class="d">2021–2025</span>제3차 계획기간<span class="x">유상할당 비중 확대. 표본에는 2021~2022년만 포함</span></li>
+</ul>
+</section>
+
+<section id="data">
+<h2 class="anchored"><span class="no">2</span>데이터</h2>
+<p>배출량은 국가온실가스 종합관리시스템(NGMS)이 공시하는 연도별·회사별 값을 썼다. 2011년 자료부터 공시되며, 제3의 독립 기관이 검증한 정보이다. 차입금을 포함한 재무자료는 KIS-Value에서 받았다. 재무제표를 공개하지 않는 관측치, 합병·분할 등으로 총자산이 50% 이상 변동한 회사, 상장폐지된 회사는 제외하였다.</p>
+<div class="box warn"><div class="h">가장 중요한 데이터 제약</div><p>은행별·기업별 대출 자료를 구할 수 없어 <b>재무제표상 차입금</b>을 신용공여의 대용치로 썼다. 금융기관의 대출액이 주로 포함되는 항목이지만, 대출 그 자체는 아니다.</p></div>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 1]</span> 계획기간별 관측치와 주요 업종</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">구분</th>
+<th class="l" data-quarto-table-cell-role="th">내용</th>
+<th class="r" data-quarto-table-cell-role="th">관측치</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">제1차 및 이전</td>
+<td class="l">2011~2017년</td>
+<td class="r">3,333</td>
+</tr>
+<tr class="even">
+<td class="l">제2차</td>
+<td class="l">2018~2020년</td>
+<td class="r">2,147</td>
+</tr>
+<tr class="odd">
+<td class="l">제3차</td>
+<td class="l">2021~2022년</td>
+<td class="r">1,556</td>
+</tr>
+<tr class="even">
+<td class="l">제조업</td>
+<td class="l">637개 회사, 평균 배출량 611천tCO₂-eq</td>
+<td class="r">5,179</td>
+</tr>
+<tr class="odd">
+<td class="l">전기·가스·증기</td>
+<td class="l">65개 회사, 평균 배출량 5,722천tCO₂-eq</td>
+<td class="r">512</td>
+</tr>
+<tr class="even">
+<td class="l">운수업</td>
+<td class="l">88개 회사, 평균 배출량 71천tCO₂-eq</td>
+<td class="r">498</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 논문 표 1, 2에서 발췌. 전체는 13개 업종, 931개 회사, 7,036개 관측치이며 제조업이 약 74%를 차지한다.</p></figure>
+</section>
+
+<section id="model">
+<h2 class="anchored"><span class="no">3</span>분석 방법</h2>
+<p>기본 모형은 차입금의 로그값을 배출량의 로그값과 통제변수에 회귀한다.</p>
+<div class="eq">ln(차입금)<sub>it</sub> = β<sub>1</sub> ln(배출량)<sub>it</sub> + β<sub>2</sub> ln(자산)<sub>it</sub> + β<sub>3</sub> 매출증가율<sub>it</sub><br>+ β<sub>4</sub> 부채비율<sub>it</sub> + β<sub>5</sub> ROA<sub>it</sub> + β<sub>6</sub> 운전자본비율<sub>it</sub> + 고정효과 + e<sub>it</sub></div>
+<div class="box easy"><div class="h">계수를 읽는 법</div><p>양쪽 모두 로그이므로 β<sub>1</sub> = 0.3은 “규모, 수익성 등이 같다면 배출량이 1% 많은 기업의 차입금이 약 0.3% 많다”는 뜻이다. 큰 기업은 배출도 많고 차입도 많으므로 규모 통제가 특히 중요하다. 통제변수 없이는 0.858이던 계수가 자산만 넣어도 0.338로 줄어든다.</p></div>
+<p>같은 모형을 세 가지 고정효과 조합으로 추정하였다. 고정효과가 없는 모형, 연도와 업종을 따로 넣은 모형(개별), 연도×업종 조합을 넣은 모형(결합)이다. 고정효과를 넣을수록 “같은 해, 같은 업종 안의 기업끼리 비교”에 가까워진다.</p>
+<ul>
+  <li><b>가설 2:</b> 표본을 계획기간별로 나누어 추정하고, 전체 표본에 2021년 이후 더미와 배출량의 교차항을 넣어 차이를 직접 검정하였다.</li>
+  <li><b>가설 3:</b> 종속변수를 장기차입금(유동성 장기차입금 포함)과 단기차입금으로 바꾸어 추정하였다.</li>
+</ul>
+</section>
+
+<section id="res-time">
+<h2 class="anchored"><span class="no">4</span>결과 ① 시간에 따른 변화</h2>
+<p>전체 기간에서는 가설 1과 반대로 <b>양(+)의 관계</b>가 나타났다. 논문은 시설투자 수요와 그에 따른 조업도 증가 등을 이유로 꼽는다. 하지만 계획기간별로 나누면 계수가 차례로 작아지고, 고정효과를 넣은 제3차 기간에는 부호가 음으로 바뀐다. 다만 이 값은 통계적으로 유의하지 않다.</p>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 2]</span> 배출량 계수: 전체 차입금(괄호는 t값)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">기간</th>
+<th class="r" data-quarto-table-cell-role="th">고정효과 없음</th>
+<th class="r" data-quarto-table-cell-role="th">개별 고정효과</th>
+<th class="r" data-quarto-table-cell-role="th">결합 고정효과</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">전체(2011~2022)</td>
+<td class="r">0.293*** (4.531)</td>
+<td class="r">0.120* (1.646)</td>
+<td class="r">0.116 (1.573)</td>
+</tr>
+<tr class="even">
+<td class="l">제1차 및 이전</td>
+<td class="r">0.382*** (4.262)</td>
+<td class="r">0.246** (2.462)</td>
+<td class="r">0.254** (2.517)</td>
+</tr>
+<tr class="odd">
+<td class="l">제2차</td>
+<td class="r">0.243** (2.044)</td>
+<td class="r">0.050 (0.371)</td>
+<td class="r">0.051 (0.376)</td>
+</tr>
+<tr class="even">
+<td class="l">제3차</td>
+<td class="r">0.133 (0.884)</td>
+<td class="r">−0.057 (−0.330)</td>
+<td class="r">−0.069 (−0.397)</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 논문 표 5~8의 통제변수 포함 모형. *, **, ***는 각각 10%, 5%, 1% 수준에서 유의함을 뜻한다.</p></figure>
+<figure class="pfig figure"><figcaption><span class="cap-no">[해설 그림 1]</span> 계획기간별 배출량 계수와 95% 구간(전체 차입금, 결합 고정효과)</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 760 210" role="img" aria-label="계획기간별 배출량 계수. 제1차 및 이전 0.25, 제2차 0.05, 제3차 −0.07로 작아지지만 구간은 서로 겹친다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="760" height="210" fill="#fff"></rect><line x1="206.4" x2="206.4" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="206.4" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−1.0</text><line x1="297.3" x2="297.3" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="297.3" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−0.5</text><line x1="388.2" x2="388.2" y1="14" y2="176" stroke="#6f6e67" stroke-width="1.5"></line><text x="388.2" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.0</text><line x1="479.1" x2="479.1" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="479.1" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.5</text><line x1="570.0" x2="570.0" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="570.0" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">1.0</text><g><title>제1차 및 이전: 계수 0.254, t값 2.517, 95% 구간 0.06 ~ 0.45</title><rect x="0" y="14.0" width="760" height="54" fill="transparent"></rect><text x="154" y="46.0" text-anchor="end" font-size="15" fill="#3e3f3a">제1차 및 이전</text><line x1="398.4" x2="470.3" y1="41.0" y2="41.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"></line><circle cx="434.4" cy="41.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"></circle><text x="588" y="46.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.25</tspan><tspan fill="#6f6e67"> [0.06, 0.45]</tspan></text></g><g><title>제2차: 계수 0.051, t값 0.376, 95% 구간 −0.21 ~ 0.32</title><rect x="0" y="68.0" width="760" height="54" fill="transparent"></rect><text x="154" y="100.0" text-anchor="end" font-size="15" fill="#3e3f3a">제2차</text><line x1="349.1" x2="445.8" y1="95.0" y2="95.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"></line><circle cx="397.5" cy="95.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"></circle><text x="588" y="100.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.05</tspan><tspan fill="#6f6e67"> [−0.21, 0.32]</tspan></text></g><g><title>제3차: 계수 −0.069, t값 −0.397, 95% 구간 −0.41 ~ 0.27</title><rect x="0" y="122.0" width="760" height="54" fill="transparent"></rect><text x="154" y="154.0" text-anchor="end" font-size="15" fill="#3e3f3a">제3차</text><line x1="313.7" x2="437.6" y1="149.0" y2="149.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"></line><circle cx="375.6" cy="149.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"></circle><text x="588" y="154.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.07</tspan><tspan fill="#6f6e67"> [−0.41, 0.27]</tspan></text></g></svg></div><p class="note">주: 이 페이지를 위해 [표 2]의 계수와 t값으로 그렸다. 구간은 계수 ± 1.96 × (계수 ÷ t)로 계산한 근사값이다. 점에 마우스를 올리면 값이 보인다.</p></figure>
+<div class="box warn"><div class="h">기간 차이를 직접 검정하면</div><p>그림처럼 세 구간은 서로 겹친다. 2021년 이후 더미의 교차항은 연도 고정효과가 없을 때 −0.031로 10% 수준에서만 유의하고(t = −1.681), 연도 고정효과를 넣으면 유의하지 않다(0.008, −0.042). 계수가 작아지는 추세는 일관되지만, 기간 간 차이가 통계적으로 확실하다고 말하기는 어렵다. 논문도 이를 한계로 밝히고 있다.</p></div>
+</section>
+
+<section id="res-maturity">
+<h2 class="anchored"><span class="no">5</span>결과 ② 만기에 따른 차이</h2>
+<p>이 연구에서 가장 또렷한 결과이다. 전체 차입금에서는 사라진 관계가 만기를 나누면 <b>서로 반대 방향</b>으로 나타난다.</p>
+<figure class="pfig figure"><figcaption><span class="cap-no">[해설 그림 2]</span> 제3차 계획기간의 만기별 배출량 계수와 95% 구간(결합 고정효과)</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 760 210" role="img" aria-label="제3차 계획기간의 만기별 배출량 계수. 장기 0.50, 전체 −0.07, 단기 −0.69로 장기와 단기의 방향이 반대이다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="760" height="210" fill="#fff"></rect><line x1="206.4" x2="206.4" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="206.4" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−1.0</text><line x1="297.3" x2="297.3" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="297.3" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">−0.5</text><line x1="388.2" x2="388.2" y1="14" y2="176" stroke="#6f6e67" stroke-width="1.5"></line><text x="388.2" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.0</text><line x1="479.1" x2="479.1" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="479.1" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">0.5</text><line x1="570.0" x2="570.0" y1="14" y2="176" stroke="#dfd7ca" stroke-width="1"></line><text x="570.0" y="196" text-anchor="middle" font-size="13" fill="#6f6e67">1.0</text><g><title>장기차입금: 계수 0.500, t값 2.187, 95% 구간 0.05 ~ 0.95</title><rect x="0" y="14.0" width="760" height="54" fill="transparent"></rect><text x="154" y="46.0" text-anchor="end" font-size="15" fill="#3e3f3a">장기차입금</text><line x1="397.6" x2="560.6" y1="41.0" y2="41.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"></line><circle cx="479.1" cy="41.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"></circle><text x="588" y="46.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">0.50</tspan><tspan fill="#6f6e67"> [0.05, 0.95]</tspan></text></g><g><title>전체 차입금: 계수 −0.069, t값 −0.397, 95% 구간 −0.41 ~ 0.27</title><rect x="0" y="68.0" width="760" height="54" fill="transparent"></rect><text x="154" y="100.0" text-anchor="end" font-size="15" fill="#3e3f3a">전체 차입금</text><line x1="313.7" x2="437.6" y1="95.0" y2="95.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"></line><circle cx="375.6" cy="95.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"></circle><text x="588" y="100.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.07</tspan><tspan fill="#6f6e67"> [−0.41, 0.27]</tspan></text></g><g><title>단기차입금: 계수 −0.694, t값 −3.101, 95% 구간 −1.13 ~ −0.26</title><rect x="0" y="122.0" width="760" height="54" fill="transparent"></rect><text x="154" y="154.0" text-anchor="end" font-size="15" fill="#3e3f3a">단기차입금</text><line x1="182.2" x2="341.8" y1="149.0" y2="149.0" stroke="#325d88" stroke-width="2" stroke-linecap="round"></line><circle cx="262.0" cy="149.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"></circle><text x="588" y="154.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">−0.69</tspan><tspan fill="#6f6e67"> [−1.13, −0.26]</tspan></text></g></svg></div><p class="note">주: 이 페이지를 위해 [표 2], [표 3]의 계수와 t값으로 그렸다. 구간 계산 방법은 [해설 그림 1]과 같다.</p></figure>
+<figure class="tfig figure"><figcaption><span class="cap-no">[표 3]</span> 배출량 계수: 만기별 차입금(괄호는 t값)</figcaption><div class="tbl">
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">종속변수</th>
+<th class="l" data-quarto-table-cell-role="th">기간</th>
+<th class="r" data-quarto-table-cell-role="th">고정효과 없음</th>
+<th class="r" data-quarto-table-cell-role="th">개별 고정효과</th>
+<th class="r" data-quarto-table-cell-role="th">결합 고정효과</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td class="l">장기차입금</td>
+<td class="l">전체</td>
+<td class="r">0.907*** (10.62)</td>
+<td class="r">0.710*** (7.292)</td>
+<td class="r">0.723*** (7.359)</td>
+</tr>
+<tr class="even">
+<td class="l">장기차입금</td>
+<td class="l">제3차</td>
+<td class="r">0.687*** (3.475)</td>
+<td class="r">0.501** (2.203)</td>
+<td class="r">0.500** (2.187)</td>
+</tr>
+<tr class="odd">
+<td class="l">단기차입금</td>
+<td class="l">제1차 및 이전</td>
+<td class="r">−0.624*** (−4.834)</td>
+<td class="r">−0.240* (−1.769)</td>
+<td class="r">−0.237* (−1.727)</td>
+</tr>
+<tr class="even">
+<td class="l">단기차입금</td>
+<td class="l">제3차</td>
+<td class="r">−0.951*** (−4.682)</td>
+<td class="r">−0.679*** (−3.044)</td>
+<td class="r">−0.694*** (−3.101)</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 논문 표 10~13. 논문은 장기차입금의 제1차·제2차 기간과 단기차입금의 전체·제2차 기간 결과를 표로 싣지 않았다.</p></figure>
+<div class="cards">
+  <div class="card"><div class="t">장기차입금</div><p>양의 관계가 유지된다. 시설자금처럼 생산과 배출에 직접 연결되는 자금은 쉽게 줄이기 어렵기 때문으로 해석된다. 다만 계수와 유의성은 전체 기간보다 낮다.</p></div>
+  <div class="card"><div class="t">단기차입금</div><p>배출량이 1% 많은 기업의 단기차입금이 약 0.7% 적다. 제1차 이전(약 −0.24)보다 음의 관계가 크게 강해졌다.</p></div>
+  <div class="card"><div class="t">논문의 해석</div><p>금융기관이 장기 시설자금을 급격히 줄이기는 어려워, 만기가 짧은 차입금을 줄여 금융배출량을 낮추려 한다는 것이다.</p></div>
+</div>
+</section>
+
+<section id="robust">
+<h2 class="anchored"><span class="no">6</span>결과는 얼마나 튼튼한가</h2>
+<p>같은 회사의 오차가 해마다 상관될 수 있으므로, 회사 단위 강건 표준오차로도 다시 추정하였다. 논문은 결과가 대부분 같았다고 하면서 다음 차이를 각주로 밝혔다.</p>
+<ul>
+  <li>전체 기간의 고정효과 모형(표 5의 컬럼 4, 5)은 유의성이 없어졌다.</li>
+  <li>제1차 및 이전의 고정효과 모형(표 6의 컬럼 2, 3)은 유의확률이 12% 수준이었다.</li>
+  <li>제1차 및 이전의 단기차입금 고정효과 모형(표 12의 컬럼 2, 3)은 유의성이 없어졌다.</li>
+  <li><b>제3차 기간의 단기차입금(표 13)은 유의한 음의 관계가 유지되었다.</b></li>
+</ul>
+<p>즉, 고정효과를 넣은 모형에서 표준오차를 바꾸어도 유의한 음의 관계가 유지된 것으로 논문이 밝힌 결과는 제3차 단기차입금이다. 위의 표는 모두 논문 본문의 표에 실린 값이며, 강건 표준오차를 적용한 값이 아니다.</p>
+</section>
+
+<section id="verdict">
+<h2 class="anchored"><span class="no">7</span>가설별 판정</h2>
+<figure class="tfig figure"><div class="tbl">
+<table class="score caption-top table">
+<thead>
+<tr class="header">
+<th class="l" data-quarto-table-cell-role="th">가설</th>
+<th class="l" data-quarto-table-cell-role="th">판정</th>
+<th class="l" data-quarto-table-cell-role="th">근거</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. 음의 관계</td>
+<td>지지되지 않음</td>
+<td>전체 기간에서는 양의 관계. 제3차 기간의 음의 계수는 유의하지 않다.</td>
+</tr>
+<tr class="even">
+<td>2. 최근일수록 강화</td>
+<td>부분 지지</td>
+<td>계수는 일관되게 작아지지만, 연도 고정효과를 넣은 직접 검정에서는 유의하지 않다.</td>
+</tr>
+<tr class="odd">
+<td>3. 만기와 무관</td>
+<td>차이가 있음</td>
+<td>제3차 기간에 장기는 양, 단기는 음이다. 다만 두 계수의 차이를 직접 검정한 것은 아니다.</td>
+</tr>
+</tbody>
+</table>
+</div><p class="note">주: 판정 문구는 이 해설에서 정리한 것이다.</p></figure>
+</section>
+
+<section id="impl">
+<h2 class="anchored"><span class="no">8</span>시사점과 한계</h2>
+<h3 class="anchored">시사점</h3>
+<ul>
+  <li><b>기업:</b> 배출량이 자금조달에 점점 더 중요한 요소가 되고 있으므로 감축 노력이 필요하다.</li>
+  <li><b>금융감독:</b> 금융기관이 단기 여신만 과도하게 줄이면 쏠림 현상과 특정 차주의 일시적 자금 경색이 생길 수 있다. 논문은 2020년 ELS발 증권사 유동성 위기와 2022년 레고랜드 사태를 단기 자금시장 경색 사례로 든다.</li>
+  <li><b>제안:</b> 감독당국은 금융배출량을 측정하고, 고탄소 업종의 여신 감축이 만기 구조상 한쪽에 쏠리지 않는지 모니터링할 필요가 있다.</li>
+</ul>
+<h3 class="anchored">논문이 밝힌 한계</h3>
+<ul>
+  <li><b>공시 시차:</b> 배출량은 연도 말 이후 3~5개월 뒤에 공시되어 연도 말 자금공급에 모두 반영되지 않을 수 있다.</li>
+  <li><b>내생성과 누락변수:</b> 통제변수가 충분하지 않을 수 있고, 담보 제공 여력은 자료 제약으로 넣지 못하였다.</li>
+  <li><b>수요와 공급의 혼재:</b> 기업이 자금 수요를 줄인 결과가 금융기관의 공급 결정과 섞여 있을 수 있다.</li>
+  <li><b>녹색 여신 미구분:</b> 고배출 기업이 저감 시설 투자를 위해 장기 자금을 늘렸을 가능성을 구분하지 못하였다.</li>
+  <li><b>모형별 결과 차이:</b> 표본 분리와 교차항 검정의 결론이 달라, 기간 간 차이가 없다는 해석도 가능하다.</li>
+</ul>
+<h3 class="anchored">이 해설에서 덧붙이는 주의점</h3>
+<ul>
+  <li><b>감축인가, 만기 구성의 변화인가.</b> 제3차 기간에 전체 차입금의 계수는 유의하지 않다. 장기는 많고 단기는 적다는 결과는 차입 총량의 축소가 아니라 만기 구성의 차이일 수도 있다.</li>
+  <li><b>차입금이 없는 기업이 섞여 있다.</b> 로그 차입금의 하위 1% 값이 0이고, 단기차입금의 표준편차(10.85)도 크다. 계수에는 차입 금액의 차이뿐 아니라 차입이 있는지 없는지의 차이도 섞여 있을 수 있다.</li>
+  <li><b>제3차 기간은 2년뿐이다.</b> 2021~2022년 자료만 포함되어 있어 추세가 이어질지는 이후 자료로 확인해야 한다.</li>
+  <li><b>기업 간 비교이다.</b> 한 기업의 배출량이 변할 때 차입이 어떻게 변했는지를 본 것이 아니므로(기업 고정효과 없음), 인과 효과로 읽어서는 안 된다.</li>
+</ul>
+</section>
+
+<section id="glossary">
+<h2 class="anchored">용어 풀이</h2>
+<dl class="gloss">
+  <dt>신용공여</dt><dd>대출, 보증 등 금융기관이 기업에 신용을 제공하는 행위. 이 연구에서는 재무제표상 차입금으로 측정하였다.</dd>
+  <dt>금융배출량</dt><dd>금융기관의 투자와 대출을 받은 실물 경제 주체가 배출하는 온실가스를 측정하는 개념(PCAF).</dd>
+  <dt>배출권 계획기간</dt><dd>배출권 할당 방식과 유상할당 비율 등을 단계적으로 정하는 기간 단위.</dd>
+  <dt>유상할당</dt><dd>배출권을 무상으로 나눠 주지 않고 기업이 비용을 내고 취득하게 하는 방식.</dd>
+  <dt>고정효과</dt><dd>연도나 업종처럼 집단 전체에 공통된 차이를 더미변수로 제거하는 방법.</dd>
+  <dt>강건 표준오차</dt><dd>같은 회사의 오차가 서로 상관될 수 있음을 고려해 회사 단위로 계산한 표준오차.</dd>
+  <dt>극단치 처리(winsorizing)</dt><dd>상하위 1%를 벗어난 값을 그 경계값으로 바꾸어 극단치의 영향을 줄이는 방법.</dd>
+  <dt>시스템 리스크</dt><dd>금융 시스템의 전부 또는 일부가 손상되어 실물경제에 부정적인 결과를 초래할 수 있는 금융서비스 중단 위험.</dd>
+</dl>
+</section>
+
+<div class="wt-foot">
+<p>논문: 윤양인·이준호·황재학 (2024). 기업의 온실가스 배출과 신용공급에 관한 연구. 『금융감독연구』, 11(1), 67-101. <a href="https://doi.org/10.23229/fss.2024.11.1.003">doi:10.23229/fss.2024.11.1.003</a> (KCI에서 원문 제공).</p>
+<p>표의 수치는 논문에서 발췌했고, 해설 그림과 설명은 이 페이지를 위해 새로 작성하였다. 이 연구는 금융감독원의 공동연구 연구비 지원으로 수행되었으며, 연구 결과와 이 해설은 필자들의 개인적인 견해로 각 소속기관의 공식 견해가 아니다.</p>
+</div>
+
+</div>
+<nav class="wt-toc" aria-label="목차">
+  <div class="t">목차</div>
+  <a href="#summary">요약</a>
+  <a href="#why">1. 왜 이 연구인가</a>
+  <a href="#data">2. 데이터</a>
+  <a href="#model">3. 분석 방법</a>
+  <a href="#res-time">4. 결과 ① 시간에 따른 변화</a>
+  <a href="#res-maturity">5. 결과 ② 만기에 따른 차이</a>
+  <a href="#robust">6. 결과는 얼마나 튼튼한가</a>
+  <a href="#verdict">7. 가설별 판정</a>
+  <a href="#impl">8. 시사점과 한계</a>
+  <a href="#glossary">용어 풀이</a>
+</nav>
+</div></div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.wt-toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(l,j){l.classList.toggle('on',i===j)})}})},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){s&&io.observe(s)});
+  }
+})();
+</script>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
