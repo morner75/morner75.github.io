@@ -1,0 +1,238 @@
+---
+title: "늦은 탄소중립은 금융회사에 얼마의 손실을 남길까"
+subtitle: "연구 해설 · FSS Working Paper 2023-1 (2023)"
+description: "2050년까지 세 가지 기후 시나리오에서 국내 은행과 보험사의 기업여신 손실을 하향식과 상향식으로 함께 추정한 금융권 공동 기후 스트레스테스트의 쉬운 해설"
+date: 2023-12-18
+date-format: "YYYY년 M월"
+categories: ["기후금융", "스트레스테스트", "금융안정"]
+image: figures/loss-by-scenario.svg
+lang: ko
+page-layout: full
+toc: false
+css:
+  - ../research.css
+  - ../wash-trading/wash-trading.css
+resources:
+  - figures/*.svg
+---
+
+```{=html}
+<div class="wt"><div class="wt-grid">
+<div class="wt-main">
+
+<div class="hero" id="summary">
+  <div class="byline">이준호, 김정일(금융감독원 금융시장안정국), 최광신(전 금융감독원 금융시장안정국) · 소속은 보고서 기준</div>
+  <p class="lead">기후변화와 탄소중립 전환은 금융회사의 대출 손실을 얼마나 늘릴까? 세 가지 기후 시나리오로 2050년까지 국내 은행과 보험사의 기업여신 손실을 추정하였다. 감독당국 모형(하향식)과 금융회사 자체 모형(상향식)을 함께 적용하고, 물리적 리스크와 이행리스크를 함께 다루었다.</p>
+  <div class="verdict"><b>한 줄 결론</b> — 2050년까지의 추가 누적 신용손실은 <b>지연전환 200조 원, 탄소중립 96조 원, 무정책 60조 원</b>으로 추정되었다. 같은 탄소중립이라도 전환이 늦으면 손실이 약 두 배로 커진다. 무정책의 값이 가장 작지만 2050년까지만 잰 결과이며, 물리적 리스크가 과소 추정되었을 수 있어 안전한 경로라는 뜻은 아니다.</div>
+  <div class="stats">
+    <div class="stat"><div class="n">200조 원</div><div class="l">지연전환<br>누적 추가 손실</div></div>
+    <div class="stat"><div class="n">96조 원</div><div class="l">탄소중립<br>누적 추가 손실</div></div>
+    <div class="stat"><div class="n">60조 원</div><div class="l">무정책<br>누적 추가 손실</div></div>
+    <div class="stat"><div class="n">63%</div><div class="l">2050년 지연전환 손실<br>÷ 은행권 2021년 순이익</div></div>
+    <div class="stat"><div class="n">1,224조 원</div><div class="l">분석 대상<br>기업여신</div></div>
+  </div>
+  <details class="mtoc"><summary>목차</summary><ol>
+    <li><a href="#why">왜 이 연구인가</a></li><li><a href="#scenario">세 가지 시나리오</a></li>
+    <li><a href="#model">손실을 추정하는 방법</a></li><li><a href="#data">분석 대상</a></li>
+    <li><a href="#res-total">결과 ① 누적 손실</a></li><li><a href="#res-path">결과 ② 시점, 업종, 지역</a></li>
+    <li><a href="#res-sector">결과 ③ 은행과 보험</a></li><li><a href="#res-bottom">결과 ④ 상향식 비교</a></li>
+    <li><a href="#impl">시사점과 한계</a></li><li><a href="#glossary">용어 풀이</a></li></ol></details>
+</div>
+
+<section id="why">
+<h2><span class="no">1</span>왜 이 연구인가</h2>
+<p>기후변화는 두 경로로 금융회사에 손실을 줄 수 있다. 자연재해로 담보와 기업의 생산이 타격을 받는 것이 <b>물리적 리스크</b>이고, 저탄소 경제로 옮겨 가는 과정의 비용과 규제가 기업 수익을 깎는 것이 <b>이행리스크</b>이다. 제조업 비중이 큰 우리나라는 이행 비용의 부담이 더 클 수 있다.</p>
+<p>보고서 기준으로 국내 선행 연구는 이행리스크(김재윤·전은경, 2021)나 물리적 리스크(황재학, 2022) 한쪽을 다루었다. 이 연구는 2022년 9월 국내 10개 대형 금융회사와 구성한 공동작업반의 시나리오로 <b>두 리스크를 함께</b> 추정하고, <b>하향식과 상향식을 병행</b>하였다.</p>
+<div class="box easy"><div class="h">스트레스테스트란</div><p>“심각하지만 발생 가능한” 상황을 가정해 금융회사의 손실과 자본 변화를 계산하는 방법이다. 미래를 예측하는 것이 아니라 “이 경로로 간다면 어떻게 되는가”를 묻는다.</p></div>
+</section>
+
+<section id="scenario">
+<h2><span class="no">2</span>세 가지 시나리오</h2>
+<p>국제 표준인 NGFS 3단계 시나리오(버전 3.4, 2022년 10월)의 MESSAGEix-GLOBIOM 한국 자료를 국내 경제와 기후에 맞게 조정하였다. 모든 시나리오는 <b>전 세계가 같은 경로를 택한다</b>고 가정한다.</p>
+<div class="cards">
+  <div class="card"><span class="tag">S1</span><div class="t">무정책</div><p>현재 정책을 유지하고 더 강화하지 않는다. 이행 비용은 없지만 물리적 피해가 가장 크다.</p></div>
+  <div class="card"><span class="tag">S2</span><div class="t">지연전환</div><p>2030년까지 현 수준을 유지하다가 이후 급격히 감축한다. 탄소가격과 화석연료 가격이 2030년 이후 급등한다.</p></div>
+  <div class="card"><span class="tag">S3</span><div class="t">탄소중립</div><p>전 세계가 계획적으로 감축해 2050년에 탄소중립에 이른다. 탄소가격이 전 기간에 완만하게 오른다.</p></div>
+</div>
+<figure class="tfig"><figcaption><span class="cap-no">[표 1]</span> 2050년 국내 기후 변수(기준: 2021년 13.8℃, 1,316mm)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">시나리오</th><th>전국 평균기온</th><th>전국 평균강수량</th></tr></thead>
+<tbody>
+<tr><td>무정책</td><td>14.8℃</td><td>1,368mm</td></tr>
+<tr><td>지연전환</td><td>14.7℃</td><td>1,358mm</td></tr>
+<tr><td>탄소중립</td><td>14.5℃</td><td>1,336mm</td></tr>
+</tbody></table></div></figure>
+<p>물리적 피해는 태풍과 홍수만 계산하였다. 2011~2020년 연평균 피해는 태풍 2,140억 원, 홍수 2,143억 원이다. 태풍은 NGFS의 전국 피해 분포를 태풍의 강도, 풍속, 거리, 이동속도로 지역에 나누었다. 홍수는 지역별 최대 강수량이 Gumbel 분포를 따른다고 보고 베이지안 계층모형으로 미래 분포를 예측하였다. 만성적 기온 상승의 다른 피해는 넣지 않았다.</p>
+</section>
+
+<section id="model">
+<h2><span class="no">3</span>손실을 추정하는 방법</h2>
+<p>하향식 모형은 기후 변수를 업종과 지역의 부도율(PD), 부도 시 손실률(LGD)로 옮긴 뒤 예상손실을 계산한다.</p>
+<div class="eq">예상손실 = PD × LGD × EAD</div>
+<ol class="timeline">
+  <li><b>이행리스크 경로</b><span class="x">탄소비용이 영업이익률을 낮추고, 저감 투자가 레버리지를 높인다. 직접 배출 비용과 중간재 비용 상승을 함께 반영하며, ECB와 유사한 접근이다.</span></li>
+  <li><b>물리적 리스크 경로 ①: 담보 가치</b><span class="x">풍수해로 부동산 가격이 떨어지면 LTV가 오르고 LGD가 커진다. 부동산 LGD에는 IMF의 2020년 한국 FSAP 구조모형을 적용하였다.</span></li>
+  <li><b>물리적 리스크 경로 ②: 생산 차질</b><span class="x">지역 풍수해 피해액 ÷ 지역내총생산을 생산차질률로 보고 수익에서 차감한다.</span></li>
+  <li><b>부도율 계산</b><span class="x">업종별 PD를 레버리지, 영업이익률, 자산의 로지스틱 회귀로 추정한다. 영업이익률이 낮을수록, 자산이 작을수록, 레버리지가 높을수록 PD가 높았다. 은행과 보험은 모형을 따로 추정하였다.</span></li>
+</ol>
+<div class="box easy"><div class="h">하향식과 상향식</div><p><b>하향식</b>은 감독당국이 하나의 모형을 모든 금융회사에 적용한다. <b>상향식</b>은 공통 시나리오를 각 회사의 자체 모형에 넣는다. 상향식에는 은행 4개사, 생명보험 3개사, 손해보험 3개사가 참여하였고, 보험사는 신용손실에 더해 자산평가(생보)와 보험리스크(손보)도 추정하였다.</p></div>
+</section>
+
+<section id="data">
+<h2><span class="no">4</span>분석 대상</h2>
+<p>하향식 대상은 2021년 말 기업여신이 1조 원 이상이고 지역 구분이 가능한 <b>은행 17개사, 보험사 19개사</b>이다. 탄소배출 정보로 업종별 부도율을 산출할 수 있는 여신 <b>1,223.9조 원</b>을 분석하였다.</p>
+<figure class="tfig"><figcaption><span class="cap-no">[표 2]</span> 분석 대상 기업여신(2021년 말, 조 원)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">업권</th><th>대상 여신</th><th>업권 전체</th><th>대상 비중</th></tr></thead>
+<tbody>
+<tr><td>은행</td><td>1,164.0</td><td>1,439</td><td>약 81%</td></tr>
+<tr><td>생명보험</td><td>35.3</td><td>86.5</td><td>40.8%</td></tr>
+<tr><td>손해보험</td><td>24.6</td><td>49.5</td><td>49.7%</td></tr>
+</tbody></table></div><p class="note">주: 은행 비중은 보고서 본문에 86.4%로 적혀 있으나, 같은 문장의 두 금액으로 계산하면 약 81%이다.</p></figure>
+<p>은행은 제조업(500.6조 원)과 부동산업(255.7조 원)의 비중이 크다. 보험사 대상 여신은 약 74%가 부동산업이다(이 해설의 계산). 지역별로는 서울과 경기가 전체의 약 64%를 차지한다.</p>
+</section>
+
+<section id="res-total">
+<h2><span class="no">5</span>결과 ① 누적 손실: 늦은 전환이 가장 비싸다</h2>
+<figure class="pfig"><figcaption><span class="cap-no">[해설 그림 1]</span> 2050년까지의 추가 누적 신용손실(은행+보험, 조 원)</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 232" role="img" aria-label="누적 추가 손실. 지연전환은 이행 148조 원과 물리 52조 원, 탄소중립은 이행 53조 원과 물리 43조 원, 무정책은 물리 60조 원이다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="620" height="232" fill="#fff"/><rect x="84" y="9" width="14" height="14" rx="2" fill="#B07A00"/><text x="104" y="21" font-size="14" fill="#3e3f3a">이행리스크</text><rect x="190" y="9" width="14" height="14" rx="2" fill="#2E6DA4"/><text x="210" y="21" font-size="14" fill="#3e3f3a">물리적 리스크</text><line x1="84.0" x2="84.0" y1="40" y2="202" stroke="#6f6e67" stroke-width="1.5"/><text x="84.0" y="222" text-anchor="middle" font-size="14" fill="#6f6e67">0</text><line x1="201.5" x2="201.5" y1="40" y2="202" stroke="#dfd7ca" stroke-width="1"/><text x="201.5" y="222" text-anchor="middle" font-size="14" fill="#6f6e67">50</text><line x1="319.0" x2="319.0" y1="40" y2="202" stroke="#dfd7ca" stroke-width="1"/><text x="319.0" y="222" text-anchor="middle" font-size="14" fill="#6f6e67">100</text><line x1="436.5" x2="436.5" y1="40" y2="202" stroke="#dfd7ca" stroke-width="1"/><text x="436.5" y="222" text-anchor="middle" font-size="14" fill="#6f6e67">150</text><line x1="554.0" x2="554.0" y1="40" y2="202" stroke="#dfd7ca" stroke-width="1"/><text x="554.0" y="222" text-anchor="middle" font-size="14" fill="#6f6e67">200</text><g><title>지연전환: 이행 148.4조 원, 물리 52.1조 원, 합계 200.4조 원</title><rect x="0" y="40" width="620" height="54" fill="transparent"/><text x="72" y="72.0" text-anchor="end" font-size="15" fill="#3e3f3a">지연전환</text><rect x="84.0" y="51" width="347.6" height="32" fill="#B07A00"/><text x="258.3" y="72.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">148</text><rect x="433.6" y="51" width="121.3" height="32" rx="2" fill="#2E6DA4"/><text x="493.8" y="72.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">52</text><text x="563.0" y="72.0" font-size="15" font-weight="700" fill="#3e3f3a">200조</text></g><g><title>탄소중립: 이행 53.4조 원, 물리 43.1조 원, 합계 96.5조 원</title><rect x="0" y="94" width="620" height="54" fill="transparent"/><text x="72" y="126.0" text-anchor="end" font-size="15" fill="#3e3f3a">탄소중립</text><rect x="84.0" y="105" width="124.4" height="32" fill="#B07A00"/><text x="146.7" y="126.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">53</text><rect x="210.4" y="105" width="100.3" height="32" rx="2" fill="#2E6DA4"/><text x="260.1" y="126.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">43</text><text x="318.7" y="126.0" font-size="15" font-weight="700" fill="#3e3f3a">96조</text></g><g><title>무정책: 이행 0.0조 원, 물리 59.7조 원, 합계 59.7조 원</title><rect x="0" y="148" width="620" height="54" fill="transparent"/><text x="72" y="180.0" text-anchor="end" font-size="15" fill="#3e3f3a">무정책</text><rect x="85.0" y="159" width="139.2" height="32" rx="2" fill="#2E6DA4"/><text x="154.1" y="180.0" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">60</text><text x="232.2" y="180.0" font-size="15" font-weight="700" fill="#3e3f3a">60조</text></g></svg></div></figure>
+<figure class="tfig"><figcaption><span class="cap-no">[표 3]</span> 시나리오별 추가 신용손실(십억 원)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">구분</th><th>무정책: 물리</th><th>지연: 이행</th><th>지연: 물리</th><th>지연: 합계</th><th>탄소중립: 이행</th><th>탄소중립: 물리</th><th>탄소중립: 합계</th></tr></thead>
+<tbody>
+<tr><td>은행 2030년</td><td>1,349</td><td>363</td><td>1,290</td><td>1,652</td><td>2,385</td><td>1,166</td><td>3,551</td></tr>
+<tr><td>은행 2050년</td><td>4,295</td><td>9,407</td><td>2,539</td><td>11,946</td><td>2,474</td><td>2,313</td><td>4,787</td></tr>
+<tr><td>은행 누적</td><td>58,568</td><td>144,554</td><td>50,512</td><td>195,066</td><td>52,613</td><td>41,829</td><td>94,443</td></tr>
+<tr><td>보험 2030년</td><td>28.9</td><td>19.5</td><td>27.7</td><td>47.2</td><td>67.8</td><td>26.2</td><td>94.0</td></tr>
+<tr><td>보험 2050년</td><td>79.1</td><td>220.3</td><td>77.0</td><td>297.3</td><td>16.1</td><td>72.7</td><td>88.8</td></tr>
+<tr><td>보험 누적</td><td>1,112</td><td>3,804</td><td>1,550</td><td>5,354</td><td>750</td><td>1,276</td><td>2,026</td></tr>
+<tr><td><b>누적 합계</b></td><td><b>59,680</b></td><td><b>148,358</b></td><td><b>52,062</b></td><td><b>200,420</b></td><td><b>53,363</b></td><td><b>43,105</b></td><td><b>96,469</b></td></tr>
+</tbody></table></div><p class="note">주: 무정책에는 이행리스크 손실이 없다.</p></figure>
+<p>보고서의 비교 기준은 2021년 신용손실 5.9조 원이 29년간 이어지는 171조 원이다. 이 기준에 비해 기후리스크가 무정책 약 35%, 탄소중립 약 56%(이 해설의 계산), 지연전환 약 117%의 손실을 더한다. 지연전환은 탄소중립보다 104조 원 많다.</p>
+<div class="box warn"><div class="h">무정책의 손실이 가장 작은 이유, 그리고 읽을 때의 주의</div><p>보고서는 세 이유를 든다.</p><ul>
+  <li><b>이행 비용이 없음:</b> 물리적 손실만 인식하며, 우리나라는 물리적 리스크 노출이 상대적으로 낮다.</li>
+  <li><b>2050년까지만 측정:</b> 물리적 피해는 시간이 지날수록 빠르게 커질 수 있어, 2100년까지 보면 무정책의 손실이 가장 클 수도 있다.</li>
+  <li><b>과소 추정 가능성:</b> 방법론과 자료의 제약으로 물리적 손실이 작게 나왔을 수 있다.</li>
+</ul><p>그래서 “아무것도 하지 않는 것이 낫다”는 결론은 아니다. 보고서는 무정책이 현실화될 가능성이 작고, 지연전환이 가장 현실적인 경로라고 본다. 또한 두 리스크는 접근 방식이 다르고 물리적 시나리오의 불확실성이 커서 크기를 단순 비교하는 데 주의가 필요하다고 밝힌다.</p></div>
+</section>
+
+<section id="res-path">
+<h2><span class="no">6</span>결과 ② 시점, 업종, 지역</h2>
+<h3>시점: 2030년과 2050년의 순서가 뒤바뀐다</h3>
+<p>은행의 연간 추가 손실은 2030년에 탄소중립(3.55조 원)이 지연전환(1.65조 원)보다 크다. 일찍 전환 비용을 치르기 때문이다. 2050년에는 지연전환(11.95조 원)이 탄소중립(4.79조 원)의 약 2.5배가 된다.</p>
+<h3>업종: 고탄소 업종의 부도율이 먼저 움직인다</h3>
+<figure class="tfig"><figcaption><span class="cap-no">[표 4]</span> 2050년 무렵 탄소배출 상위 3개 업종의 부도율(%)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">업종</th><th>무정책</th><th>탄소중립</th><th>지연전환</th></tr></thead>
+<tbody>
+<tr><td>1차금속</td><td>약 2.5</td><td>약 8</td><td>약 16</td></tr>
+<tr><td>코크스·연탄·석유정제</td><td>약 5</td><td>약 8</td><td>약 11</td></tr>
+<tr><td>화학물질·화학제품</td><td>약 1</td><td>약 1.5</td><td>약 3</td></tr>
+</tbody></table></div><p class="note">주: 보고서 그림 14에서 눈으로 읽은 근사값이다.</p></figure>
+<p>탄소중립에서는 2030년 전후로 부도율이 오른 뒤 안정되지만, 지연전환에서는 2030년대에 급등한다. 다만 화학처럼 영업이익률이 높거나 레버리지가 낮은 업종은 고탄소여도 상승이 제한적이었다. 배출량만으로 위험을 판단할 수 없다는 뜻이다.</p>
+<h3>지역: 풍수해 지역의 손실률이 높다</h3>
+<p>무정책에서 2050년 전남 기업의 부도율은 기준연도보다 1.4%포인트 오른다. 서울은 0.6%포인트이다. 부동산 LGD 상승폭은 전남 36.7%포인트, 서울 0.9%포인트로 차이가 더 크다.</p>
+</section>
+
+<section id="res-sector">
+<h2><span class="no">7</span>결과 ③ 은행과 보험</h2>
+<figure class="tfig"><figcaption><span class="cap-no">[표 5]</span> 은행 유형별 기준 자본비율과 연간 추가 신용손실(조 원)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">항목</th><th>전체</th><th>시중</th><th>지방</th><th>특수</th></tr></thead>
+<tbody>
+<tr><td>2021년 말 BIS 비율(%)</td><td>16.67</td><td>17.72</td><td>16.31</td><td>15.64</td></tr>
+<tr><td>2030년 지연전환</td><td>1.65</td><td>1.45</td><td>0.03</td><td>0.17</td></tr>
+<tr><td>2030년 탄소중립</td><td>3.55</td><td>2.20</td><td>0.19</td><td>1.16</td></tr>
+<tr><td>2050년 무정책</td><td>4.30</td><td>2.43</td><td>0.29</td><td>1.57</td></tr>
+<tr><td>2050년 지연전환</td><td>11.95</td><td>5.82</td><td>0.98</td><td>5.15</td></tr>
+<tr><td>2050년 탄소중립</td><td>4.79</td><td>2.63</td><td>0.35</td><td>1.81</td></tr>
+</tbody></table></div></figure>
+<ul>
+  <li><b>은행권 전체:</b> 2021년 말 자산과 포트폴리오가 유지된다고 할 때, 2050년 지연전환의 연간 손실 약 11.9조 원은 2021년 은행권 순이익 18.8조 원의 63.3%이다. BIS 비율 영향은 약 0.75%포인트이다.</li>
+  <li><b>지방은행:</b> 풍수해가 잦은 지역의 여신 비중이 커 물리적 손실 비중이 상대적으로 크다. 2050년 지연전환의 BIS 비율 하락은 0.86%포인트이다.</li>
+  <li><b>특수은행:</b> 고탄소 산업 여신 비중이 커 이행리스크에 크게 노출되었다. 김재윤·전은경(2021)과 대체로 일치한다.</li>
+  <li><b>보험사:</b> 신용리스크 비중이 작아 2050년 지연전환에서 2,973억 원으로, 보험권 순이익의 9.6%이다. RBC 비율 영향은 약 0.53%포인트이다. 시장리스크와 보험리스크를 넣지 않아 과소 추정되었을 가능성이 크다.</li>
+</ul>
+<p>외국과 비교하면 영란은행(BOE, 2021)의 “무정책 &lt; 탄소중립 &lt; 지연전환” 순서와 같다. ECB(2022)는 물리적 리스크를 높게 보아 “탄소중립 &lt; 지연전환 &lt; 무정책”으로 평가하였다.</p>
+</section>
+
+<section id="res-bottom">
+<h2><span class="no">8</span>결과 ④ 상향식 비교: 모형마다 답이 다르다</h2>
+<figure class="pfig"><figcaption><span class="cap-no">[해설 그림 2]</span> 지연전환 시나리오의 2050년 은행별 신용손실(조 원)</figcaption><div class="svgbox"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 254" role="img" aria-label="지연전환 2050년 은행별 손실. 하향식은 네 은행 모두 약 2조 원이지만 상향식은 1.03조 원에서 4.16조 원까지 벌어진다." font-family="Roboto, 'Noto Sans KR', sans-serif"><rect width="620" height="254" fill="#fff"/><circle cx="82" cy="16" r="6" fill="#325d88"/><text x="94" y="21" font-size="14" fill="#3e3f3a">하향식(감독당국 모형)</text><circle cx="262" cy="16" r="6" fill="#fff" stroke="#325d88" stroke-width="2"/><text x="274" y="21" font-size="14" fill="#3e3f3a">상향식(자체 모형)</text><line x1="76.0" x2="76.0" y1="40" y2="224" stroke="#6f6e67" stroke-width="1.5"/><text x="76.0" y="244" text-anchor="middle" font-size="14" fill="#6f6e67">0</text><line x1="159.6" x2="159.6" y1="40" y2="224" stroke="#dfd7ca" stroke-width="1"/><text x="159.6" y="244" text-anchor="middle" font-size="14" fill="#6f6e67">1</text><line x1="243.2" x2="243.2" y1="40" y2="224" stroke="#dfd7ca" stroke-width="1"/><text x="243.2" y="244" text-anchor="middle" font-size="14" fill="#6f6e67">2</text><line x1="326.8" x2="326.8" y1="40" y2="224" stroke="#dfd7ca" stroke-width="1"/><text x="326.8" y="244" text-anchor="middle" font-size="14" fill="#6f6e67">3</text><line x1="410.4" x2="410.4" y1="40" y2="224" stroke="#dfd7ca" stroke-width="1"/><text x="410.4" y="244" text-anchor="middle" font-size="14" fill="#6f6e67">4</text><line x1="494.0" x2="494.0" y1="40" y2="224" stroke="#dfd7ca" stroke-width="1"/><text x="494.0" y="244" text-anchor="middle" font-size="14" fill="#6f6e67">5</text><g><title>은행 A: 하향식 2.13조 원, 상향식 1.03조 원</title><rect x="0" y="40.0" width="620" height="46" fill="transparent"/><text x="64" y="68.0" text-anchor="end" font-size="15" fill="#3e3f3a">은행 A</text><line x1="254.1" x2="162.1" y1="63.0" y2="63.0" stroke="#325d88" stroke-width="2"/><circle cx="162.1" cy="63.0" r="6" fill="#fff" stroke="#325d88" stroke-width="2"/><circle cx="254.1" cy="63.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="508" y="68.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">2.13</tspan> / 1.03</text></g><g><title>은행 B: 하향식 2.25조 원, 상향식 1.82조 원</title><rect x="0" y="86.0" width="620" height="46" fill="transparent"/><text x="64" y="114.0" text-anchor="end" font-size="15" fill="#3e3f3a">은행 B</text><line x1="264.1" x2="228.2" y1="109.0" y2="109.0" stroke="#325d88" stroke-width="2"/><circle cx="228.2" cy="109.0" r="6" fill="#fff" stroke="#325d88" stroke-width="2"/><circle cx="264.1" cy="109.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="508" y="114.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">2.25</tspan> / 1.82</text></g><g><title>은행 C: 하향식 2.16조 원, 상향식 1.20조 원</title><rect x="0" y="132.0" width="620" height="46" fill="transparent"/><text x="64" y="160.0" text-anchor="end" font-size="15" fill="#3e3f3a">은행 C</text><line x1="256.6" x2="176.3" y1="155.0" y2="155.0" stroke="#325d88" stroke-width="2"/><circle cx="176.3" cy="155.0" r="6" fill="#fff" stroke="#325d88" stroke-width="2"/><circle cx="256.6" cy="155.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="508" y="160.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">2.16</tspan> / 1.20</text></g><g><title>은행 D: 하향식 1.89조 원, 상향식 4.16조 원</title><rect x="0" y="178.0" width="620" height="46" fill="transparent"/><text x="64" y="206.0" text-anchor="end" font-size="15" fill="#3e3f3a">은행 D</text><line x1="234.0" x2="423.8" y1="201.0" y2="201.0" stroke="#325d88" stroke-width="2"/><circle cx="423.8" cy="201.0" r="6" fill="#fff" stroke="#325d88" stroke-width="2"/><circle cx="234.0" cy="201.0" r="6" fill="#325d88" stroke="#fff" stroke-width="2"/><text x="508" y="206.0" font-size="14" fill="#3e3f3a"><tspan font-weight="700">1.89</tspan> / 4.16</text></g></svg></div></figure>
+<figure class="tfig"><figcaption><span class="cap-no">[표 6]</span> 은행별 하향식과 상향식 결과(2050년, 조 원)</figcaption><div class="tbl"><table>
+<thead><tr><th class="l">은행</th><th>무정책: 하향</th><th>무정책: 상향</th><th>지연: 하향</th><th>지연: 상향</th><th>탄소중립: 하향</th><th>탄소중립: 상향</th></tr></thead>
+<tbody>
+<tr><td>은행 A</td><td>1.27</td><td>1.06</td><td>2.13</td><td>1.03</td><td>1.35</td><td>0.98</td></tr>
+<tr><td>은행 B</td><td>1.33</td><td>1.02</td><td>2.25</td><td>1.82</td><td>1.41</td><td>1.23</td></tr>
+<tr><td>은행 C</td><td>1.39</td><td>0.05</td><td>2.16</td><td>1.20</td><td>1.37</td><td>0.82</td></tr>
+<tr><td>은행 D</td><td>1.26</td><td>3.75</td><td>1.89</td><td>4.16</td><td>1.21</td><td>2.17</td></tr>
+<tr><td><b>4개 은행 합계</b></td><td>5.25</td><td>5.88</td><td>8.43</td><td>8.21</td><td>5.34</td><td>5.20</td></tr>
+</tbody></table></div><p class="note">주: 합계는 이 해설의 계산이다. 보고서는 은행명을 익명으로 표기하였다.</p></figure>
+<p>회사별 차이가 컸다. 은행 A는 시나리오 간 차이가 거의 없었지만, 은행 C는 지연전환이 무정책의 24배였다. A를 제외한 세 은행은 지연전환의 손실을 가장 크게 추정하였다.</p>
+<p>보고서는 하향식 결과가 상향식의 중위수 수준이라고 보고, 하향식 모형을 상향식의 적정성을 평가하는 <b>기준모형</b>으로 쓸 가능성을 제시한다. 표 6을 보면 네 은행의 합계는 세 시나리오 모두 비슷하다. 다만 은행별로는 세 곳에서 하향식이 상향식보다 높고, 은행 D만 크게 낮다. 합계가 비슷한 데에는 D의 큰 값이 기여하므로, 기준모형으로 쓰려면 더 많은 비교가 필요하다.</p>
+<p>보험에서는 생보사가 지연전환과 탄소중립에서 이행리스크 투자손실을 신용손실보다 크게 보았고, 손보사는 보험손실을 신용손실보다 작게 보았다. 보고서는 영국의 결과와 비교해 국내 보험리스크가 과소 추정되었을 수 있다고 추측하되, 재보험 비중이 높은 점 등으로 실제 노출이 작을 가능성도 함께 언급한다.</p>
+</section>
+
+<section id="impl">
+<h2><span class="no">9</span>시사점과 한계</h2>
+<h3>시사점</h3>
+<ul>
+  <li><b>금융권:</b> 질서 있는 이행이 금융안정에 중요하다. 손실에 대응하는 과정에서 급격한 자본 확충으로 시장 불안이 커지는 등의 부작용도 생길 수 있다.</li>
+  <li><b>금융감독당국:</b> 2050년까지 탄소중립을 달성해도 은행의 2050년 연간 추가 손실은 4.8조 원이다. 고탄소 여신이 많거나 물리적 리스크에 취약한 회사, 특히 지방·특수은행과 손보사의 기후리스크 관리 실태를 점검할 필요가 있다.</li>
+  <li><b>방법과 자료:</b> 측정 방법론을 공유하고 자료의 품질을 높여야 한다. 특히 거래 상대방의 온실가스 배출 정보가 크게 부족해, 대체 지표나 공시 제도가 필요하다.</li>
+  <li><b>국제 논의:</b> 기후 자본규제와 충당금 논의에 적극 참여할 필요가 있다.</li>
+</ul>
+<h3>보고서가 밝힌 한계</h3>
+<ul>
+  <li><b>국내 정책 미반영:</b> NGFS 시나리오는 전 세계가 동시에 한 경로를 택한다고 가정한다. 우리나라의 탄소중립 정책을 반영한 시나리오가 필요하다.</li>
+  <li><b>범위:</b> 하향식은 기업여신의 신용리스크만 본다. 소매 여신과 시장성 자산 평가손실은 빠졌다.</li>
+  <li><b>2차 효과:</b> 기후변화의 비선형성과 위기 전염 효과를 고려하지 못해 손실이 과소 추정되었을 수 있다.</li>
+</ul>
+<div class="box warn"><div class="h">이 해설에서 덧붙이는 주의점</div><ul>
+  <li><b>전망이 아닌 조건부 계산:</b> 200조 원은 지연전환 경로를 가정한 값이다. 시나리오의 발생 확률이나 추정 오차 구간은 제시되어 있지 않다.</li>
+  <li><b>대응하지 않는 금융회사:</b> 2021년 말 자산과 포트폴리오가 유지된다는 가정에서는 금융회사가 고탄소 여신을 줄이는 대응이 반영되지 않는다. 그 대신 시간이 지나며 대출이 늘어나는 효과도 빠진다.</li>
+  <li><b>단순 누적:</b> 29년의 누적 금액이며, 보고서에는 할인에 대한 설명이 없다. 현재가치로 해석하지 않는 것이 좋다.</li>
+  <li><b>업종 평균:</b> 기업별이 아니라 업종별 재무제표를 썼으므로 같은 업종 안의 저탄소·고탄소 기업 차이는 드러나지 않는다.</li>
+  <li><b>2022년 시나리오:</b> NGFS는 2024년 11월 5단계 시나리오에서 물리적 피해 함수를 바꾸고, 2050년 GDP 손실이 이전 추정보다 2~4배 클 수 있다고 <a href="https://www.ngfs.net/en/press-release/ngfs-publishes-latest-long-term-climate-macro-financial-scenarios-climate-risks-assessment">밝혔다</a>. 새 시나리오에서는 무정책의 상대적 순위가 달라질 수 있으며, 이 보고서의 결과를 새 시나리오로 다시 계산한 것은 아니다.</li>
+  <li><b>작은 상향식 표본:</b> 하향식과 상향식의 은행 비교는 4개 은행에 한정된다.</li>
+</ul></div>
+</section>
+
+<section id="glossary">
+<h2>용어 풀이</h2>
+<dl class="gloss">
+  <dt>NGFS</dt><dd>녹색금융을 위한 감독기구 협의체. 중앙은행과 감독당국이 쓰는 표준 기후 시나리오를 제공한다.</dd>
+  <dt>PD·LGD·EAD</dt><dd>부도율, 부도 시 손실률, 부도 시 익스포저. 세 값을 곱하면 예상손실이다.</dd>
+  <dt>LTV</dt><dd>담보 가치 대비 대출 비율. 담보 가격이 떨어지면 올라가고 LGD도 커진다.</dd>
+  <dt>BIS 비율</dt><dd>위험가중자산 대비 총자본의 비율. 은행의 자본 건전성 지표이다.</dd>
+  <dt>RBC 비율</dt><dd>지급여력기준금액 대비 지급여력금액의 비율. 보험사의 자본 건전성 지표이다.</dd>
+  <dt>Gumbel 분포</dt><dd>최댓값의 분포로 쓰이는 극값분포의 하나. 여기서는 지역별 최대 강수량에 적용하였다.</dd>
+  <dt>베이지안 계층모형</dt><dd>분포의 모수가 다시 다른 변수와 분포로 결정되도록 층을 쌓은 모형이다. 여기서는 기온과 강수량이 최대 강수량 분포를 결정한다.</dd>
+</dl>
+</section>
+
+<div class="wt-foot">
+<p>출처: 이준호·김정일·최광신 (2023). 금융권 공동 기후 스트레스테스트. FSS Working Paper 2023-1, 금융감독원. <a href="https://www.fss.or.kr/fss/bbs/B0000083/view.do?nttId=132378&amp;menuNo=200398&amp;pageIndex=1">금융감독원 게시판에서 원문 보기</a>.</p>
+<p>표의 수치는 연구 해설을 위해 보고서에서 인용·발췌하였고, 해설 그림 1~2는 보고서 표 4와 표 7의 수치로 새로 그렸다. 보고서의 그림은 싣지 않았다. 관련 연구: <a href="../ghg-credit/index.html">온실가스와 신용공급</a>, <a href="../carbon-returns/index.html">탄소배출과 주가수익률</a>. 이 페이지는 연구 내용의 해설이며, 금융감독원의 공식 견해가 아니다.</p>
+</div>
+
+</div>
+<nav class="wt-toc" aria-label="목차">
+  <div class="t">목차</div>
+  <a href="#summary">요약</a>
+  <a href="#why">1. 왜 이 연구인가</a>
+  <a href="#scenario">2. 세 가지 시나리오</a>
+  <a href="#model">3. 손실을 추정하는 방법</a>
+  <a href="#data">4. 분석 대상</a>
+  <a href="#res-total">5. 결과 ① 누적 손실</a>
+  <a href="#res-path">6. 결과 ② 시점, 업종, 지역</a>
+  <a href="#res-sector">7. 결과 ③ 은행과 보험</a>
+  <a href="#res-bottom">8. 결과 ④ 상향식 비교</a>
+  <a href="#impl">9. 시사점과 한계</a>
+  <a href="#glossary">용어 풀이</a>
+</nav>
+</div></div>
+<script>
+(function(){
+  var links=[].slice.call(document.querySelectorAll('.wt-toc a')), secs=links.map(function(a){return document.querySelector(a.getAttribute('href'))});
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var i=secs.indexOf(e.target);links.forEach(function(l,j){l.classList.toggle('on',i===j)})}})},{rootMargin:'-20% 0px -70% 0px'});
+    secs.forEach(function(s){s&&io.observe(s)});
+  }
+})();
+</script>
+```
