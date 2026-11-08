@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="일반화 극단값 분포, 임계값 초과 모형, 비정상 극단값과 비례 꼬리 모형">
+
+<title>극단값 이론 (1): 일변량 극단값 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">극단값 이론 (1): 일변량 극단값</h1>
+                  <div>
+        <div class="description">
+          일반화 극단값 분포, 임계값 초과 모형, 비정상 극단값과 비례 꼬리 모형
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Extreme value theory</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2026년 11월 8일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#일반화-극단값-분포" id="toc-일반화-극단값-분포" class="nav-link active" data-scroll-target="#일반화-극단값-분포">일반화 극단값 분포</a>
+  <ul class="collapse">
+  <li><a href="#블록-최댓값-방법" id="toc-블록-최댓값-방법" class="nav-link" data-scroll-target="#블록-최댓값-방법">블록 최댓값 방법</a></li>
+  </ul></li>
+  <li><a href="#임계값-초과-모형" id="toc-임계값-초과-모형" class="nav-link" data-scroll-target="#임계값-초과-모형">임계값 초과 모형</a></li>
+  <li><a href="#비정상-극단값" id="toc-비정상-극단값" class="nav-link" data-scroll-target="#비정상-극단값">비정상 극단값</a>
+  <ul class="collapse">
+  <li><a href="#비례-꼬리-모형과-스케다시스-밀도" id="toc-비례-꼬리-모형과-스케다시스-밀도" class="nav-link" data-scroll-target="#비례-꼬리-모형과-스케다시스-밀도">비례 꼬리 모형과 스케다시스 밀도</a></li>
+  </ul></li>
+  <li><a href="#주요-참고문헌" id="toc-주요-참고문헌" class="nav-link" data-scroll-target="#주요-참고문헌">주요 참고문헌</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 비정상 극단값의 베이지안 분석 — 배경 이론
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>이 연재는 필자의 박사학위 논문 <em>Bayesian Analysis of Nonstationary Extremes</em> (Lee, 2022, University of Edinburgh)의 1.2절(Background)을 우리말로 옮기고 다듬은 것이다.</p>
+<ol type="1">
+<li><a href="../../posts/thesis-background/1-univariate-extremes.html">극단값 이론 (1): 일변량 극단값</a></li>
+<li><a href="../../posts/thesis-background/2-multivariate-extremes.html">극단값 이론 (2): 다변량 극단값</a></li>
+<li><a href="../../posts/thesis-background/3-bayesian-psplines.html">베이지안 평활 (1): 베이지안 P-스플라인</a></li>
+<li><a href="../../posts/thesis-background/4-bayesian-gam.html">베이지안 평활 (2): 일반화 가법모형으로의 확장</a></li>
+<li><a href="../../posts/thesis-background/5-dirichlet-process-mixtures.html">비모수 베이즈 (1): 디리클레 과정 혼합</a></li>
+<li><a href="../../posts/thesis-background/6-bernstein-polynomials.html">비모수 베이즈 (2): 랜덤 번스타인 다항식</a></li>
+</ol>
+</div>
+</div>
+<p>극단값 이론(extreme-value theory)은 드물게 일어나지만 일단 일어나면 파국적인 결과를 낳는 사건, 즉 분포의 꼬리(tail)와 관련된 사건을 모형화하는 확률론적·통계적 접근법이다 (Coles, 2001; Beirlant et al., 2004; de Haan and Ferreira, 2007; Davison and Huser, 2015; Dey and Yan, 2016). 극단값 이론은 고전적 통계 방법을 보완하거나 때로는 대체하는 수단으로서 수문학(Katz et al., 2002), 기후학(Buishand, 1989), 보건학(Thomas et al., 2016), 공학(Castillo, 2012), 금융(Longin, 2016) 등 여러 분야에서 수요가 커지고 있다. 예를 들어 금융자산 수익률을 분석할 때 극단값 이론은 드물지만 파국적인 주식시장 폭락의 가능성을 평가하는 데 도움을 줄 수 있으며, 이는 위험관리 관점에서 매우 중요한 현상이다.</p>
+<p>이 글에서는 독립이고 동일한 분포를 따르는(i.i.d.) 확률변수열에 대한 일변량 극단값 이론의 기초를 정리하고, 시간에 따라 변하는 비정상(nonstationary) 극단값으로 넘어간다. i.i.d. 극단값을 모형화하는 확률적 접근은 크게 두 가지이다. <strong>일반화 극단값(generalised extreme-value, GEV) 분포</strong>는 표본 최댓값의 극한과 관련되고, <strong>일반화 파레토(generalised Pareto, GP) 분포</strong>는 어떤 높은 임계값(threshold)을 넘는 관측값과 관련된다. 아래 서술은 Coles (2001)와 Beirlant et al.&nbsp;(2004)를 따른다.</p>
+<section id="일반화-극단값-분포" class="level2">
+<h2 class="anchored" data-anchor-id="일반화-극단값-분포">일반화 극단값 분포</h2>
+<p>확률변수 <span class="math inline">\(X\)</span> 가 오른쪽 끝점 <span class="math inline">\(x^* = \sup\{x : F(x) &lt; 1\}\)</span> 을 갖는 분포함수 <span class="math inline">\(F\)</span> 를 따른다고 하자. <span class="math inline">\(X_1,\ldots,X_n\)</span> 을 크기 <span class="math inline">\(n\)</span> 인 확률표본, <span class="math inline">\(X_{k,n}\)</span> 을 표본의 <span class="math inline">\(k\)</span> 번째 순서통계량이라 하자. 표본 최댓값 <span class="math inline">\(X_{n,n}=\max\{X_1,\ldots,X_n\}\)</span> 의 극한분포는 점 <span class="math inline">\(x^*\)</span> 에서 퇴화(degenerate)한다. 모든 <span class="math inline">\(x&lt;x^*\)</span> 에 대해</p>
+<p><span class="math display">\[
+P(X_{n,n}\le x)=P(X_1\le x,\ldots,X_n\le x)=F^n(x)\to 0 \quad (n\to\infty)
+\]</span></p>
+<p>이기 때문이다. 퇴화하지 않는 극한분포를 얻으려면, 중심극한정리를 적용할 때 표본평균을 표준화하듯이 두 정규화 수열 <span class="math inline">\(\{a_n&gt;0\}\)</span> 과 <span class="math inline">\(\{b_n\}\)</span> 을 도입하여 모든 <span class="math inline">\(x\in\mathbb R\)</span> 에 대해</p>
+<p><span id="eq-ev-condition"><span class="math display">\[
+P\left(\frac{X_{n,n}-b_n}{a_n}\le x\right)=F^n(a_nx+b_n)\to G(x)\quad (n\to\infty)
+\tag{1}\]</span></span></p>
+<p>가 되도록 한다. 이 정규화를 <strong>극단값 조건(extreme-value condition)</strong> 이라 하며, 극한이 존재하면 그 극한분포는 일반화 극단값 분포족이 된다 (Fisher and Tippett, 1928; Gnedenko, 1943; de Haan, 1970).</p>
+<div id="thm-fisher-tippett" class="theorem">
+<p><span class="theorem-title"><strong>정리 1 (Fisher–Tippett–Gnedenko)</strong></span> <a href="#eq-ev-condition" class="quarto-xref">방정식&nbsp;1</a> 을 만족하는 수열 <span class="math inline">\(\{a_n&gt;0\}\)</span> 과 <span class="math inline">\(\{b_n\}\)</span> 이 존재하면, 분포 <span class="math inline">\(G\)</span> 는 다음 일반화 극단값 분포족과 같은 유형(type)이다.</p>
+<p><span class="math display">\[
+G(x)=\exp\{-(1+\xi x)^{-1/\xi}\},\quad 1+\xi x&gt;0,\quad \xi\in\mathbb R.
+\]</span></p>
+<p><span class="math inline">\(\xi=0\)</span> 인 경우는 <span class="math inline">\(G(x)=\exp\{-\exp(-x)\}\)</span> 로 해석한다. 모수 <span class="math inline">\(\xi\)</span> 를 <strong>극단값 지수(extreme-value index)</strong> 라 한다.</p>
+</div>
+<p>증명은 de Haan and Ferreira (2007, pp.&nbsp;7–8)를 참고하라.</p>
+<p>GEV 분포족의 극단값 지수 <span class="math inline">\(\xi\)</span> 는 분포함수 <span class="math inline">\(F\)</span> 의 꼬리 행태를 결정한다. <span class="math inline">\(\xi&gt;0\)</span>, <span class="math inline">\(\xi=0\)</span>, <span class="math inline">\(\xi&lt;0\)</span> 은 각각 두꺼운 꼬리(heavy tail), 가벼운 꼬리(light tail), 짧은 꼬리(short tail)를 나타내며, 각각 파레토형(Pareto-type), 검벨형(Gumbel-type), 와이블형(Weibull-type) 분포라 부른다. <a href="#fig-gev" class="quarto-xref">그림&nbsp;1</a> 은 극단값 지수가 서로 다른 세 GEV 분포를 보여준다.</p>
+<div id="fig-gev" class="quarto-float quarto-figure quarto-figure-center anchored" alt="극단값 지수가 1, 0, -1인 세 일반화 극단값 분포의 밀도함수. 파레토형은 오른쪽 꼬리가 길고, 검벨형은 오른쪽으로 지수적으로 감소하며, 와이블형은 오른쪽 끝점에서 끝난다.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/fig-1-1.png" class="img-fluid figure-img" alt="극단값 지수가 1, 0, -1인 세 일반화 극단값 분포의 밀도함수. 파레토형은 오른쪽 꼬리가 길고, 검벨형은 오른쪽으로 지수적으로 감소하며, 와이블형은 오른쪽 끝점에서 끝난다.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gev-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;1: 일반화 극단값 분포: 파레토형 <span class="math inline">\(\xi=1\)</span> (왼쪽), 검벨형 <span class="math inline">\(\xi=0\)</span> (가운데), 와이블형 <span class="math inline">\(\xi=-1\)</span> (오른쪽).
+</figcaption>
+</figure>
+</div>
+<p><a href="#eq-ev-condition" class="quarto-xref">방정식&nbsp;1</a> 의 극단값 조건은 <span class="math inline">\(X\)</span> 의 분포가 극한분포 <span class="math inline">\(G\)</span> 를 갖기 위한 필요충분조건이며, 어떤 특정 GEV 분포로의 극한이 성립하도록 하는 수열 <span class="math inline">\(\{a_n\}\)</span>, <span class="math inline">\(\{b_n\}\)</span> 이 존재하는 분포함수 <span class="math inline">\(F\)</span> 를 특징짓는다. 극단값 조건이 성립하면 <span class="math inline">\(F\)</span> 는 극단값 분포 <span class="math inline">\(G\)</span> 의 <strong>끌림 영역(domain of attraction)</strong> 에 속한다고 하고, <span class="math inline">\(F\in D_\xi(G)\)</span> 로 표기한다.</p>
+<p>극단값 조건은 꼬리 분위함수나 생존함수로도 동등하게 표현할 수 있다. <span class="math inline">\(X\)</span> 의 꼬리 분위함수(tail quantile function) <span class="math inline">\(U\)</span> 는 다음과 같이 정의되는 우연속 역함수이다.</p>
+<p><span class="math display">\[
+U(y)=\inf\left\{x : F(x)\ge 1-\frac{1}{y}\right\},\quad y\ge 1.
+\]</span></p>
+<p><span class="math inline">\(U\)</span> 는 <span class="math inline">\([1,\infty)\)</span> 에서 감소하지 않으며 <span class="math inline">\(U(\infty)=x^*\)</span> 이다. <span class="math inline">\(F\)</span> 가 연속이면 단순히 <span class="math inline">\(U(y)=F^{-1}(1-1/y)\)</span> 이다. 다음 정리는 극단값 조건의 세 가지 동치 표현을 제시한다.</p>
+<div id="thm-equivalent" class="theorem">
+<p><span class="theorem-title"><strong>정리 2 (극단값 조건의 동치 표현)</strong></span> <span class="math inline">\(\xi\in\mathbb R\)</span> 에 대해 다음 명제들은 서로 동치이다.</p>
+<ol type="1">
+<li>실수열 <span class="math inline">\(\{a_n&gt;0\}\)</span>, <span class="math inline">\(\{b_n\}\)</span> 이 존재하여 <span class="math inline">\(1+\xi x&gt;0\)</span> 인 모든 <span class="math inline">\(x\)</span> 에 대해 <span class="math display">\[
+\lim_{n\to\infty}F^n(a_nx+b_n)=G(x)=\exp\{-(1+\xi x)^{-1/\xi}\}.
+\]</span></li>
+<li>보조함수 <span class="math inline">\(a(\cdot)&gt;0\)</span> 이 존재하여 <span class="math inline">\(u&gt;0\)</span> 에 대해 <span class="math display">\[
+\lim_{x\to\infty}\frac{U(ux)-U(x)}{a(x)}=h(u)=\frac{u^\xi-1}{\xi}.
+\]</span> 여기서 <span class="math inline">\(\xi=0\)</span> 이면 우변은 <span class="math inline">\(\log u\)</span> 로 해석한다.</li>
+<li>보조함수 <span class="math inline">\(b(\cdot)\)</span> 가 존재하여 <span class="math inline">\(1+\xi y&gt;0\)</span> 인 모든 <span class="math inline">\(y\)</span> 에 대해 <span id="eq-ev-survival"><span class="math display">\[
+\lim_{x\uparrow x^*}\frac{1-F\{x+b(x)y\}}{1-F(x)}=(1+\xi y)^{-1/\xi}.
+\tag{2}\]</span></span></li>
+</ol>
+</div>
+<p>증명은 Beirlant et al.&nbsp;(2004, pp.&nbsp;80–81)과 de Haan and Ferreira (2007, p.&nbsp;11)를 참고하라.</p>
+<section id="블록-최댓값-방법" class="level3">
+<h3 class="anchored" data-anchor-id="블록-최댓값-방법">블록 최댓값 방법</h3>
+<p>GEV 분포족은 월별·연별 최댓값처럼 <strong>블록 최댓값(block maxima)</strong> 의 분포를 모형화하는 데 유용하다. <a href="#thm-fisher-tippett" class="quarto-xref">정리&nbsp;1</a> 은 확률표본의 크기 <span class="math inline">\(n\)</span> 이 충분히 크면, 적절한 위치·척도 변환을 거친 표본 최댓값의 분포를 극단값 분포족 <span class="math inline">\(G\)</span> 로 근사할 수 있음을 뜻한다. 블록 최댓값 방법은 관측값을 같은 크기의 블록으로 나누고, 각 블록에서 얻은 최댓값들에 GEV 분포를 적합한다.</p>
+<p>블록 크기의 선택에는 두 가지 근사 오차에서 오는 편향–분산 상충(bias–variance trade-off)이 따른다. 블록 수가 적고 블록마다 표본이 많으면 표본 최댓값이 GEV 분포를 잘 따르지만, 모형화에 쓸 최댓값의 개수가 줄어 모수 추정이 부정확해질 수 있다. 반대로 블록 수가 많고 블록마다 표본이 적으면 추정량의 분산은 줄지만 GEV 근사의 편향이 커진다.</p>
+</section>
+</section>
+<section id="임계값-초과-모형" class="level2">
+<h2 class="anchored" data-anchor-id="임계값-초과-모형">임계값 초과 모형</h2>
+<p>블록 최댓값 모형은 각 블록에서 최댓값 하나만 쓴다. 그러나 최댓값에 가까운 다른 관측값들도 <a href="#eq-ev-condition" class="quarto-xref">방정식&nbsp;1</a> 의 극단값 조건에서 분포 <span class="math inline">\(G\)</span> 를 따를 것으로 기대할 수 있다. 이 생각을 활용하는 것이 <strong>임계값 초과(peaks-over-threshold, POT)</strong> 모형이다.</p>
+<p><span class="math inline">\(X\)</span> 가 오른쪽 끝점 <span class="math inline">\(x^*\)</span> 를 갖는 분포함수 <span class="math inline">\(F\)</span> 를 따르고, <span class="math inline">\(Y=X-u\)</span> 를 어떤 임계값 <span class="math inline">\(u\)</span> 에 대한 초과량(exceedance)이라 하자. 임계값을 넘는 초과량 <span class="math inline">\(Y\)</span> 의 분포는</p>
+<p><span class="math display">\[
+F_u(y)=P(Y\le y\mid X&gt;u)=\frac{F(u+y)-F(u)}{1-F(u)},\quad 0\le y\le x^*-u
+\]</span></p>
+<p>이다. 임계값 <span class="math inline">\(u\)</span> 가 충분히 크면 임계값 초과량의 분포는 일반화 파레토 분포로 근사할 수 있다.</p>
+<div id="thm-pbdh" class="theorem">
+<p><span class="theorem-title"><strong>정리 3 (Pickands–Balkema–de Haan)</strong></span> 분포함수 <span class="math inline">\(F\)</span> 가 극단값 분포의 끌림 영역에 속한다고 하자. 즉, <span class="math inline">\(F\in D_\xi(G)\)</span>, <span class="math inline">\(\xi\in\mathbb R\)</span> 이다. 그러면 조건부 초과 분포함수 <span class="math inline">\(F_u(y)\)</span> 는</p>
+<p><span class="math display">\[
+\lim_{u\to x^*}\ \sup_{0\le y\le x^*-u}\left|F_u(y)-H(y;\sigma,\xi)\right|=0
+\]</span></p>
+<p>을 만족한다. 여기서 <span class="math inline">\(H\)</span> 는 다음 형태의 일반화 파레토 분포이다.</p>
+<p><span id="eq-gpd"><span class="math display">\[
+H(y;\sigma,\xi)=1-\left(1+\frac{\xi y}{\sigma}\right)^{-1/\xi},\quad y&gt;0,\quad \xi\in\mathbb R.
+\tag{3}\]</span></span></p>
+<p><span class="math inline">\(H\)</span> 는 <span class="math inline">\(\{y:1+\xi y/\sigma&gt;0\}\)</span> 에서 정의되며, <span class="math inline">\(\xi=0\)</span> 이면 <span class="math inline">\(H(y)=1-\exp(-y/\sigma)\)</span> 로 해석한다.</p>
+</div>
+<p>증명은 Pickands (1975)와 Balkema and de Haan (1974)를 참고하라.</p>
+<p><a href="#eq-gpd" class="quarto-xref">방정식&nbsp;3</a> 의 극한분포는 <a href="#thm-equivalent" class="quarto-xref">정리&nbsp;2</a> 의 동치 조건 <a href="#eq-ev-survival" class="quarto-xref">방정식&nbsp;2</a> 로부터 유도할 수 있다. <span class="math inline">\(Y\)</span> 의 조건부 생존함수를 <span class="math inline">\(y^*b(u)\)</span> 에서 계산하면</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(Y&gt;y^*b(u)\mid Y&gt;0)&amp;=P(X-u&gt;y^*b(u)\mid X-u&gt;0)\\
+&amp;=P(X&gt;u+y^*b(u)\mid X&gt;u)\\
+&amp;=\frac{1-F\{u+y^*b(u)\}}{1-F(u)}\to(1+\xi y^*)^{-1/\xi}\quad (u\uparrow x^*)
+\end{aligned}
+\]</span></p>
+<p>이다. <span class="math inline">\(y=y^*b(u)\)</span> 로 두면, 조건부 초과 분포함수는 어떤 모수 <span class="math inline">\(\sigma_u&gt;0\)</span> 에 대해 다음과 같이 일반화 파레토 분포로 근사된다.</p>
+<p><span class="math display">\[
+P(Y\le y\mid X&gt;u)\approx 1-\left\{1+\frac{\xi y}{b(u)}\right\}^{-1/\xi}=1-\left(1+\frac{\xi y}{\sigma_u}\right)^{-1/\xi}.
+\]</span></p>
+<p>극단값 분포에서와 마찬가지로 극단값 지수 <span class="math inline">\(\xi\)</span> 가 분포 <span class="math inline">\(F\)</span> 의 꼬리 행태를 지배한다. GP 분포의 지지집합(support)도 극단값 지수에 따라 달라진다. <span class="math inline">\(\xi\ge0\)</span> 이면 상한이 없지만, <span class="math inline">\(\xi&lt;0\)</span> 이면 초과량은 상한 <span class="math inline">\(-\sigma/\xi\)</span> 를 갖는다.</p>
+<p>임계값 선택에도 비슷한 편향–분산 상충이 있다. 임계값이 충분히 높지 않으면 GP 근사가 나빠지고, 너무 높으면 모수 추정의 분산이 커진다.</p>
+</section>
+<section id="비정상-극단값" class="level2">
+<h2 class="anchored" data-anchor-id="비정상-극단값">비정상 극단값</h2>
+<p>고전적 극단값 분석은 분포 꼬리에 대한 통계적 추론을 위해 관측값이 i.i.d.라고 가정한다. i.i.d. 가정에서 벗어나는 경우는 두 가지이다. 관측값이 계열 의존성(serial dependence)을 보이거나, 서로 다른 분포에서 나올 수 있다. <strong>비정상 극단값(nonstationary extremes)</strong> 은 시간에 따라 변하는 극단값의 성질을 반영하며, 지금도 활발히 연구되는 분야이다. 시간에 따른 극단값의 동학을 포착하기 위한 여러 통계모형이 제안되었다 (Davison and Smith, 1990; Coles, 2001; Chavez-Demoulin and Davison, 2005; Eastoe and Tawn, 2009; Wang and Tsai, 2009; Jonathan et al., 2014; Randell et al., 2016; Einmahl et al., 2016; Opitz et al., 2018; Einmahl et al., 2020; de Haan and Zhou, 2020; Johannesson et al., 2022).</p>
+<p>자연스러운 접근은 GEV 분포나 GP 분포의 모수에 시간 첨자를 붙여 i.i.d. 극단값 이론을 확장하는 것이다 (Davison and Smith, 1990; Coles, 2001). 예를 들어 정규화된 최댓값 <span class="math inline">\(X_t\)</span> 의 극한분포를 비정상 GEV 모형으로 기술할 수 있다.</p>
+<p><span class="math display">\[
+X_t\sim \mathrm{GEV}\{\mu(t),\sigma(t),\xi(t)\},\quad t=1,\ldots,n.
+\]</span></p>
+<p>여기서 <span class="math inline">\(\mu(t)\)</span>, <span class="math inline">\(\sigma(t)\)</span>, <span class="math inline">\(\xi(t)\)</span> 는 시점 <span class="math inline">\(t\)</span> 에서 GEV 분포의 시변(time-varying) 위치·척도·형상 모수이다. 마찬가지로 두 모수를 갖는 비정상 GP 모형도 쓸 수 있다.</p>
+<p><span class="math display">\[
+Y_t\sim\mathrm{GP}\{\sigma(t),\xi(t)\},\quad t=1,\ldots,n.
+\]</span></p>
+<p>비정상 모형의 추론에는 여러 방법이 쓰였다. 전처리(Eastoe and Tawn, 2009), 분위회귀 기법(Jonathan et al., 2014), 베이지안 준모수 방법(Randell et al., 2016), 근사 베이지안 방법(Opitz et al., 2018), 비모수 방법(de Haan and Zhou, 2020) 등이다. 점과정(point process)이나 자료 변환으로 얻은 관측값의 표본분포가 포아송 분포나 지수분포 같은 지수족(exponential family)에 속하면, 일반화 선형모형(GLM)이나 일반화 가법모형(GAM)의 틀에서 추론할 수 있다 (Chavez-Demoulin and Davison, 2005; Wang and Tsai, 2009; Randell et al., 2016).</p>
+<section id="비례-꼬리-모형과-스케다시스-밀도" class="level3">
+<h3 class="anchored" data-anchor-id="비례-꼬리-모형과-스케다시스-밀도">비례 꼬리 모형과 스케다시스 밀도</h3>
+<p><strong>비례 꼬리 모형(proportional tails model)</strong> (Einmahl et al., 2016)은 비정상 극단값을 모형화하는 새로운 접근이다. 이 모형은 관측값이 독립이지만 동일하지 않은 분포에서 나온다고 가정하며, 분포가 완만하게 변하는 상황에서 극단값 통계를 극단값 지수뿐 아니라 극단 사건의 <strong>빈도</strong>로도 포착할 수 있음을 보인다. 이 방법은 꼬리 동등류(tail equivalent class; Resnick, 1987, 1.5절)와 상대위험(relative risk; de Haan et al., 2011)에 바탕을 둔다.</p>
+<p>분포 <span class="math inline">\(F_t(x)=P(X(t)\le x)\)</span>, <span class="math inline">\(x\in\mathbb R\)</span> 를 따르는 시변 확률변수 <span class="math inline">\(X(t)\)</span> 를 생각하자. 어떤 <span class="math inline">\(\xi\in\mathbb R\)</span> 에 대해 <span class="math inline">\(F_t\)</span>, <span class="math inline">\(t\ge0\)</span> 이 모두 극단값 분포의 끌림 영역에 속한다고(<span class="math inline">\(F_t\in D_\xi(G)\)</span>) 가정하면, 시점 <span class="math inline">\(t\)</span> 의 생존확률은 시점 <span class="math inline">\(0\)</span> 의 생존확률과 상대위험 <span class="math inline">\(c(t)\)</span> 의 곱으로 체계적으로 분해된다.</p>
+<p><span class="math display">\[
+\lim_{x\uparrow x^*}\frac{1-F_t(x)}{1-F_0(x)}=c(t),\quad t\ge0.
+\]</span></p>
+<p>Einmahl et al.&nbsp;(2016)은 이 꼬리 비례의 아이디어를 발전시켜, 극단값 지수가 시간에 걸쳐 일정하다는 조건 아래에서 극단 사건의 강도(intensity)를 나타내는 <strong>스케다시스 밀도함수(scedasis density function)</strong> 를 제안하였다. 시점 <span class="math inline">\(t=1,\ldots,n\)</span> 에서 각각 연속 분포함수 <span class="math inline">\(F_1,\ldots,F_n\)</span> 을 따르는 독립 관측값 <span class="math inline">\(y_1,\ldots,y_n\)</span> 이 공통의 오른쪽 끝점 <span class="math inline">\(y^*=\sup\{y:F_t(y)&lt;1\}\)</span> 을 갖는다고 하자. 또한 기준 분포함수 <span class="math inline">\(F_0\)</span> 와 연속함수 <span class="math inline">\(c:[0,1]\to[0,\infty)\)</span> 가 존재하여</p>
+<p><span class="math display">\[
+c\left(\frac{t}{n}\right):=\lim_{y\to y^*}\frac{1-F_t(y)}{1-F_0(y)},\quad t=1,\ldots,n
+\]</span></p>
+<p>이 성립한다고 하자. 여기서 <span class="math inline">\(c\)</span> 는 정규화 제약</p>
+<p><span class="math display">\[
+\int_0^1 c(w)\,\mathrm dw=1
+\]</span></p>
+<p>을 만족하는 스케다시스 밀도이다. 스케다시스 밀도 <span class="math inline">\(c\)</span> 는 큰 <span class="math inline">\(y\)</span> 에서 꼬리 <span class="math inline">\(1-F_t\)</span> 가 기준 꼬리 <span class="math inline">\(1-F_0\)</span> 에 비해 얼마나 많은 확률질량을 갖는지를 정량화한다.</p>
+<p><a href="#fig-scedasis" class="quarto-xref">그림&nbsp;2</a> 는 스케다시스 밀도함수의 몇 가지 예이다. 왼쪽의 균일한 스케다시스는 극단 사건의 빈도가 시간에 걸쳐 일정한 경우이고, 가운데와 오른쪽의 두 스케다시스 밀도는 극단값의 빈도가 시간에 따라 변하는 경우이다. 임계값을 넘는 초과의 <strong>빈도</strong>는 스케다시스 밀도함수의 값을, 초과의 <strong>크기</strong>는 극단값 지수의 값을 반영한다.</p>
+<div id="fig-scedasis" class="quarto-float quarto-figure quarto-figure-center anchored" alt="세 스케다시스 밀도. 왼쪽은 높이 1의 균일 밀도, 가운데는 시간에 따라 증가하는 밀도, 오른쪽은 0.5 부근에 봉우리가 있는 밀도이며, 아래 러그 표시가 각 밀도에 맞게 분포한다.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-scedasis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="figures/fig-1-2.png" class="img-fluid figure-img" alt="세 스케다시스 밀도. 왼쪽은 높이 1의 균일 밀도, 가운데는 시간에 따라 증가하는 밀도, 오른쪽은 0.5 부근에 봉우리가 있는 밀도이며, 아래 러그 표시가 각 밀도에 맞게 분포한다.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-scedasis-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;2: 극단 사건의 빈도와 스케다시스 함수의 예. 아래쪽 러그 플롯은 <span class="math inline">\(t\in[0,1]\)</span> 에서 발생한 극단 사건을 나타내며, 각각 극단 사건의 빈도가 균일한 경우(왼쪽), 빈도가 증가하는 추세(가운데), 특정 기간에 극단 사건이 몰리는 경우(오른쪽)에 해당한다.
+</figcaption>
+</figure>
+</div>
+<p>다음 글에서는 여러 변수의 극단값이 함께 나타나는 구조, 즉 다변량 극단값 이론을 다룬다.</p>
+</section>
+</section>
+<section id="주요-참고문헌" class="level2">
+<h2 class="anchored" data-anchor-id="주요-참고문헌">주요 참고문헌</h2>
+<ul>
+<li>Balkema, A. A. and de Haan, L. (1974). Residual life time at great age. <em>The Annals of Probability</em>, 2, 792–804.</li>
+<li>Beirlant, J., Goegebeur, Y., Segers, J. and Teugels, J. (2004). <em>Statistics of Extremes: Theory and Applications</em>. Wiley.</li>
+<li>Coles, S. (2001). <em>An Introduction to Statistical Modeling of Extreme Values</em>. Springer.</li>
+<li>Davison, A. C. and Smith, R. L. (1990). Models for exceedances over high thresholds. <em>Journal of the Royal Statistical Society: Series B</em>, 52, 393–425.</li>
+<li>de Haan, L. and Ferreira, A. (2007). <em>Extreme Value Theory: An Introduction</em>. Springer.</li>
+<li>Einmahl, J. H. J., de Haan, L. and Zhou, C. (2016). Statistics of heteroscedastic extremes. <em>Journal of the Royal Statistical Society: Series B</em>, 78, 31–51.</li>
+<li>Fisher, R. A. and Tippett, L. H. C. (1928). Limiting forms of the frequency distribution of the largest or smallest member of a sample. <em>Mathematical Proceedings of the Cambridge Philosophical Society</em>, 24, 180–190.</li>
+<li>Gnedenko, B. (1943). Sur la distribution limite du terme maximum d’une série aléatoire. <em>Annals of Mathematics</em>, 44, 423–453.</li>
+<li>Pickands, J. (1975). Statistical inference using extreme order statistics. <em>The Annals of Statistics</em>, 3, 119–131.</li>
+<li>Resnick, S. (1987). <em>Extreme Values, Regular Variation, and Point Processes</em>. Springer.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
