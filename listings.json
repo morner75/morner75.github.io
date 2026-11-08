@@ -14,14 +14,14 @@
   {
     "listing": "/blog.html",
     "items": [
-      "/posts/thesis-background/1-univariate-extremes.html",
-      "/posts/thesis-background/2-multivariate-extremes.html",
-      "/posts/thesis-background/3-bayesian-psplines.html",
-      "/posts/thesis-background/4-bayesian-gam.html",
-      "/posts/thesis-background/5-dirichlet-process-mixtures.html",
-      "/posts/thesis-background/6-bernstein-polynomials.html",
       "/posts/smoothing/smoothing2.html",
-      "/posts/smoothing/smoothing1.html"
+      "/posts/smoothing/smoothing1.html",
+      "/posts/thesis-background/6-bernstein-polynomials.html",
+      "/posts/thesis-background/5-dirichlet-process-mixtures.html",
+      "/posts/thesis-background/4-bayesian-gam.html",
+      "/posts/thesis-background/3-bayesian-psplines.html",
+      "/posts/thesis-background/2-multivariate-extremes.html",
+      "/posts/thesis-background/1-univariate-extremes.html"
     ]
   },
   {
