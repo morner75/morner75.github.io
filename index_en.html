@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Practical Bayesian Extremist</title>
+<title>Junho Lee | Practical Bayesian Extremist – Practical Bayesian Extremist</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,16 +30,19 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-listing/list.min.js"></script>
+<script src="site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-35cccd11ad14a73224a77815faaca215.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,12 +70,70 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
 
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    const listingTargetEl = window.document.querySelector('#listing-home-latest .list');
+    if (!listingTargetEl) {
+      // No listing discovered, do not attach.
+      return; 
+    }
+
+    const options = {
+      valueNames: ['listing-image','listing-title','listing-date',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
+      
+      searchColumns: ["listing-title","listing-author","listing-date","listing-image","listing-description"],
+    };
+
+    window['quarto-listings'] = window['quarto-listings'] || {};
+    window['quarto-listings']['listing-home-latest'] = new List('listing-home-latest', options);
+
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  });
+
+  window.addEventListener('hashchange',() => {
+    if (window['quarto-listing-loaded']) {
+      window['quarto-listing-loaded']();
+    }
+  })
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="nav-fixed home-page quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -126,42 +187,159 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     
 <!-- main -->
-<div class="quarto-about-trestles column-page">
-  <div class="about-entity">
-    <img src="starry_night.jpeg" class="about-image
-  rounded " style="width: 30em;">
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Practical Bayesian Extremist</h1>
-</div>
-<div class="quarto-title-meta column-page">
-  </div>
-</header>
-    <div class="about-links">
-  <a href="https://www.linkedin.com/in/junho-lee-050943267/" class="about-link" rel="" target="">
-    <i class="bi bi-linkedin"></i>
-     <span class="about-link-text">LinkedIn</span>
-  </a>
-  <a href="https://www.github.com/morner75" class="about-link" rel="" target="">
-    <i class="bi bi-github"></i>
-     <span class="about-link-text">Github</span>
-  </a>
-</div>
-  </div>
-  <div class="about-contents"><main class="content column-page" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><h1 class="title display-7">Practical Bayesian Extremist</h1></header>
 <a class="lang-switch" href="index.html" hreflang="ko">한국어</a>
-<div id="intro_english">
-<p><strong>Hi, I’m Junho Lee, an investigator working across capital and virtual asset markets, and a Bayesian statistician.</strong></p>
-<p>I have a PhD in Statistics from the University of Edinburgh and have worked at the Financial Supervisory Service in South Korea since 2003.</p>
-<p>Much of my career has been spent investigating unfair trading in stock and derivatives markets and examining financial investment companies. Since January 2026, I have been the Team Head of the Virtual Asset Investigation Analysis Team, extending that investigative experience to virtual asset markets. I have also worked on stress-testing and climate scenario analysis.</p>
-<p>My research interests include extreme value theory, Bayesian nonparametrics and practical data analysis in R. I am also working on fraud detection models for market manipulation and applying Bayesian networks to account tracking.</p>
-<p>The views expressed on this blog are my own and do not represent those of my employer.</p>
-</div>
+
+<header id="title-block-header">
 
 
-</main></div>
+</header>
+
+
+<section class="home-hero">
+  <div class="home-hero-text">
+    <p class="home-eyebrow">Practical Bayesian Extremist</p>
+    <h1 class="home-name">Junho Lee</h1>
+    <p class="home-tagline">I analyse capital and virtual asset markets, <br>and study Bayesian statistics and AI.</p>
+    <nav class="home-actions" aria-label="Main pages">
+      <a href="research.html">Research</a>
+      <a href="CV_ENG.html">CV</a>
+      <a href="blog.html">Blog</a>
+    </nav>
+  </div>
+  <img class="home-hero-image" src="starry_night.jpeg" alt="People on a hillside with laptops and glowing data beneath a swirling, star-filled night sky">
+</section>
+
+<section class="home-intro">
+  <p class="home-lead">Welcome to my blog.</p>
+  <p>I have a PhD in Statistics from the University of Edinburgh and joined the Financial Supervisory Service in South Korea in 2003. I specialised in extreme value theory and Bayesian nonparametrics and am interested in practical data analysis in R and Python, and the mathematical foundations of statistical and machine learning models. In my spare time, I build dashboards using public data and AI. I currently work on financial market analysis and investigation at the Financial Supervisory Service.</p>
+</section>
+
+<section class="home-cards" aria-label="What I do">
+  <article class="home-card">
+    <h2 class="anchored">Unfair trading analysis</h2>
+    <figure class="home-chart figure">
+      <img src="images/pump-chart.svg" alt="Illustrative virtual asset chart in which the price moves sideways, surges on rising volume and partly retraces" class="figure-img">
+      <figcaption>Illustrative virtual asset surge; not real market data.</figcaption>
+    </figure>
+    <p>At the Financial Supervisory Service, I investigate and analyse unfair trading, and study detection models and algorithms for market manipulation.</p>
+    <a href="research/wash-trading/index.html">Wash trading study (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2 class="anchored">Benford's Law</h2>
+    <figure class="home-chart figure">
+      <img src="images/benford-first-digit.svg" alt="Bar chart of the Benford first-digit distribution. Digit 1 is highest at 30.1% and the share falls to 4.6% for digit 9." class="figure-img">
+      <figcaption>Benford first-digit distribution: P(d) = log<sub>10</sub>(1 + 1/d)</figcaption>
+    </figure>
+    <p>I study how to apply Benford's Law in areas such as anomaly detection.</p>
+    <a href="research/benford-cyclones/index.html">Benford's Law study (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2 class="anchored">Bayesian methods</h2>
+    <div class="home-bayes">
+      <img src="images/thomas-bayes.png" alt="Black-and-white portrait traditionally said to show Thomas Bayes">
+      <p class="home-formula">P(θ | y) ∝ P(y | θ) P(θ)</p>
+    </div>
+    <p>I study a range of Bayesian models, including Bayesian smoothing, Bayesian vector autoregression and Bayesian networks.</p>
+    <a href="posts/smoothing/smoothing2.html">Bayesian smoothing post (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2 class="anchored">Extreme value theory</h2>
+    <figure class="home-chart figure">
+      <img src="images/gev-types.svg" alt="Comparison of the three generalized extreme value types. Fréchet has the heaviest right tail, Gumbel decays exponentially and Weibull has a finite right endpoint." class="figure-img">
+      <figcaption>The three extreme value types (μ = 0, σ = 1). Their right tails differ in shape.</figcaption>
+    </figure>
+    <p>I study applications of extreme value theory (EVT).</p>
+    <a href="research/tail-dependence/index.html">Extremal dependence study (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2 class="anchored">Financial markets and industry analysis</h2>
+    <figure class="home-chart figure">
+      <img src="images/stress-scenario-en.svg" alt="Illustrative GDP growth paths: after the actual data, the baseline rises gently while the adverse scenario falls into contraction and then recovers" class="figure-img">
+      <figcaption>Illustrative stress-test scenarios: GDP growth (%). Not an actual projection.</figcaption>
+    </figure>
+    <p>I develop a range of models for financial markets and the financial industry, including macrofinancial stress tests and GDP nowcasting.</p>
+  </article>
+  <article class="home-card">
+    <h2 class="anchored">Climate change and financial markets</h2>
+    <figure class="home-chart figure">
+      <img src="images/climate-loss-en.svg" alt="Cumulative additional credit losses to 2050: delayed transition KRW 200tn, net zero 96tn, current policies 60tn" class="figure-img">
+      <figcaption>Cumulative additional credit losses to 2050 by scenario (KRW tn), from the joint climate stress test of Korean banks and insurers.</figcaption>
+    </figure>
+    <p>I study a range of climate change applications, such as the effects of climate change on financial markets.</p>
+    <a href="research/climate-stress-test/index.html">Climate stress test (in Korean) →</a>
+  </article>
+</section>
+
+<section class="home-latest-head">
+  <h2 class="anchored">Latest research <span>(explainers in Korean)</span></h2>
+  <a href="research.html">View all →</a>
+</section>
+<div id="listing-home-latest" class="quarto-listing quarto-listing-container-grid">
+<div class="list grid quarto-listing-cols-3">
+<div class="g-col-1" data-index="0" data-categories="JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIwJTJDJUVDJTlCJThDJUVDJThCJTlDJTIwJUVEJThBJUI4JUVCJUEwJTg4JUVDJTlEJUI0JUVCJTk0JUE5JTJDJUVCJUIyJUE0JUVEJThGJUFDJUVCJTkzJTlDJTIwJUVCJUIyJTk1JUVDJUI5JTk5" data-listing-date-sort="1793718000000" data-listing-file-modified-sort="1793783069715" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="45" data-listing-word-count-sort="8988">
+<a href="./research/wash-trading/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./research/wash-trading/figures/fig-01.png" class="thumbnail-image card-img" style="height: 170px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향
+</h5>
+<div class="card-attribution card-text-small end">
+<div class="listing-date">
+Nov 2026
 </div>
- <!-- /main -->
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="1" data-categories="JUVEJTg2JUI1JUVBJUIzJTg0JTIwJUVCJUI2JTg0JUVDJTg0JTlEJTJDJUVDJTg0JUEwJUVEJTk4JTk1JUVEJTk4JUJDJUVEJTk1JUE5JUVCJUFBJUE4JUVEJTk4JTk1JTJDJUVDJTg0JUJDJUVDJTg0JTlDJTIwJUVCJThEJUIwJUVDJTlEJUI0JUVEJTg0JUIw" data-listing-date-sort="1786978800000" data-listing-file-modified-sort="1793869139450" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1864">
+<a href="./research/calf-diarrhoea/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./research/calf-diarrhoea/figures/fig-3.jpg" class="thumbnail-image card-img" style="height: 170px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+가속도 센서로 송아지 설사의 조짐을 미리 알아챌 수 있을까
+</h5>
+<div class="card-attribution card-text-small end">
+<div class="listing-date">
+Aug 2026
+</div>
+</div>
+</div>
+</div></a>
+</div>
+<div class="g-col-1" data-index="2" data-categories="JUVBJUI4JUIwJUVEJTlCJTg0JUVBJUI4JTg4JUVDJTlDJUI1JTJDJUVDJTk4JUE4JUVDJThCJUE0JUVBJUIwJTgwJUVDJThBJUE0JTJDJUVDJThCJUEwJUVDJTlBJUE5JUVBJUIzJUI1JUVDJTk3JUFD" data-listing-date-sort="1713279600000" data-listing-file-modified-sort="1794017116903" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2028">
+<a href="./research/ghg-credit/index.html" class="quarto-grid-link">
+<div class="quarto-grid-item card h-100 card-left">
+<p class="card-img-top">
+<img loading="lazy" src="./research/ghg-credit/figures/coef-maturity.svg" class="thumbnail-image card-img" style="height: 170px;">
+</p>
+<div class="card-body post-contents">
+<h5 class="no-anchor card-title listing-title">
+온실가스를 많이 배출하는 기업의 차입은 줄고 있을까
+</h5>
+<div class="card-attribution card-text-small end">
+<div class="listing-date">
+Apr 2024
+</div>
+</div>
+</div>
+</div></a>
+</div>
+</div>
+<div class="listing-no-matching d-none">No matching items</div>
+</div>
+<p class="home-disclaimer">The views expressed on this blog are my own and do not represent those of my employer.</p>
+
+
+
+
+</main> <!-- /main -->
 <script>
 // 영문 페이지의 상단 링크를 영문 페이지로 연결한다.
 document.addEventListener('DOMContentLoaded', function () {
@@ -180,6 +358,13 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
     const isCodeAnnotation = (el) => {
       for (const clz of el.classList) {
         if (clz.startsWith('code-annotation-')) {                     

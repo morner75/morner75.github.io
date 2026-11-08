@@ -33,3 +33,302 @@ body {
   color: #3e3f3a;
   background: #f8f5f0;
 }
+
+/* 시작화면: 분할 배너, 소개, 주제 카드, 최신 연구 */
+.home-page {
+  --home-navy: #14284d;
+  --home-star: #f2c14e;
+  --home-line: #dfd7ca;
+}
+
+.home-page main.content {
+  max-width: 1120px;
+  margin-inline: auto;
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  overflow: hidden;
+  margin: 2.5rem 0 3rem;
+  background: var(--home-navy);
+  border-radius: 12px;
+}
+
+.home-hero-text {
+  align-self: center;
+  padding: 3rem;
+  color: #fff;
+}
+
+.home-eyebrow {
+  margin: 0 0 1.1rem;
+  padding-bottom: 0.7rem;
+  font-size: 1.4rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--home-star);
+  border-bottom: 2px solid var(--home-star);
+  width: fit-content;
+}
+
+.home-name {
+  margin: 0 0 0.8rem;
+  padding: 0;
+  font-size: 2.75rem;
+  font-weight: 700;
+  color: #fff;
+  border: 0;
+}
+
+.home-tagline {
+  margin: 0 0 1.75rem;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  color: #fff;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.home-actions a {
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+  color: #fff;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 6px;
+}
+
+.home-actions a:first-child {
+  font-weight: 500;
+  color: var(--home-navy);
+  background: var(--home-star);
+  border-color: var(--home-star);
+}
+
+.home-actions a:hover,
+.home-actions a:focus-visible {
+  color: var(--home-navy);
+  background: #fff;
+  border-color: #fff;
+}
+
+.home-hero-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  max-height: 460px;
+  object-fit: cover;
+  object-position: 50% 85%;
+}
+
+.home-intro {
+  max-width: 60rem;
+  margin: 0 auto 3rem;
+  font-size: 1.0625rem;
+  line-height: 1.8;
+  text-align: center;
+}
+
+.home-intro p {
+  margin-bottom: 0.6rem;
+}
+
+.home-intro p:not(.home-lead) {
+  text-align: justify;
+}
+
+.home-lead {
+  font-size: 1.45rem;
+  font-weight: 500;
+  color: var(--home-navy);
+}
+
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 3.5rem;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.4rem 1.5rem;
+  background: #fff;
+  border: 1px solid var(--home-line);
+  border-top: 3px solid var(--home-star);
+  border-radius: 8px;
+}
+
+.home-card h2 {
+  margin: 0 0 0.75rem;
+  padding: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border: 0;
+}
+
+.home-card p {
+  font-size: 0.98rem;
+  line-height: 1.75;
+}
+
+.home-card > a {
+  margin-top: auto;
+  padding-top: 0.25rem;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.home-card > a:hover,
+.home-card > a:focus-visible {
+  text-decoration: underline;
+}
+
+.home-bayes {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.4rem;
+}
+
+.home-bayes img {
+  flex: none;
+  width: 76px;
+  height: 92px;
+  object-fit: cover;
+  object-position: 50% 20%;
+  border: 1px solid var(--home-line);
+  border-radius: 50%;
+}
+
+.home-card .home-formula {
+  margin: 0;
+  font-family: "Times New Roman", Georgia, serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--home-navy);
+}
+
+.home-card .home-credit {
+  margin-bottom: 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #6f6e67;
+}
+
+.home-chart {
+  margin: 0 0 0.75rem;
+}
+
+.home-chart img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--home-line);
+  border-radius: 6px;
+}
+
+.home-chart figcaption {
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: #6f6e67;
+}
+
+.home-latest-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.home-latest-head h2 {
+  margin: 0;
+  padding: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+  border: 0;
+}
+
+.home-latest-head h2 span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #6f6e67;
+}
+
+.home-latest-head a {
+  font-size: 0.92rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* 도표 썸네일이 잘리지 않게 한다. */
+.home-page .quarto-listing img {
+  object-fit: contain !important;
+  background: #fff;
+}
+
+/* 이름을 배너에서 보여 주므로 기본 제목은 숨긴다. */
+.home-page #title-block-header,
+.home-page .quarto-title-block {
+  display: none;
+}
+
+.home-disclaimer {
+  margin: 2.5rem 0 1rem;
+  font-size: 0.85rem;
+  color: #6f6e67;
+  text-align: center;
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .home-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767.98px) {
+  .home-hero {
+    grid-template-columns: 1fr;
+    margin-top: 2.75rem;
+  }
+
+  .home-hero-image {
+    order: -1;
+    min-height: 0;
+    height: 240px;
+  }
+
+  .home-hero-text {
+    padding: 1.75rem 1.5rem 2rem;
+  }
+
+  .home-name {
+    font-size: 2.25rem;
+  }
+
+  .home-tagline {
+    font-size: 1.15rem;
+  }
+
+  .home-tagline br {
+    display: none;
+  }
+
+  .home-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .home-intro {
+    text-align: left;
+  }
+}

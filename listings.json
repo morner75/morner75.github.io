@@ -17,5 +17,29 @@
       "/posts/smoothing/smoothing2.html",
       "/posts/smoothing/smoothing1.html"
     ]
+  },
+  {
+    "listing": "/index_en.html",
+    "items": [
+      "/research/wash-trading/index.html",
+      "/research/calf-diarrhoea/index.html",
+      "/research/ghg-credit/index.html",
+      "/research/tail-dependence/index.html",
+      "/research/climate-stress-test/index.html",
+      "/research/carbon-returns/index.html",
+      "/research/benford-cyclones/index.html"
+    ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/research/wash-trading/index.html",
+      "/research/calf-diarrhoea/index.html",
+      "/research/ghg-credit/index.html",
+      "/research/tail-dependence/index.html",
+      "/research/climate-stress-test/index.html",
+      "/research/carbon-returns/index.html",
+      "/research/benford-cyclones/index.html"
+    ]
   }
 ]
