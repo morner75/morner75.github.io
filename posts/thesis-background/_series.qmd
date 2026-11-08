@@ -1,0 +1,12 @@
+::: {.callout-note appearance="simple"}
+## 연재: 비정상 극단값의 베이지안 분석 — 배경 이론
+
+이 연재는 필자의 박사학위 논문 *Bayesian Analysis of Nonstationary Extremes* (Lee, 2022, University of Edinburgh)의 1.2절(Background)을 우리말로 옮기고 다듬은 것이다.
+
+1. [극단값 이론 (1): 일변량 극단값](1-univariate-extremes.qmd)
+2. [극단값 이론 (2): 다변량 극단값](2-multivariate-extremes.qmd)
+3. [베이지안 평활 (1): 베이지안 P-스플라인](3-bayesian-psplines.qmd)
+4. [베이지안 평활 (2): 일반화 가법모형으로의 확장](4-bayesian-gam.qmd)
+5. [비모수 베이즈 (1): 디리클레 과정 혼합](5-dirichlet-process-mixtures.qmd)
+6. [비모수 베이즈 (2): 랜덤 번스타인 다항식](6-bernstein-polynomials.qmd)
+:::

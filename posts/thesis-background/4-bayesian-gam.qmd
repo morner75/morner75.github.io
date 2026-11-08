@@ -1,0 +1,127 @@
+---
+title: '베이지안 평활 (2): 일반화 가법모형으로의 확장'
+date: '2026-11-08'
+categories: ['Bayesian smoothing']
+description: '가법모형과 베이지안 백피팅, 지수족 반응변수를 위한 베이지안 P-스플라인'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](3-bayesian-psplines.qmd)의 베이지안 평활은 두 방향으로 확장할 수 있다. 첫째, 모형에 여러 공변량 $x_1,\ldots,x_p$ 를 넣을 수 있다. 완전히 유연한 $p$ 차원 비모수 함수 $y=f(x_1,\ldots,x_p)$ 는 주어진 표본 크기로 추정하기가 대체로 어려우므로, 모형에 **가법(additive)** 구조를 추가로 부여하는 것이 일반적이다. 둘째, 일반화 선형모형(GLM)의 틀에서 **지수족(exponential family)** 분포를 따르는 관측값을 다룰 수 있다. 이 글에서는 두 확장을 차례로 살펴본다.
+
+## 가법모형
+
+다음 형태의 비모수 평활 문제를 생각하자.
+
+$$
+y_i=f_1(x_{i1})+\cdots+f_p(x_{ip})+\varepsilon_i,\quad i=1,\ldots,n.
+$$ {#eq-additive}
+
+여기서 $f_j(x_j)$ 는 공변량 $x_j$ 에 대한 비모수 함수이고 ($j=1,\ldots,p$), $\varepsilon_i$ 는 정규 오차항 $\varepsilon_i\sim N(0,\sigma^2)$ 이다. 이 가법모형은 공변량 사이의 교호작용(interaction)을 허용하지 않지만, 공간 회귀모형처럼 교호작용 항을 넣어 이 제약을 완화할 수 있다 (Buja et al., 1989).
+
+각 공변량이 절편을 포함한 자신만의 평활 함수를 가지면 모형은 식별되지 않는다. 어떤 상수 $c$ 와 $i\ne j$ 에 대해 $f_i(x_i)+f_j(x_j)=\{f_i(x_i)+c\}+\{f_j(x_j)-c\}$ 이기 때문이다. 가법모형을 식별 가능하게 하려면, $y_i$ 의 전체 수준을 나타내는 전역 절편 $\beta_0$ 를 도입하고 모든 비모수 함수를 0을 중심으로 맞춘다.
+
+$$
+\sum_{i=1}^nf_1(x_{i1})=\cdots=\sum_{i=1}^nf_p(x_{ip})=0.
+$$
+
+적분에 기반한 중심화, 예를 들어 $\int f_j(x_j)\,\mathrm dx_j=0$ 같은 다른 방법도 있다. 각 비모수 성분 $f_j(x_j)$ 는 다항식 기저함수로 표현된다.
+
+$$
+f_j(x_j)=\sum_{k=1}^{K_j}\beta_{jk}B_{jk}^D(x_j)=\mathbf B_j\boldsymbol\beta_j.
+$$
+
+모형을 행렬로 정리하면 다음과 같다.
+
+$$
+\mathbf y=\beta_0+\mathbf B_1\boldsymbol\beta_1+\cdots+\mathbf B_p\boldsymbol\beta_p+\boldsymbol\varepsilon.
+$$
+
+각 비모수 성분에 벌점항을 도입하면 벌점 최소제곱 평활이 다음과 같이 확장된다.
+
+$$
+PLS=(\mathbf y-\boldsymbol\eta)^{\top}(\mathbf y-\boldsymbol\eta)+\sum_{j=1}^p\lambda_j\boldsymbol\beta_j^{\top}\mathbf K_j\boldsymbol\beta_j.
+$$ {#eq-pls-additive}
+
+여기서 $\boldsymbol\eta=\beta_0+\mathbf B_1\boldsymbol\beta_1+\cdots+\mathbf B_p\boldsymbol\beta_p$ 이고, $\lambda_j$ 는 각 함수에 할당된 평활 모수이다. PLS는 모든 회귀계수와 평활 모수에 대해 동시에 최소화할 수 있다. @eq-pls-additive 의 1계 조건으로부터 얻는 연립방정식은 전체 모형의 평활 행렬을 준다.
+
+$$
+\begin{pmatrix}\beta_0\\ \boldsymbol\beta_1\\ \vdots\\ \boldsymbol\beta_p\end{pmatrix}
+=
+\begin{pmatrix}
+n & \mathbf 1^{\top}\mathbf B_1 & \cdots & \mathbf 1^{\top}\mathbf B_p\\
+\mathbf B_1^{\top}\mathbf 1 & \mathbf B_1^{\top}\mathbf B_1+\lambda_1\mathbf K_1 & \cdots & \mathbf B_1^{\top}\mathbf B_p\\
+\vdots & \vdots & \ddots & \vdots\\
+\mathbf B_p^{\top}\mathbf 1 & \mathbf B_p^{\top}\mathbf B_1 & \cdots & \mathbf B_p^{\top}\mathbf B_p+\lambda_p\mathbf K_p
+\end{pmatrix}^{-1}
+\begin{pmatrix}\mathbf 1^{\top}\mathbf y\\ \mathbf B_1^{\top}\mathbf y\\ \vdots\\ \mathbf B_p^{\top}\mathbf y\end{pmatrix}.
+$$ {#eq-smoother}
+
+### 백피팅 알고리즘
+
+PLS 기준의 최소화에는 **백피팅(backfitting) 알고리즘**이 쓰인다 (Hastie and Tibshirani, 2000; Lang and Brezger, 2004). 백피팅은 다항식 계수의 작업 추정치(working estimate)로 계산한 잔차를 최소화하는 반복 방법이다. @eq-smoother 의 연립방정식을 풀면서 각 성분 함수를 차례로 갱신하고, 더 이상 변화가 없을 때까지 반복한다.
+
+백피팅 알고리즘의 베이지안 버전도 같은 방식으로 사후분포를 유도한다. 핵심 아이디어는 각 성분 함수 $f_j$ 를 다른 성분 함수 추정치를 뺀 잔차로 근사하는 것이다.
+
+$$
+f_j\approx\mathbf y-\beta_0-\sum_{k\ne j}\hat f_k=\mathbf y-\beta_0-\sum_{k\ne j}\mathbf B_k\boldsymbol\beta_k,\quad j=1,\ldots,p.
+$$
+
+이 작업 잔차(working residual)로 $\boldsymbol\beta_j$ 의 사후분포를 얻는다. 절편 $\beta_0$ 에는 약한 정보의 정규 사전분포 $N(m_0,s_0)$ 를, 분산 $\sigma^2$ 에는 단일 공변량 모형과 같은 역감마 사전분포를 부여한다. 다만 공변량이 여럿이므로 $\boldsymbol\beta_j$ 와 $\tau_j^2$ 에 대한 사전분포를 $p$ 개씩 지정해야 한다.
+
+$$
+\boldsymbol\beta_j\sim\mathrm{RW}(d),\quad \tau_j^2\sim\mathrm{IG}(a_j,b_j),\quad j=1,\ldots,p.
+$$
+
+여기서 $\mathrm{RW}(d)$ 는 [앞 글](3-bayesian-psplines.qmd)의 $d$ 차 확률보행 사전분포이다. 모든 모수의 사후분포는 결합분포로부터 얻는다.
+
+$$
+\pi(\boldsymbol\beta_1,\ldots,\boldsymbol\beta_p,\tau_1^2,\ldots,\tau_p^2,\sigma^2,\beta_0\mid\mathbf y)\propto L(\mathbf y\mid\boldsymbol\eta)\,p(\beta_0)\,p(\sigma^2)\prod_{j=1}^p p(\boldsymbol\beta_j\mid\tau_j^2)\,p(\tau_j^2).
+$$
+
+## 지수족 반응변수
+
+베이지안 모형화는 관련된 모든 모수와 확률변수의 결합분포를 지정하는 데서 출발한다. 정규분포를 따르지 않는 관측값에 대한 비모수 회귀모형은, 관심 모수 $\theta$ 를 갖는 지수족 우도함수
+
+$$
+L(\theta_i\mid y_i,\phi)=\exp\left\{\frac{y_i\theta_i-b(\theta_i)}{\phi}+c(y_i,\phi)\right\}
+$$
+
+와, 평활 회귀계수에 대한 확률보행 사전분포
+
+$$
+\pi(\boldsymbol\beta\mid\tau^2)\propto(1/\tau^2)^{(K-d)/2}\exp\left(-\frac{1}{2\tau^2}\boldsymbol\beta^{\top}\mathbf K\boldsymbol\beta\right)
+$$
+
+로 정의된다. 매끄러움을 조절하는 모수에는 $\tau^2\sim\mathrm{IG}(a,b)$ 를 부여한다. 사후분포는 결합분포에 비례하며 다음과 같이 얻는다.
+
+$$
+\begin{aligned}
+\pi(\boldsymbol\beta\mid\mathbf y,\tau^2)&\propto L(\mathbf y\mid\boldsymbol\beta)\,p(\boldsymbol\beta\mid\tau^2),\\
+\pi(\tau^2\mid\boldsymbol\beta)&\propto p(\boldsymbol\beta\mid\tau^2)\,p(\tau^2).
+\end{aligned}
+$$
+
+조절 모수 $\tau^2$ 의 완전 조건부 분포는 앞에서와 마찬가지로 켤레 역감마 분포이다.
+
+$$
+\tau^2\mid\boldsymbol\beta\sim\mathrm{IG}\left(a+\frac{K-d}{2},\ b+\frac{\boldsymbol\beta^{\top}\mathbf K\boldsymbol\beta}{2}\right).
+$$
+
+계수벡터 $\boldsymbol\beta$ 의 완전 조건부 분포는
+
+$$
+\pi(\boldsymbol\beta\mid\mathbf y,\tau^2)\propto\exp\left[\sum_{i=1}^n\left\{\frac{y_i\,\theta_i(\boldsymbol\beta)-b(\theta_i(\boldsymbol\beta))}{\phi}\right\}-\frac{\boldsymbol\beta^{\top}\mathbf K\boldsymbol\beta}{2\tau^2}\right]
+$$
+
+이다. 여기서 $\theta_i(\boldsymbol\beta)$ 는 선형예측자 $\mathbf b_i^{\top}\boldsymbol\beta$ 를 연결함수(link function)로 정준모수에 대응시킨 값이며, $\mathbf b_i^{\top}$ 는 $\mathbf B$ 의 $i$ 번째 행이다.
+
+이 조건부 분포는 일반적으로 해석적으로 다루기 쉬운 형태가 되지 않는다. 지수족 분포에서 모수의 사후분포를 얻는 마르코프 연쇄 몬테카를로(MCMC) 방법으로는 반복 가중 최소제곱(iteratively weighted least squares, IWLS) 제안분포를 쓰는 메트로폴리스–헤이스팅스(Metropolis–Hastings) 알고리즘과, 잠재변수를 도입한 깁스 샘플링 등이 있다.
+
+## 주요 참고문헌
+
+- Brezger, A. and Lang, S. (2006). Generalized structured additive regression based on Bayesian P-splines. *Computational Statistics & Data Analysis*, 50, 967–991.
+- Buja, A., Hastie, T. and Tibshirani, R. (1989). Linear smoothers and additive models. *The Annals of Statistics*, 17, 453–510.
+- Hastie, T. and Tibshirani, R. (2000). Bayesian backfitting. *Statistical Science*, 15, 196–223.
+- Lang, S. and Brezger, A. (2004). Bayesian P-splines. *Journal of Computational and Graphical Statistics*, 13, 183–212.
