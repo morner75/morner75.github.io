@@ -1,32 +1,121 @@
 ---
 title: "Practical Bayesian Extremist"
+pagetitle: "이준호 | Practical Bayesian Extremist"
 image: starry_night.jpeg
-about:
-  template: trestles
-  image-width: 30em
-  image-shape: rounded
-  links:
-    - icon: linkedin
-      text: LinkedIn
-      href: https://www.linkedin.com/in/junho-lee-050943267/
-    - icon: github
-      text: Github
-      href: https://www.github.com/morner75
 page-layout: full
+title-block-style: none
+toc: false
 lang: ko
+body-classes: home-page
 include-before-body:
   text: '<a class="lang-switch" href="index_en.html" hreflang="en">English</a>'
+resources:
+  - starry_night.jpeg
+  - images/thomas-bayes.png
+  - images/pump-chart.svg
+  - images/benford-first-digit.svg
+  - images/gev-types.svg
+  - images/stress-scenario.svg
+  - images/climate-loss.svg
+listing:
+  id: home-latest
+  contents: research/**/index.qmd
+  sort: "date desc"
+  max-items: 3
+  type: grid
+  grid-columns: 3
+  image-height: 170px
+  fields: [image, title, date]
+  date-format: "YYYY년 M월"
+  sort-ui: false
+  filter-ui: false
 ---
 
-:::{#intro_korean}
+```{=html}
+<section class="home-hero">
+  <div class="home-hero-text">
+    <p class="home-eyebrow">Practical Bayesian Extremist</p>
+    <h1 class="home-name">이준호</h1>
+    <p class="home-tagline">자본시장과 가상자산시장을 분석하고, <br>베이즈 통계학과 인공지능을 연구합니다.</p>
+    <nav class="home-actions" aria-label="주요 페이지">
+      <a href="research.html">Research</a>
+      <a href="CV_KOR.html">CV</a>
+      <a href="blog.html">Blog</a>
+    </nav>
+  </div>
+  <img class="home-hero-image" src="starry_night.jpeg" alt="별이 소용돌이치는 밤하늘 아래 언덕에서 사람들이 노트북을 펼쳐 놓고 빛나는 데이터를 바라보는 그림">
+</section>
 
-**블로그에 오신 걸 환영합니다.
-자본시장과 가상자산시장을 아우르는 조사 전문가이자, 베이즈 통계학을 연구하는 이준호입니다.**
+<section class="home-intro">
+  <p class="home-lead">제 블로그에 오신 걸 환영합니다.</p>
+  <p>대학에서 경제학과 법학을 공부했고, 2003년 금융감독원에 입사했습니다. 2010년대 중반 데이터 혁명과 기계학습에 감명받아, 뒤늦은 40대에 영국 에든버러대학교(University of Edinburgh)로 유학을 떠나 통계학 박사학위를 받았습니다. 극단값 이론과 베이즈 비모수 통계학을 전공했고, R과 Python을 이용한 실용적인 데이터 분석과 통계·머신러닝 모형의 수학적 배경에 관심이 있습니다. 또한 공개 데이터와 AI를 활용한 다양한 Dashboard를 만드는 것을 취미로 삼고 있습니다. 현재 금융감독원에서 금융시장 분석 및 조사업무를 수행하고 있습니다.</p>
+</section>
 
-2003년 금융감독원에 입사해 주식·파생상품 시장의 불공정거래 조사와 금융투자회사 검사를 맡아 왔습니다. 2026년 1월부터는 가상자산조사국 가상자산조사분석팀장으로 일하며, 자본시장에서 쌓은 조사 경험을 가상자산시장으로 넓혀 가고 있습니다. 스트레스테스트와 기후 시나리오 분석 업무를 맡기도 했습니다.
+<section class="home-cards" aria-label="하는 일">
+  <article class="home-card">
+    <h2>시장 불공정거래 분석</h2>
+    <figure class="home-chart">
+      <img src="images/pump-chart.svg" alt="가격이 횡보하다가 거래량 증가와 함께 급등한 뒤 일부 되돌리는 가상자산 예시 차트">
+      <figcaption>가상자산 급등 예시 그림. 실제 시세가 아닙니다.</figcaption>
+    </figure>
+    <p>금융감독원에서 불공정거래 조사/분석 업무를 담당하면서 시세조종 탐지 모형과 알고리즘을 연구합니다.</p>
+    <a href="research/wash-trading/index.html">워시 트레이딩 연구 →</a>
+  </article>
+  <article class="home-card">
+    <h2>벤포드 법칙(Benford's Law)</h2>
+    <figure class="home-chart">
+      <img src="images/benford-first-digit.svg" alt="벤포드 법칙의 첫 자리 분포 막대그래프. 숫자 1이 30.1%로 가장 높고 숫자가 커질수록 낮아져 9는 4.6%이다.">
+      <figcaption>벤포드 법칙의 첫 자리 분포: P(d) = log<sub>10</sub>(1 + 1/d)</figcaption>
+    </figure>
+    <p>벤포드 법칙을 이상현상 탐지 등 다양한 영역에서 활용하는 법을 연구합니다.</p>
+    <a href="research/benford-cyclones/index.html">벤포드 법칙 연구 →</a>
+  </article>
+  <article class="home-card">
+    <h2>베이지안 방법론</h2>
+    <div class="home-bayes">
+      <img src="images/thomas-bayes.png" alt="토머스 베이즈로 전해지는 흑백 초상">
+      <p class="home-formula">P(θ | y) ∝ P(y | θ) P(θ)</p>
+    </div>
+    <p>Bayesian Smoothing, Bayesian Vector Autoregression, Bayesian Networks 등 다양한 베이지안 모형을 연구합니다.</p>
+    <a href="posts/smoothing/smoothing2.html">베이지안 평활기법 글 →</a>
+  </article>
+  <article class="home-card">
+    <h2>극단값 이론</h2>
+    <figure class="home-chart">
+      <img src="images/gev-types.svg" alt="일반화 극값분포의 세 유형 비교. Fréchet는 오른쪽 꼬리가 가장 두껍고, Gumbel은 지수적으로 줄어들며, Weibull은 오른쪽 끝점이 있다.">
+      <figcaption>극값분포의 세 유형(μ = 0, σ = 1). 오른쪽 꼬리의 모양이 서로 다릅니다.</figcaption>
+    </figure>
+    <p>극단값 이론(Extreme Value Theory)을 활용한 응용사례를 연구합니다.</p>
+    <a href="research/tail-dependence/index.html">극단적 동조화 연구 →</a>
+  </article>
+  <article class="home-card">
+    <h2>금융시장 및 금융산업 분석</h2>
+    <figure class="home-chart">
+      <img src="images/stress-scenario.svg" alt="실적 이후 기본 시나리오는 완만히 오르고 위기 시나리오는 마이너스 성장으로 떨어졌다가 회복하는 GDP 성장률 예시 그림">
+      <figcaption>스트레스테스트 시나리오 예시: GDP 성장률(%). 실제 전망이 아닙니다.</figcaption>
+    </figure>
+    <p>Macrofinancial Stress Test, GDP Nowcasting 모형 등 금융시장과 금융산업에 대한 다양한 모형을 개발합니다.</p>
+  </article>
+  <article class="home-card">
+    <h2>기후변화와 금융시장 분석</h2>
+    <figure class="home-chart">
+      <img src="images/climate-loss.svg" alt="2050년까지 누적 추가 신용손실. 지연전환 200조 원, 탄소중립 96조 원, 무정책 60조 원">
+      <figcaption>2050년까지 시나리오별 누적 추가 신용손실(조 원). 금융권 공동 기후 스트레스테스트 결과입니다.</figcaption>
+    </figure>
+    <p>기후변화가 금융시장에 미치는 영향 등 다양한 기후변화 응용사례를 연구합니다.</p>
+    <a href="research/climate-stress-test/index.html">기후 스트레스테스트 연구 →</a>
+  </article>
+</section>
 
-대학에서 경제학과 법학을 공부했고, 2010년대 중반 데이터 혁명과 기계학습에 감명받아 뒤늦은 40대에 영국 에든버러대학교(University of Edinburgh)로 유학을 떠나 통계학 박사 학위를 받았습니다. 극단값 이론(Extreme value theory)과 베이즈 비모수 통계학(Nonparametric Bayes)을 전공했고, R을 이용한 실용적인 데이터 분석과 통계·머신러닝 모형의 수학적 배경에 관심을 갖고 있습니다. 시세조종 등 불공정거래 탐지 모형과 베이지안 네트워크를 활용한 계좌추적 모형 개발에도 힘쓰고 있습니다.
+<section class="home-latest-head">
+  <h2>최신 연구</h2>
+  <a href="research.html">전체 보기 →</a>
+</section>
+```
 
-이 블로그의 내용은 개인 견해이며, 소속 기관의 공식 입장과 무관합니다.
-
+:::{#home-latest}
 :::
+
+```{=html}
+<p class="home-disclaimer">이 블로그의 내용은 개인 견해이며, 소속 기관의 공식 입장과 무관합니다.</p>
+```

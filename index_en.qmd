@@ -1,34 +1,122 @@
 ---
 title: "Practical Bayesian Extremist"
+pagetitle: "Junho Lee | Practical Bayesian Extremist"
 image: starry_night.jpeg
-about:
-  template: trestles
-  image-width: 30em
-  image-shape: rounded
-  links:
-    - icon: linkedin
-      text: LinkedIn
-      href: https://www.linkedin.com/in/junho-lee-050943267/
-    - icon: github
-      text: Github
-      href: https://www.github.com/morner75
 page-layout: full
+title-block-style: none
+toc: false
 lang: en
+body-classes: home-page
 include-before-body:
   text: '<a class="lang-switch" href="index.html" hreflang="ko">한국어</a>'
 include-after-body: _lang-en.html
+resources:
+  - starry_night.jpeg
+  - images/thomas-bayes.png
+  - images/pump-chart.svg
+  - images/benford-first-digit.svg
+  - images/gev-types.svg
+  - images/stress-scenario-en.svg
+  - images/climate-loss-en.svg
+listing:
+  id: home-latest
+  contents: research/**/index.qmd
+  sort: "date desc"
+  max-items: 3
+  type: grid
+  grid-columns: 3
+  image-height: 170px
+  fields: [image, title, date]
+  date-format: "MMM YYYY"
+  sort-ui: false
+  filter-ui: false
 ---
 
-:::{#intro_english}
+```{=html}
+<section class="home-hero">
+  <div class="home-hero-text">
+    <p class="home-eyebrow">Practical Bayesian Extremist</p>
+    <h1 class="home-name">Junho Lee</h1>
+    <p class="home-tagline">I analyse capital and virtual asset markets, <br>and study Bayesian statistics and AI.</p>
+    <nav class="home-actions" aria-label="Main pages">
+      <a href="research.html">Research</a>
+      <a href="CV_ENG.html">CV</a>
+      <a href="blog.html">Blog</a>
+    </nav>
+  </div>
+  <img class="home-hero-image" src="starry_night.jpeg" alt="People on a hillside with laptops and glowing data beneath a swirling, star-filled night sky">
+</section>
 
-**Hi, I'm Junho Lee, an investigator working across capital and virtual asset markets, and a Bayesian statistician.**
+<section class="home-intro">
+  <p class="home-lead">Welcome to my blog.</p>
+  <p>I have a PhD in Statistics from the University of Edinburgh and joined the Financial Supervisory Service in South Korea in 2003. I specialised in extreme value theory and Bayesian nonparametrics and am interested in practical data analysis in R and Python, and the mathematical foundations of statistical and machine learning models. In my spare time, I build dashboards using public data and AI. I currently work on financial market analysis and investigation at the Financial Supervisory Service.</p>
+</section>
 
-I have a PhD in Statistics from the University of Edinburgh and have worked at the Financial Supervisory Service in South Korea since 2003.
+<section class="home-cards" aria-label="What I do">
+  <article class="home-card">
+    <h2>Unfair trading analysis</h2>
+    <figure class="home-chart">
+      <img src="images/pump-chart.svg" alt="Illustrative virtual asset chart in which the price moves sideways, surges on rising volume and partly retraces">
+      <figcaption>Illustrative virtual asset surge; not real market data.</figcaption>
+    </figure>
+    <p>At the Financial Supervisory Service, I investigate and analyse unfair trading, and study detection models and algorithms for market manipulation.</p>
+    <a href="research/wash-trading/index.html">Wash trading study (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2>Benford's Law</h2>
+    <figure class="home-chart">
+      <img src="images/benford-first-digit.svg" alt="Bar chart of the Benford first-digit distribution. Digit 1 is highest at 30.1% and the share falls to 4.6% for digit 9.">
+      <figcaption>Benford first-digit distribution: P(d) = log<sub>10</sub>(1 + 1/d)</figcaption>
+    </figure>
+    <p>I study how to apply Benford's Law in areas such as anomaly detection.</p>
+    <a href="research/benford-cyclones/index.html">Benford's Law study (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2>Bayesian methods</h2>
+    <div class="home-bayes">
+      <img src="images/thomas-bayes.png" alt="Black-and-white portrait traditionally said to show Thomas Bayes">
+      <p class="home-formula">P(θ | y) ∝ P(y | θ) P(θ)</p>
+    </div>
+    <p>I study a range of Bayesian models, including Bayesian smoothing, Bayesian vector autoregression and Bayesian networks.</p>
+    <a href="posts/smoothing/smoothing2.html">Bayesian smoothing post (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2>Extreme value theory</h2>
+    <figure class="home-chart">
+      <img src="images/gev-types.svg" alt="Comparison of the three generalized extreme value types. Fréchet has the heaviest right tail, Gumbel decays exponentially and Weibull has a finite right endpoint.">
+      <figcaption>The three extreme value types (μ = 0, σ = 1). Their right tails differ in shape.</figcaption>
+    </figure>
+    <p>I study applications of extreme value theory (EVT).</p>
+    <a href="research/tail-dependence/index.html">Extremal dependence study (in Korean) →</a>
+  </article>
+  <article class="home-card">
+    <h2>Financial markets and industry analysis</h2>
+    <figure class="home-chart">
+      <img src="images/stress-scenario-en.svg" alt="Illustrative GDP growth paths: after the actual data, the baseline rises gently while the adverse scenario falls into contraction and then recovers">
+      <figcaption>Illustrative stress-test scenarios: GDP growth (%). Not an actual projection.</figcaption>
+    </figure>
+    <p>I develop a range of models for financial markets and the financial industry, including macrofinancial stress tests and GDP nowcasting.</p>
+  </article>
+  <article class="home-card">
+    <h2>Climate change and financial markets</h2>
+    <figure class="home-chart">
+      <img src="images/climate-loss-en.svg" alt="Cumulative additional credit losses to 2050: delayed transition KRW 200tn, net zero 96tn, current policies 60tn">
+      <figcaption>Cumulative additional credit losses to 2050 by scenario (KRW tn), from the joint climate stress test of Korean banks and insurers.</figcaption>
+    </figure>
+    <p>I study a range of climate change applications, such as the effects of climate change on financial markets.</p>
+    <a href="research/climate-stress-test/index.html">Climate stress test (in Korean) →</a>
+  </article>
+</section>
 
-Much of my career has been spent investigating unfair trading in stock and derivatives markets and examining financial investment companies. Since January 2026, I have been the Team Head of the Virtual Asset Investigation Analysis Team, extending that investigative experience to virtual asset markets. I have also worked on stress-testing and climate scenario analysis.
+<section class="home-latest-head">
+  <h2>Latest research <span>(explainers in Korean)</span></h2>
+  <a href="research.html">View all →</a>
+</section>
+```
 
-My research interests include extreme value theory, Bayesian nonparametrics and practical data analysis in R. I am also working on fraud detection models for market manipulation and applying Bayesian networks to account tracking.
-
-The views expressed on this blog are my own and do not represent those of my employer.
-
+:::{#home-latest}
 :::
+
+```{=html}
+<p class="home-disclaimer">The views expressed on this blog are my own and do not represent those of my employer.</p>
+```
