@@ -6,6 +6,8 @@ website:
   description: "This is Junho Lee's personal Blog."
   navbar:
     left:
+      - text: Home
+        href: index.qmd
       - text: Blog
         href: blog.qmd
       - text: Research
