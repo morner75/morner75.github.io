@@ -8,10 +8,10 @@ website:
     left:
       - text: Home
         href: index.qmd
-      - text: Blog
-        href: blog.qmd
       - text: Research
         href: research.qmd
+      - text: Blog
+        href: blog.qmd
       - text: Curriculum Vitae
         href: CV_KOR.qmd
     right:

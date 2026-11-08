@@ -1,6 +1,6 @@
 ---
 title: '베이지안 평활 (2): 일반화 가법모형으로의 확장'
-date: '2026-11-08'
+date: '2022-01-06'
 categories: ['Bayesian smoothing']
 description: '가법모형과 베이지안 백피팅, 지수족 반응변수를 위한 베이지안 P-스플라인'
 lang: ko

@@ -1,6 +1,6 @@
 ---
 title: '극단값 이론 (1): 일변량 극단값'
-date: '2026-11-08'
+date: '2022-01-01'
 categories: ['Extreme value theory']
 description: '일반화 극단값 분포, 임계값 초과 모형, 비정상 극단값과 비례 꼬리 모형'
 lang: ko

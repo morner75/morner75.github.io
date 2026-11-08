@@ -1,7 +1,7 @@
 ---
 listing:
   contents: posts/**/*.qmd
-  sort: ["date desc", "title"]
+  sort: ["date desc", "title desc"]
   type: default
   categories: true
   sort-ui: false

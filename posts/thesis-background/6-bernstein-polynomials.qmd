@@ -1,6 +1,6 @@
 ---
 title: '비모수 베이즈 (2): 랜덤 번스타인 다항식'
-date: '2026-11-08'
+date: '2022-01-08'
 categories: ['Bayesian nonparametrics']
 description: '번스타인 다항식, 베타 밀도의 혼합, 번스타인–디리클레 사전분포와 잠재변수를 이용한 추론'
 lang: ko

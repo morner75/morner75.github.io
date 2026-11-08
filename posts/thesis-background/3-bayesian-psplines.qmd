@@ -1,6 +1,6 @@
 ---
 title: '베이지안 평활 (1): 베이지안 P-스플라인'
-date: '2026-11-08'
+date: '2022-01-03'
 categories: ['Bayesian smoothing']
 description: 'B-스플라인 기저함수, 벌점 최소제곱, 확률보행 사전분포를 이용한 베이지안 P-스플라인'
 lang: ko

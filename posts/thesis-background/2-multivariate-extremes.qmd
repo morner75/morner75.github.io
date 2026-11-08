@@ -1,6 +1,6 @@
 ---
 title: '극단값 이론 (2): 다변량 극단값'
-date: '2026-11-08'
+date: '2022-01-01'
 categories: ['Extreme value theory']
 description: '다변량 GEV 분포, 각도 측도, 꼬리 의존 함수, Pickands 의존 함수, 극단값 코퓰라'
 lang: ko

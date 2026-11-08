@@ -1,6 +1,6 @@
 ---
 title: '비모수 베이즈 (1): 디리클레 과정 혼합'
-date: '2026-11-08'
+date: '2022-01-07'
 categories: ['Bayesian nonparametrics']
 description: '디리클레 과정, 막대 꺾기 표현, 폴리아 항아리, 디리클레 과정 혼합과 군집화'
 lang: ko
