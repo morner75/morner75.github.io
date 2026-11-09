@@ -1,13 +1,332 @@
-/* CV 페이지 전용 스타일: 본문과 제목을 한 단계 작게 표시한다. */
-main.content {
-  font-size: 0.875rem;
+/* CV 페이지 전용 스타일: 시작화면과 같은 남색·별빛 색을 쓴다. */
+.cv-page {
+  --cv-navy: #14284d;
+  --cv-star: #f2c14e;
+  --cv-line: #dfd7ca;
+  --cv-muted: #6f6e67;
+  --cv-soft: #f8f5f0;
 }
 
-/* CV 제목은 main 바깥의 소개 영역에 있다. */
-.quarto-about-solana h1.title {
-  font-size: 1.75rem;
+.cv-page main.content {
+  max-width: 920px;
+  margin-inline: auto;
 }
 
-main.content h3 {
-  font-size: 1.15rem;
+/* 기본 제목은 배너에서 보여 주므로 숨긴다. */
+.cv-page #title-block-header,
+.cv-page .quarto-title-block {
+  display: none;
+}
+
+/* 머리 배너 */
+.cv-hero {
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  margin: 2.5rem 0 2.75rem;
+  padding: 2.25rem 2.5rem;
+  color: #fff;
+  background: var(--cv-navy);
+  border-radius: 12px;
+}
+
+.cv-photo {
+  flex: none;
+  width: 148px;
+  height: 148px;
+  object-fit: cover;
+  border: 3px solid var(--cv-star);
+  border-radius: 50%;
+}
+
+.cv-eyebrow {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cv-star);
+}
+
+.cv-name {
+  margin: 0 0 0.45rem;
+  padding: 0;
+  font-size: 2.3rem;
+  font-weight: 700;
+  color: #fff;
+  border: 0;
+}
+
+.cv-name span {
+  margin-left: 0.4rem;
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.cv-role {
+  margin: 0 0 1rem;
+  font-size: 1.02rem;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.cv-interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0 0 1.1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-interests li {
+  padding: 0.15rem 0.7rem;
+  font-size: 0.82rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.cv-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.1rem;
+}
+
+.cv-links a {
+  font-size: 0.9rem;
+  color: var(--cv-star);
+  text-decoration: none;
+}
+
+.cv-links a:hover,
+.cv-links a:focus-visible {
+  color: #fff;
+  text-decoration: underline;
+}
+
+/* 절 제목 */
+.cv-page main.content h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 2.75rem 0 1.25rem;
+  padding: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--cv-navy);
+  border: 0;
+}
+
+.cv-page main.content h2::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 1.4rem;
+  background: var(--cv-star);
+  border-radius: 3px;
+}
+
+.cv-page main.content h2::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--cv-line);
+}
+
+/* 연도 + 내용 항목: 오른쪽 세로선을 따라 점을 찍는다. */
+.cv-item {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  column-gap: 1.5rem;
+}
+
+/* 연도는 문단(p) 안의 span 으로 들어온다. */
+.cv-item > p {
+  margin: 0;
+  text-align: right;
+}
+
+.cv-year {
+  padding-top: 0.15rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--cv-navy);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cv-body {
+  position: relative;
+  padding: 0 0 1.15rem 1.5rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  border-left: 2px solid var(--cv-line);
+}
+
+.cv-body::before {
+  content: "";
+  position: absolute;
+  top: 0.45rem;
+  left: -7px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border: 2px solid var(--cv-navy);
+  border-radius: 50%;
+}
+
+.cv-body p {
+  margin: 0;
+}
+
+.cv-body strong {
+  font-weight: 600;
+  color: #2b2b28;
+}
+
+.cv-body strong a {
+  font-weight: 600;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--cv-star);
+}
+
+.cv-body strong a:hover,
+.cv-body strong a:focus-visible {
+  color: #325d88;
+  border-bottom-color: #325d88;
+}
+
+.cv-meta {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-size: 0.86rem;
+  color: var(--cv-muted);
+}
+
+/* 발표 종류 표시 */
+.cv-tag {
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: 0.12em;
+  color: var(--cv-navy);
+  background: #e6ebf3;
+  border-radius: 4px;
+}
+
+.cv-tag.poster {
+  color: #6b4e00;
+  background: #fbefcc;
+}
+
+.cv-tag.webinar {
+  color: #3e5a3a;
+  background: #e3eedf;
+}
+
+/* 경력: 기관 머리글과 학술연수 강조 */
+.cv-org {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0 0 1rem 9rem;
+  font-size: 1.05rem;
+  color: var(--cv-navy);
+}
+
+.cv-org p {
+  margin: 0;
+}
+
+.cv-org .cv-meta {
+  margin: 0 0 0 0.5rem;
+}
+
+.cv-leave .cv-body::before {
+  background: var(--cv-star);
+  border-color: var(--cv-star);
+}
+
+.cv-leave .cv-body strong {
+  color: var(--cv-navy);
+}
+
+/* 각 절의 마지막 항목은 세로선을 끝낸다. */
+.cv-item:has(+ :not(.cv-item)) .cv-body,
+.cv-item:last-child .cv-body {
+  padding-bottom: 0.25rem;
+}
+
+@media (max-width: 767.98px) {
+  .cv-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-top: 2.75rem;
+    padding: 1.75rem 1.5rem;
+  }
+
+  .cv-photo {
+    width: 104px;
+    height: 104px;
+  }
+
+  .cv-name {
+    font-size: 1.9rem;
+  }
+
+  .cv-name span {
+    display: block;
+    margin: 0.2rem 0 0;
+    font-size: 1.05rem;
+  }
+
+  .cv-item {
+    grid-template-columns: 1fr;
+  }
+
+  .cv-item > p {
+    padding: 0 0 0.1rem 1.5rem;
+    text-align: left;
+    border-left: 2px solid var(--cv-line);
+  }
+
+  .cv-year {
+    padding: 0;
+  }
+
+  .cv-body::before {
+    top: -1.25rem;
+  }
+
+  .cv-org {
+    margin-left: 0;
+  }
+}
+
+@media print {
+  .cv-hero {
+    color: #000;
+    background: none;
+    border: 1px solid var(--cv-line);
+  }
+
+  .cv-name,
+  .cv-role,
+  .cv-interests li {
+    color: #000;
+  }
+
+  .cv-links,
+  .lang-switch {
+    display: none;
+  }
 }
