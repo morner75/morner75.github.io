@@ -50,6 +50,8 @@ include-before-body:
 
 ### Talks/Posters
 
+Lee, Junho (2025), "Global Insights on Advancing Financial Market Deepening", a talk at OJK Risk and Governance Summit 2025, 'Empowering the GRC Ecosystem to Drive Economic Growth and National Resilience', Aug 2025, Jakarta, Indonesia.
+
 Lee, Junho (2023), "Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service", a talk at NFSC-KOICA international conference, 'Vietnam's financial market: Opportunities and challenges', Dec 2023, Dalat, Vietnam. 
 
 이준호·김정일(2023). “금융감독기관의 기후스트레스테스트 진행현황 및 향후계획”. SPGMI-KPMG 웹비나, 2023.3.
