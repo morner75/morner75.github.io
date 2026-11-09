@@ -33,9 +33,9 @@ include-before-body:
 
 ### Publications
 
-[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
-
 이준호·최범전 (2026). 가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향: 거래 데이터 기반 실증 분석. Working paper.
+
+[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
 
 [Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, 73(3), 581–597.](https://doi.org/10.1093/jrsssc/qlae002)
 

@@ -34,9 +34,9 @@ Bachelor of Arts in Economics, Yonsei University, South Korea, 2001.
 
 ### Publications
 
-[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
-
 Lee, J. & Choi, B. (2026). The impact of the Virtual Asset User Protection Act on wash trading in the domestic virtual asset market: An empirical study based on transaction data. Working paper.
+
+[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
 
 [Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, 73(3), 581–597.](https://doi.org/10.1093/jrsssc/qlae002)
 
