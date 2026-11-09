@@ -1,100 +1,331 @@
 ---
 title: "Curriculum Vitae"
 image: junholee.jpeg
-about:
-  template: solana
-  image-width: 8em
-  image-shape: round
-format:
-  html:
-    toc: true
 css: cv.css
-page-layout: full
+body-classes: cv-page
 lang: en
 include-before-body:
   text: '<a class="lang-switch" href="CV_KOR.html" hreflang="ko">한국어</a>'
 include-after-body: _lang-en.html
 ---
 
+<!--
+How to add an entry
+- Each entry is one ::::: {.cv-item} block.
+- Put [year]{.cv-year} first, then the content in a ::: {.cv-body} block.
+- Mark talk types with [Talk]{.cv-tag}, [Poster]{.cv-tag .poster} or [Webinar]{.cv-tag .webinar}.
+-->
 
-### Education
+```{=html}
+<header class="cv-hero">
+  <img class="cv-photo" src="junholee.jpeg" alt="Photo of Junho Lee">
+  <div class="cv-hero-text">
+    <p class="cv-eyebrow">Curriculum Vitae</p>
+    <h1 class="cv-name">Junho Lee</h1>
+    <p class="cv-role">Team Head, Financial Supervisory Service (Korea) · PhD in Statistics, University of Edinburgh</p>
+    <ul class="cv-interests" aria-label="Research interests">
+      <li>Extreme value theory</li>
+      <li>Bayesian methods</li>
+      <li>Market fraud detection</li>
+      <li>Climate stress testing</li>
+    </ul>
+    <nav class="cv-links" aria-label="CV sections">
+      <a href="#education">Education</a>
+      <a href="#publications">Publications</a>
+      <a href="#talks">Talks</a>
+      <a href="#work">Experience</a>
+      <a href="https://www.github.com/morner75">GitHub</a>
+      <a href="https://www.linkedin.com/in/junho-lee-050943267/">LinkedIn</a>
+    </nav>
+  </div>
+</header>
+```
 
-Doctor of Philosophy in Statistics, University of Edinburgh, UK, <br>
-*"Bayesian analysis of non-stationary extremes", 2022.*
+## Education {#education}
 
-Master of Science in  Statistics & Operational Research, University of Edinburgh, <br>
-UK, *"A primer on Benford's Law", 2017.* 
+::::: {.cv-item}
+[2022]{.cv-year}
 
-Master of Arts in Economics, Yonsei University, South Korea, <br>
-*"A study on the won/dollar exchange rate in the short and long run: comparing the time and frequency domain approaches", 2003.*
+::: {.cv-body}
+**Doctor of Philosophy in Statistics, University of Edinburgh, UK**\
+[Thesis: *Bayesian analysis of non-stationary extremes*]{.cv-meta}
+:::
+:::::
 
-Bachelor of Laws, Korea National Open University, South Korea, 2010. <br>
-Bachelor of Arts in Economics, Yonsei University, South Korea, 2001.
+::::: {.cv-item}
+[2017]{.cv-year}
 
+::: {.cv-body}
+**Master of Science in Statistics & Operational Research, University of Edinburgh, UK**\
+[Dissertation: *A primer on Benford's Law*]{.cv-meta}
+:::
+:::::
 
-### Publications
+::::: {.cv-item}
+[2010]{.cv-year}
 
-Lee, J. & Choi, B. (2026). The impact of the Virtual Asset User Protection Act on wash trading in the domestic virtual asset market: An empirical study based on transaction data. Working paper.
+::: {.cv-body}
+**Bachelor of Laws, Korea National Open University, South Korea**
+:::
+:::::
 
-[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. (2026). Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea. Animal - Open Space, 5, 100158.](https://doi.org/10.1016/j.anopes.2026.100158)
+::::: {.cv-item}
+[2003]{.cv-year}
 
-[Lee, J., de Carvalho, M., Rua, A. & Avila, J. (2024). Bayesian smoothing for time‑varying extremal dependence. Journal of the Royal Statistical Society: Series C, 73(3), 581–597.](https://doi.org/10.1093/jrsssc/qlae002)
+::: {.cv-body}
+**Master of Arts in Economics, Yonsei University, South Korea**\
+[Thesis: *A study on the won/dollar exchange rate in the short and long run: comparing the time and frequency domain approaches*]{.cv-meta}
+:::
+:::::
 
-[Yoon, Y., Lee, J., & Hwang, J. (2024). A study on corporate greenhouse gas emission and loan provision. Journal of Financial Regulation and Supervision, 11(1), 67–101.](https://doi.org/10.23229/fss.2024.11.1.003)
+::::: {.cv-item}
+[2001]{.cv-year}
 
-[Lee, J., Kim, J. & Choi, K. (2023). Joint climate stress-test, FSS working paper 2023-1.](https://www.fss.or.kr/fss/bbs/B0000083/view.do?nttId=132378&menuNo=200398&pageIndex=1)
+::: {.cv-body}
+**Bachelor of Arts in Economics, Yonsei University, South Korea**
+:::
+:::::
 
-[Yoon, Y., Lee, J., & Hwang, J. (2023). A study on the relationship between corporate carbon emissions and stock market returns. Journal of Financial Regulation and Supervision, 10(2), 1–44.](http://doi.org/10.23229/fss.2023.10.2.001)
+## Publications {#publications}
 
-[Lee, J. & de Carvalho, M. (2019). Technological improvements or climate change? Bayesian modeling of time‑varying conformance to Benford’s Law. PLOS ONE, 14(4), e0213300.](https://doi.org/10.1371/journal.pone.0213300)
+::::: {.cv-item}
+[2026]{.cv-year}
 
+::: {.cv-body}
+**The impact of the Virtual Asset User Protection Act on wash trading in the domestic virtual asset market: An empirical study based on transaction data**\
+[Lee, J. & Choi, B. · *Working paper*]{.cv-meta}
+:::
+:::::
 
-### Talks/Posters
+::::: {.cv-item}
+[2026]{.cv-year}
 
-Lee, Junho (2025), "Global Insights on Advancing Financial Market Deepening", a talk at OJK Risk and Governance Summit 2025, 'Empowering the GRC Ecosystem to Drive Economic Growth and National Resilience', Aug 2025, Jakarta, Indonesia.
+::: {.cv-body}
+**[Early identification of behavioural changes using accelerometers in dairy calves with neonatal calf diarrhoea](https://doi.org/10.1016/j.anopes.2026.100158)**\
+[Kang, H., Lee, J., Sandilands, V., Jarvis, S. & Haskell, M.J. · *Animal - Open Space*, 5, 100158]{.cv-meta}
+:::
+:::::
 
-Lee, Junho (2023), "Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service", a talk at NFSC-KOICA international conference, 'Vietnam's financial market: Opportunities and challenges', Dec 2023, Dalat, Vietnam. 
+::::: {.cv-item}
+[2024]{.cv-year}
 
-Lee, J., & Kim, J. (2023). “Climate stress‑testing for banking and insurance sectors in South Korea”. a talk at SPGMI-KPMG Webinar, March 2023, on‑line.
+::: {.cv-body}
+**[Bayesian smoothing for time‑varying extremal dependence](https://doi.org/10.1093/jrsssc/qlae002)**\
+[Lee, J., de Carvalho, M., Rua, A. & Avila, J. · *Journal of the Royal Statistical Society: Series C*, 73(3), 581–597]{.cv-meta}
+:::
+:::::
 
-Lee, J., & de Carvalho, M. (2021). “Bayesian Semiparametric Inferences for Covariate‑adjusted Extreme‑value Copula with application to Cryptocurrency Markets”. a talk at XXV Congress of the Portuguese Statistical Society, November 2021, Portugal.
+::::: {.cv-item}
+[2024]{.cv-year}
 
-Lee, J., de Carvalho, M., & Rua, A. (2021). “Bayesian smoothing of time‑varying extremal dependence in international stock markets”. a talk at Eco‑stats 2021, June 2021, Hong Kong.
+::: {.cv-body}
+**[A study on corporate greenhouse gas emission and loan provision](https://doi.org/10.23229/fss.2024.11.1.003)**\
+[Yoon, Y., Lee, J. & Hwang, J. · *Journal of Financial Regulation and Supervision*, 11(1), 67–101]{.cv-meta}
+:::
+:::::
 
-Lee, J., de Carvalho, M. & Rua, A. (2019). “Bayesian semiparametric regression for heavy‑tailed responses”. a talk at CMstatistics 2019, 14‑16 December 2019, London, UK.
+::::: {.cv-item}
+[2023]{.cv-year}
 
-Lee, J., de Carvalho, M. & Rua, A. (2019). “Bayesian semi‑parametric modelling of heteroscedastic extremes”. a talk at Extreme Value Analysis 2019, July 2019, Zagreb, Croatia.
+::: {.cv-body}
+**[Joint climate stress-test](https://www.fss.or.kr/fss/bbs/B0000083/view.do?nttId=132378&menuNo=200398&pageIndex=1)**\
+[Lee, J., Kim, J. & Choi, K. · *FSS working paper* 2023-1]{.cv-meta}
+:::
+:::::
 
-Lee, J., de Carvalho, M. & Rua, A. (2019). “What hides behind an extreme currency demand? Bayesian semi‑parametric modelling of heteroscedastic extremes”. a poster at Centre for Statistics conference, June 2019, Edinburgh, UK.
+::::: {.cv-item}
+[2023]{.cv-year}
 
-Lee, J., & de Carvalho, M. (2018). “Modelling Time‑Varying Conformance to Benford’s Law”. a poster at ISBA 2018 World meeting, June 2018, Edinburgh, UK.
+::: {.cv-body}
+**[A study on the relationship between corporate carbon emissions and stock market returns](http://doi.org/10.23229/fss.2023.10.2.001)**\
+[Yoon, Y., Lee, J. & Hwang, J. · *Journal of Financial Regulation and Supervision*, 10(2), 1–44]{.cv-meta}
+:::
+:::::
 
+::::: {.cv-item}
+[2019]{.cv-year}
 
+::: {.cv-body}
+**[Technological improvements or climate change? Bayesian modeling of time‑varying conformance to Benford’s Law](https://doi.org/10.1371/journal.pone.0213300)**\
+[Lee, J. & de Carvalho, M. · *PLOS ONE*, 14(4), e0213300]{.cv-meta}
+:::
+:::::
 
+## Talks/Posters {#talks}
 
+::::: {.cv-item}
+[2025]{.cv-year}
 
+::: {.cv-body}
+**Global Insights on Advancing Financial Market Deepening** [Talk]{.cv-tag}\
+[Lee, J. · OJK Risk and Governance Summit 2025, ‘Empowering the GRC Ecosystem to Drive Economic Growth and National Resilience’, Aug 2025, Jakarta, Indonesia]{.cv-meta}
+:::
+:::::
 
-### Work Experience
+::::: {.cv-item}
+[2023]{.cv-year}
 
-**Financial Supervisory Service** (2003 -- present)
+::: {.cv-body}
+**Stress-testing & other macroprudential supervision techniques in the Financial Supervisory Service** [Talk]{.cv-tag}\
+[Lee, J. · NFSC-KOICA international conference, ‘Vietnam's financial market: Opportunities and challenges’, Dec 2023, Dalat, Vietnam]{.cv-meta}
+:::
+:::::
 
+::::: {.cv-item}
+[2023]{.cv-year}
 
-* Virtual asset market analysis and market fraud investigation (Virtual Asset Investigation Analysis Team), Team Head, 2026 -- present.
+::: {.cv-body}
+**Climate stress‑testing for banking and insurance sectors in South Korea** [Webinar]{.cv-tag .webinar}\
+[Lee, J. & Kim, J. · SPGMI-KPMG Webinar, Mar 2023, online]{.cv-meta}
+:::
+:::::
 
-* Leading a KOICA-project of developing Early Warning System in Vietnam, Project Manager, 2024 -- 2025.
+::::: {.cv-item}
+[2021]{.cv-year}
 
-* Developing fraud detection models in stock markets, Lead Examiner, 2024.
+::: {.cv-body}
+**Bayesian Semiparametric Inferences for Covariate‑adjusted Extreme‑value Copula with application to Cryptocurrency Markets** [Talk]{.cv-tag}\
+[Lee, J. & de Carvalho, M. · XXV Congress of the Portuguese Statistical Society, Nov 2021, Portugal]{.cv-meta}
+:::
+:::::
 
-* Stress‑testing of financial companies and scenario analysis of climate‑change, Lead Manager, 2021 -- 2023.
+::::: {.cv-item}
+[2021]{.cv-year}
 
-* Leave for academic training, 2016 -- 2020.<br>
+::: {.cv-body}
+**Bayesian smoothing of time‑varying extremal dependence in international stock markets** [Talk]{.cv-tag}\
+[Lee, J., de Carvalho, M. & Rua, A. · Eco‑stats 2021, Jun 2021, Hong Kong]{.cv-meta}
+:::
+:::::
 
-* Investigating market frauds in capital markets, Senior Examiner, 2013 -- 2016.
+::::: {.cv-item}
+[2019]{.cv-year}
 
-* Examining financial investment companies, Senior Examiner, 2010 -- 2013.
+::: {.cv-body}
+**Bayesian semiparametric regression for heavy‑tailed responses** [Talk]{.cv-tag}\
+[Lee, J., de Carvalho, M. & Rua, A. · CMstatistics 2019, 14–16 Dec 2019, London, UK]{.cv-meta}
+:::
+:::::
 
-* Investigating market frauds in stock and derivative markets, Senior Examiner, 2007 -- 2010.
+::::: {.cv-item}
+[2019]{.cv-year}
 
-* Inspecting corporate disclosure reports, Manager, 2005 -- 2007.
+::: {.cv-body}
+**Bayesian semi‑parametric modelling of heteroscedastic extremes** [Talk]{.cv-tag}\
+[Lee, J., de Carvalho, M. & Rua, A. · Extreme Value Analysis 2019, Jul 2019, Zagreb, Croatia]{.cv-meta}
+:::
+:::::
 
-* Developing on‑site examination techniques, Examiner, 2003 -- 2005.
+::::: {.cv-item}
+[2019]{.cv-year}
+
+::: {.cv-body}
+**What hides behind an extreme currency demand? Bayesian semi‑parametric modelling of heteroscedastic extremes** [Poster]{.cv-tag .poster}\
+[Lee, J., de Carvalho, M. & Rua, A. · Centre for Statistics conference, Jun 2019, Edinburgh, UK]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2018]{.cv-year}
+
+::: {.cv-body}
+**Modelling Time‑Varying Conformance to Benford’s Law** [Poster]{.cv-tag .poster}\
+[Lee, J. & de Carvalho, M. · ISBA 2018 World meeting, Jun 2018, Edinburgh, UK]{.cv-meta}
+:::
+:::::
+
+## Work Experience {#work}
+
+::: {.cv-org}
+**Financial Supervisory Service** [2003 – present]{.cv-meta}
+:::
+
+::::: {.cv-item}
+[2026 – present]{.cv-year}
+
+::: {.cv-body}
+**Virtual asset market analysis and market fraud investigation**\
+[Virtual Asset Investigation Analysis Team · Team Head]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2024 – 2025]{.cv-year}
+
+::: {.cv-body}
+**Leading a KOICA project developing an Early Warning System in Vietnam**\
+[Project Manager]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2024]{.cv-year}
+
+::: {.cv-body}
+**Developing fraud detection models in stock markets**\
+[Lead Examiner]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2021 – 2023]{.cv-year}
+
+::: {.cv-body}
+**Stress‑testing of financial companies and scenario analysis of climate change**\
+[Lead Manager]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item .cv-leave}
+[2016 – 2020]{.cv-year}
+
+::: {.cv-body}
+**Leave for academic training**\
+[University of Edinburgh]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2013 – 2016]{.cv-year}
+
+::: {.cv-body}
+**Investigating market frauds in capital markets**\
+[Senior Examiner]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2010 – 2013]{.cv-year}
+
+::: {.cv-body}
+**Examining financial investment companies**\
+[Senior Examiner]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2007 – 2010]{.cv-year}
+
+::: {.cv-body}
+**Investigating market frauds in stock and derivative markets**\
+[Senior Examiner]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2005 – 2007]{.cv-year}
+
+::: {.cv-body}
+**Inspecting corporate disclosure reports**\
+[Manager]{.cv-meta}
+:::
+:::::
+
+::::: {.cv-item}
+[2003 – 2005]{.cv-year}
+
+::: {.cv-body}
+**Developing on‑site examination techniques**\
+[Examiner]{.cv-meta}
+:::
+:::::
