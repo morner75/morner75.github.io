@@ -1,0 +1,228 @@
+---
+title: '벌점 스플라인'
+date: '2022-10-06'
+categories: ['Bayesian smoothing', 'Splines']
+description: '다항 스플라인 기저함수와 벌점최소자승 추정으로 비모수 회귀함수를 추정한다.'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing3.qmd)에서는 시계열 평활 모형을 확장하고 비정규 관측값으로 일반화하였다. 이번 글부터는 시점이 아닌 연속형 설명변수에 대한 비모수 회귀분석으로 넘어가, 벌점 스플라인함수(P-splines)를 이용한 평활화 모형의 구성을 살펴본다.
+
+## 벌점 스플라인함수에 기반한 비모수 회귀분석
+
+이번 절에서 다루고자 하는 주요 내용은 다음과 같다.
+
+1. 벌점 스플라인함수(P-splines)에 대한 베이지안 접근법을 소개한다.
+2. 다항 스플라인함수에 대한 벌점최소자승기준(PLS)과 벌점로그우도(PLL) 추론방법에 대하여 알아본다.
+3. 마코프체인 몬테카를로(MCMC) 시뮬레이션의 개념을 소개하고, 다항 스플라인함수 접근법과 다른 기저함수를 이용한 평활화 방법과의 관계를 살펴본다.
+
+### 일변수 정규분포 관측값 모형
+
+앞서 살펴본 시계열 자료에 대한 베이지안 접근방법은 변수들의 조건부 종속구조를 사전분포의 가정과 연결시켜 모형의 해석을 쉽게 만든다는 매력이 있다. 하지만 시계열 접근 방식은 추정해야 할 값의 수가 데이터의 수만큼 많아서 상대적으로 구불구불한 추정치를 만들어 낸다. 또한 관측점 사이를 직선으로 연결하기 때문에 각 관측점에서 미분이 불가능하고, 관측점이 많은 경우 계산 부담이 상당하다는 단점이 있다. 이러한 단점을 해결하기 위하여 인접한 시점을 묶어 구간으로 만들고 구간마다 낮은 차수의 다항함수를 부여하는 방법을 생각할 수 있다. 이때 구간별 다항함수가 구간 사이의 경계점에서 충분히 부드럽게 연결되도록 제약을 부여할 것이다.
+
+## 모형의 구성
+
+일반적인 비모수 평활화 문제는 다음과 같다.
+
+$$
+y_i=f(x_i)+\varepsilon_i,\quad i=1,\ldots,n.
+$$ {#eq-np-model}
+
+여기서 $x_i$는 연속인 설명변수이고, $f(x)$는 매끄러운 함수(평활화 함수)를 나타낸다. 함수 $f(x)$는 다항 스플라인함수로 근사할 수 있다. 우선 $x$의 정의역을 $M+1$개의 결합점(knot)으로 나눈다. 즉,
+
+$$
+x_{\min}=\kappa_0<\kappa_1<\cdots<\kappa_{M-1}<\kappa_M=x_{\max}.
+$$
+
+그 다음 함수 $f(x)$를 차수 $D\in\mathbb N_0$의 다항 스플라인함수로 구성하는데, 이 경우 $f(x)$는
+
+1. $D-1$번 연속적으로 미분가능하고,
+2. 결합점으로 생기는 각 구간 $x\in[\kappa_m,\kappa_{m+1}),\; m=0,\ldots,M-1$마다 차수 $D$의 다항함수를 부여하는 형태가 된다.
+
+만약 $D=1$이면 $f(x)$는 구간별 선형함수로서 연속이지만 결합점에서는 미분이 불가능하다. $D=0$인 경우 $f(x)$는 계단함수로 결합점마다 점프가 발생한다. 차수 $D$와 결합점 $\kappa_0,\ldots,\kappa_M$이 주어지면 이러한 다항 스플라인함수 전체가 이루는 공간은 $D-1$번 미분가능한 함수 공간의 $M+D$차원 부분공간이 된다. 따라서 함수 $f(x)$는 $K=M+D$개의 기저함수들의 선형결합으로 표현할 수 있다. 즉,
+
+$$
+f(x)=\sum_{k=1}^K\gamma_kB_k(x)
+$$ {#eq-basis-expansion}
+
+여기서 $B_k(x)$는 기저함수를 나타낸다. 다항 스플라인의 기저함수로는 절단 거듭제곱 급수함수(truncated power series)와 B-스플라인함수를 들 수 있다.
+
+### 절단 거듭제곱 급수 기저
+
+절단 거듭제곱 급수함수(TPS)는 다음과 같이 정의한다.
+
+$$
+\begin{aligned}
+B_1(x)&=1,\quad B_2(x)=x,\quad \ldots,\quad B_{D+1}(x)=x^D,\\
+B_{D+2}(x)&=(x-\kappa_1)^D_+,\quad \ldots,\quad B_K(x)=(x-\kappa_{M-1})^D_+
+\end{aligned}
+$$
+
+여기서
+
+$$
+(x-\kappa_k)^D_+=\begin{cases}(x-\kappa_k)^D, & x\ge \kappa_k,\\ 0, & \text{otherwise.}\end{cases}
+$$
+
+처음 $D+1$개의 기저함수는 함수 전체에 영향을 미치는 전역 다항식이고, 절단 다항함수들은 각 결합점에서 부드러운 연결조건을 만족하도록 다항식의 계수를 국소적으로 조정하는 역할을 한다.
+
+### B-스플라인 기저
+
+B-스플라인함수는 수치해석적으로 TPS보다 안정적인 기저함수로서 다음과 같이 재귀적으로 정의한다.
+
+$$
+\begin{aligned}
+B_k^0(x)&=1_{[\kappa_k,\kappa_{k+1})}(x)=\begin{cases}1, & \kappa_k\le x < \kappa_{k+1},\\ 0, & \text{otherwise,}\end{cases}\\
+B_k^D(x)&=\frac{x-\kappa_k}{\kappa_{k+D}-\kappa_k}B_k^{D-1}(x) + \frac{\kappa_{k+D+1}-x}{\kappa_{k+D+1}-\kappa_{k+1}}B_{k+1}^{D-1}(x)
+\end{aligned}
+$$ {#eq-bspline}
+
+B-스플라인 기저함수는 다음과 같은 성질을 갖는다.
+
+첫째, B-스플라인은 국소 기저를 형성한다. 각 기저함수는 $D+2$개의 인접한 결합점 사이에서만 양의 값을 갖고, 주어진 $x$에 대하여 $D+1$개의 기저함수만이 양의 값을 갖는다.
+
+둘째, B-스플라인은 단위 분해(partition of unity)가 가능하다. 구체적으로 말하면 B-스플라인은 상수항을 암묵적으로 포함하고 있으며, 기저함수들의 함수값을 모두 더하면 1이 된다.
+
+$$
+\sum_{k=1}^K B_k(x)=1,\quad x_{\min}\le x\le x_{\max}
+$$
+
+셋째, B-스플라인은 유계이다. 즉, 함수값의 범위가 위로 유계(1 이하)이다. 이 성질은 절단 다항식에 비하여 B-스플라인이 수치해석적으로 선호되는 이유이기도 하다.
+
+넷째, TPS 기저함수는 B-스플라인으로 표현될 수 있고 그 반대도 가능하다는 의미에서 TPS와 B-스플라인은 동등하다. 예를 들어 $D=0$이면
+
+$$
+B_k^{B}(x) = B_k^{TPS}(x)-B_{k+1}^{TPS}(x),\qquad B_k^{TPS}(x)=\sum_{m=k}^K B_m^{B}(x).
+$$
+
+### 행렬 표현과 최소제곱 추정
+
+기저함수 표현을 행렬 형태로 나타내면
+
+$$
+\mathbf y=\mathbf X \boldsymbol\gamma +\boldsymbol\varepsilon
+$$
+
+이다. 여기서
+
+$$
+\mathbf X=\begin{pmatrix} B_1(x_1)&\cdots&B_K(x_1)\\ \vdots &&\vdots\\ B_1(x_n)&\cdots&B_K(x_n)\end{pmatrix}
+$$
+
+이고, $\mathbf y,\;\boldsymbol\gamma,\;\boldsymbol\varepsilon$은 각각 종속변수, 회귀계수, 오차항을 쌓아 올린 벡터이다.
+
+최소제곱추정량은 일반 선형모형에서와 같이 $\hat{\boldsymbol\gamma}=(\mathbf X^{\top}\mathbf X)^{-1} \mathbf X^{\top} \mathbf y$이며, $\boldsymbol\gamma$에 비정보 사전분포를 부여하고 오차항을 등분산 정규분포로 가정하면 사후분포의 평균, 최빈값, 중위수가 모두 이 값과 같게 된다. 함수값 벡터 $\mathbf f=(f(x_1),\ldots, f(x_n))^{\top}$의 추정값은
+
+$$
+\hat{\mathbf f}=\mathbf X\hat{\boldsymbol\gamma}=\mathbf X(\mathbf X^{\top}\mathbf X)^{-1}\mathbf X^{\top}\mathbf y
+$$
+
+이며, 여기서 $\mathbf X^{\top} \mathbf X$는 TPS의 경우 대부분의 원소가 0이 아닌 조밀한 행렬이고, B-스플라인의 경우 많은 원소가 0인 띠(band) 구조를 갖는 행렬이다.
+
+함수의 형태는 스플라인 함수의 차수와 결합점의 수에 의해 결정된다. 차수는 기본적으로 미분가능성을 좌우하지만 전반적인 매끄러운 정도는 크게 변하지 않으며, 주로 결합점에서의 미분가능성에 영향을 미친다. 보통은 3차 다항 스플라인($D=3$)이 적절한 선택으로, 시각적으로 보기 좋고 매끄러운 함수를 만들어 낸다. 결합점은 그 수가 적으면 상대적으로 부드러운 함수를, 많으면 구불구불한 함수를 만들어 낸다. 결합점은 차수와 결합하여 함수형태를 다양하게 바꿀 수 있으므로, 차수와 달리 결합점에 대해서는 일관된 기준을 얻기 어렵다. 모형선택 전략에 따라 상황에 맞는 결합점을 선택할 수도 있고, 또 다른 방법으로 다항 스플라인 계수에 벌점을 부과하는 아이디어를 이용할 수 있다.
+
+## 벌점 스플라인
+
+### TPS 기저의 벌점
+
+벌점 스플라인의 기본 아이디어는 TPS 스플라인을 이용하여 쉽게 설명할 수 있다. TPS 스플라인에서
+
+1. 처음 $D+1$개의 기저함수의 계수는 전역 다항식을 묘사한다.
+2. 그 다음의 많은 절단 다항함수의 계수들이 추가적인 변동성을 표현한다.
+3. 값이 큰 절단 다항함수 계수들에 제곱합 형태의 벌점을 부과한다.
+
+$$
+\text{pen}(\boldsymbol\gamma)=\sum_{k=D+2}^K \gamma_k^2 =\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma, \quad \mathbf K=\text{diag}(\mathbf 0_{D+1},\mathbf I_{M-1})
+$$
+
+이 벌점항은 $\boldsymbol\gamma$에 대하여 미분가능하다는 장점이 있으며, 관점에 따라 확률효과의 분포 또는 i.i.d. 가우스 사전분포에 해당한다. 이차 벌점은 또한 능형회귀(ridge regression)와 밀접한 관계가 있다. 한편, 평활화 파라미터 $\lambda\ge0$는 벌점의 영향을 결정한다. 즉,
+
+$$
+\text{PLS}(\lambda)=\sum_{i=1}^n\Big(y_i-\sum_{k=1}^K \gamma_kB_k(x_i)\Big)^2+\lambda\sum_{k=D+2}^K \gamma_k^2=(\mathbf y-\mathbf X\boldsymbol\gamma)^{\top}(\mathbf y-\mathbf X\boldsymbol\gamma)+\lambda\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma
+$$ {#eq-pls-tps}
+
+$\lambda\to 0$이면 벌점이 없는 최소제곱 스플라인 적합이 되고, $\lambda\to\infty$이면 전역 다항식 적합과 동일하게 된다. 다양한 형태의 함수를 표현하기 위하여 많은 수(20~30개)의 결합점을 사용하면, 평활화 파라미터는 구불구불한 함수와 평탄한 함수 사이의 연속적인 값 중 하나를 선택하는 역할을 하며, 따라서 결합점의 수와 위치의 역할은 미미해진다. 벌점항은 또한 두 인접 결합점 사이에 데이터가 관측되지 않은 영역에서도 평활화가 이루어지도록 한다. 즉, 데이터가 존재하는 부분에서 적합된 두 함수를 부드럽게 연결하여 안정적인 함수형태를 부여한다. 평활화 파라미터는 단순한 산점도 평활화 모형에서는 AIC나 교차검증 기준을 최소화하는 값으로 선택하지만, 보다 복잡한 모형에서는 선택이 더 어렵다. 완전베이즈 추정에서 MCMC 방법을 따르는 방법이나 다른 방법들은 3장에서 살펴볼 것이며, 당분간은 $\lambda$를 고정된 상수라고 가정한다.
+
+### B-스플라인 기저의 차분 벌점
+
+B-스플라인은 전역 다항식과 국소 다항식의 구별이 없어서 벌점을 도출하는 것이 다소 복잡하다. 이 경우 시계열에서와 같이 벌점을 부여하되, 함수값이 아니라 인접한 회귀계수의 차분에 부여한다. B-스플라인의 경우 PLS는
+
+$$
+\begin{aligned}
+\text{PLS}(\lambda)&=\sum_{i=1}^n\Big(y_i-\sum_{k=1}^K\gamma_kB_k(x_i)\Big)^2+\lambda\sum_{k=d+1}^K(\Delta^d\gamma_k)^2\\
+&=(\mathbf y-\mathbf X\boldsymbol\gamma)^{\top}(\mathbf y-\mathbf X\boldsymbol\gamma)+\lambda\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma
+\end{aligned}
+$$ {#eq-pls-bspline}
+
+이다. 여기서 $\Delta^1\gamma_k=\gamma_k-\gamma_{k-1},\;\Delta^2\gamma_k=\Delta^1\gamma_k-\Delta^1\gamma_{k-1},\ldots$는 $d$차 차분을 나타낸다. $\text{PLS}(\lambda)$는 TPS와 B-스플라인에서 정확하게 동일한 형태를 갖는다. 다른 일부 비모수 회귀모형이나 공간모형들도 유사하게 이차형식으로 표현될 수 있으며, 이 경우 이들 모형에 공통적으로 적용할 수 있는 추론 절차를 도출할 수 있다.
+
+### 벌점최소자승 추정량
+
+PLS 추정량은 PLS 기준을 미분하여 구할 수 있다. 즉,
+
+$$
+-2\mathbf X^{\top}\mathbf y +2(\mathbf X^{\top}\mathbf X+\lambda\mathbf K)\boldsymbol\gamma=\mathbf 0\quad \Rightarrow \quad \hat{\boldsymbol\gamma}=(\mathbf X^{\top}\mathbf X +\lambda\mathbf K)^{-1}\mathbf X^{\top}\mathbf y
+$$ {#eq-pls-estimator}
+
+평활화 함수값은 다음과 같이 능형회귀 형태의 추정량이 된다.
+
+$$
+\hat {\mathbf f}=\mathbf X\hat{\boldsymbol\gamma}=\mathbf X(\mathbf X^{\top}\mathbf X +\lambda\mathbf K)^{-1}\mathbf X^{\top}\mathbf y
+$$ {#eq-pls-fit}
+
+### 비등간격 결합점
+
+또한 분위수를 이용하여 데이터가 많은 구간에 더 많은 결합점을 부여하는 방법이 있다. 결합점이 등간격이 아닌 경우에도 이차형식 벌점 $\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma$의 형태는 동일하지만, 행렬 $\mathbf K$를 다르게 정의하여야 한다. 예를 들어 1차 차분의 경우
+
+$$
+\mathbf K=\mathbf D^{\top}\boldsymbol\Delta\mathbf D,\quad \boldsymbol\Delta=\text{diag}(\delta_2,\ldots,\delta_K)
+$$
+
+이다. 여기서 $\mathbf D$는 1차 차분행렬이고, $\delta_k=\kappa_k-\kappa_{k-1}$은 인접한 결합점 간의 거리를 나타낸다. TPS 스플라인인 경우에는 능형 형태의 벌점이 여전히 유효하기 때문에 동일한 벌점행렬을 이용한다. 하지만 비등간격 결합점은 데이터가 매우 불균형하게 분포되어 있지 않은 이상 반드시 필요한 것은 아니다.
+
+### TPS와 B-스플라인의 비교
+
+벌점 원칙에 따라 TPS 스플라인과 B-스플라인 중 어느 쪽을 이용하든 결과는 동일하다. 다만 평활화 파라미터, 스플라인 차수, 차분 차수에 대한 조건을 설정하는 데 있어 TPS 스플라인이 다음과 같이 좀 더 제약을 받는다.
+
+|      구분       | B-스플라인 |                       TPS 스플라인                        |
+| :-------------: | :--------: | :-------------------------------------------------------: |
+|  스플라인 차수  |    $D$     |                            $D$                            |
+|    차분 차수    |    $d$     |                         $d=D+1$                           |
+| 평활화 파라미터 | $\lambda$  | $\tilde\lambda=(D!\,h^d)\lambda,\quad h=\kappa_{j+1}-\kappa_j$ |
+
+B-스플라인 기저함수는 스플라인 차수 $D$와 차분 차수 $d$를 분리할 수 있어서 좀 더 유연하게 접근할 수 있다. 여기서는 파라미터 $\lambda$가 고정되어 있다고 가정하였는데, 만약 $\lambda$를 추정해야 한다면 위 조건들이 만족되더라도 두 스플라인 적합이 달라질 수 있다.
+
+### 차분 벌점의 해석
+
+$\lambda$가 무한대로 가면 함수는 $x$의 $(d-1)$차 다항식에 접근한다. 예를 들어 B-스플라인 기저함수 하나를 1차 미분하면
+
+$$
+\begin{aligned}
+\frac{\partial}{\partial x}B_k^D(x)&=D\left(\frac{1}{\kappa_{k+D}-\kappa_k}B_k^{D-1}(x)-\frac{1}{\kappa_{k+D+1}-\kappa_{k+1}}B_{k+1}^{D-1}(x)\right),\\
+\frac{\partial}{\partial x}\sum_{k}\gamma_kB_k^D(x)&=D\sum_{k}\frac{\gamma_k-\gamma_{k-1}}{\kappa_{k+D}-\kappa_k}B_k^{D-1}(x)
+\end{aligned}
+$$
+
+이다. 즉, 미분값은 인접 회귀계수 간의 차분에 의존한다. 정리하면 차분 벌점은 미분값의 제곱으로 변동성에 벌점을 부과한 것에 대한 근사로 해석할 수 있으며, $(d-1)$차 다항식은 벌점의 영향을 받지 않는다. 따라서 $\lambda\to\infty$인 경우 회귀계수들은 벌점항을 최소화하는 $(d-1)$차 다항식이 된다.
+
+### 비다항 벌점
+
+다항함수가 아닌 형태를 가정하는 경우 다른 유형의 벌점을 부과할 수 있다. 예를 들어 주기함수인 경우 다음과 같은 이차 차분 벌점을 생각해 보자.
+
+$$
+\sum_{k=3}^K (\gamma_k-2c\gamma_{k-1}+\gamma_{k-2})^2
+$$ {#eq-periodic-penalty}
+
+여기서 $c=\cos(2\pi\delta/p)$이며, $\delta$와 $p$는 각각 두 결합점 간의 거리와 주기를 나타내는 파라미터이다. 만약 벌점의 가중치를 $\lambda\to\infty$로 두면 계수는
+
+$$
+\gamma_k=\gamma_0\cos(2\pi k\delta/p+\phi)
+$$
+
+로 주기 $p$를 갖는 코사인 함수로 귀결되며, 여기서 진폭 $\gamma_0$와 위상 $\phi$는 데이터에 의해 결정된다. 이 벌점함수는 다항함수로 적합하기에 부적절한 주기적 패턴을 갖는 데이터를 적합하는 데 유용하다. 만약 지수적으로 증가하는 함수에 벌점을 부과하지 않고자 한다면 또 다른 유형의 비다항 벌점인 L-스플라인을 참고할 만하다.
+
+## 다음 글
+
+다음 글 [베이지안 벌점 스플라인](smoothing5.qmd)에서는 벌점에 대응하는 사전분포와 Gibbs sampler를 살펴본다.

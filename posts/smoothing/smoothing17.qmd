@@ -1,0 +1,120 @@
+---
+title: '방사 기저 평활'
+date: '2022-10-19'
+categories: ['Bayesian smoothing', 'Spatial statistics']
+description: '방사 기저함수와 공간채우기 알고리즘, 텐서곱 기저와의 비교'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing16.qmd)에서는 텐서곱 기저와 크로네커곱 벌점을 이용한 텐서곱 벌점 스플라인을 살펴보았다. 이번 글에서는 연속 공간 평활화의 두 번째 방법인 방사 기저(radial basis)를 다루고, 두 접근법의 장단점을 비교한다.
+
+## 방사 기저
+
+방사 기저의 기본 아이디어는 기저함수의 다변수 인자를 바꾸어 일변수 문제로 만드는 것이다. 공간상의 임의의 결합점 $\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K$ 를 고려해 보자. 방사 기저의 주된 이점은 데이터가 밀집한 지역에 더 많은 결합점을 놓을 수 있다는 것이다. 각 기저함수는 단 하나의 결합점에 할당된다. 이를 모형화하면 기저함수는
+
+$$
+B_k(\mathbf s)=B(\|\mathbf s-\boldsymbol\kappa_k\|)
+$$
+
+이고, 여기서 $B(\cdot)$ 는 일변수 함수이며, $\|\mathbf s-\boldsymbol\kappa_k\|$ 는 각 점과 결합점 $\boldsymbol\kappa_k$ 사이의 거리를 측정한다. 공간함수 $f(\mathbf s)$ 는
+
+$$
+f(\mathbf s)=\sum_{k=1}^K \gamma_k B_k(\mathbf s)
+$$ {#eq-radial}
+
+로 근사할 수 있다.
+
+함수 $B(\cdot)$ 나 거리측도 $\|\cdot\|$ 를 바꾸면 다양한 종류의 방사 기저를 얻을 수 있다. 보통 거리로는 원형 등고선을 제공하는 유클리드 거리를 사용하기 때문에 방사 기저라고 부른다. 가장 많이 사용되는 방사 기저함수는 다음과 같다.
+
+- $B(r)=\exp(-cr^2),\quad c>0$
+- $B(r)=r^2\log(r)$ (박판 스플라인, thin plate spline)
+- $B(r)=r^k$, $k$ 는 짝수
+- $B(r)=\sqrt{r^2+c^2}$, $c>0$
+
+텐서곱 스플라인 기저함수에 비해 방사 기저함수가 갖는 장점은 두 가지이다. 첫째, 텐서곱 스플라인 기저함수에서는 결합점의 일부가 데이터가 전혀 없는 곳에 놓일 수 있다. 이 경우 예측에는 문제가 없을지 몰라도 계산해야 하는 계수의 수가 불필요하게 크게 증가한다. 둘째, 방사 기저함수에서는 결합점을 보다 유연하게 배치하여 데이터가 밀집한 지역에 보다 많은 기저함수를 추가할 수 있다.
+
+### 공간채우기 알고리즘
+
+앞에서 언급한 것처럼 데이터를 감안하여 결합점을 배치하려면 데이터와 결합점의 일치도를 측정할 필요가 있다. 공간채우기 알고리즘(space filling algorithm)은 이러한 측도를 제공하고 최적 결합점을 설정하도록 해준다.
+
+$D=\{\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K\}$ 를 방사 기저의 결합점을 정의하는, 관측위치 $C=\{\mathbf s_1, \ldots,\mathbf s_n\}$ 의 부분집합이라 하고, 임의의 위치 $\mathbf{s}\in C$ 와 결합점 집합 $D$ 사이의 거리측도를
+
+$$
+d(\mathbf s,D)=\left(\sum_{\boldsymbol\kappa\in D}\|\mathbf s-\boldsymbol\kappa\|^p\right)^{1/p}
+$$ {#eq-sf-distance}
+
+라 하자. 거리측도는 계수 $p$ 에 의해 결정되며, 제약조건 $p<0$ 은 결합점 집합과 그 집합 내에 있는 한 결합점 사이의 거리를 0으로 만들어 준다. 즉,
+
+$$
+d(\boldsymbol\kappa,D)=0,\quad \boldsymbol\kappa\in D
+$$
+
+이다. 결합점과 데이터 간의 일치도는 다음과 같이 정의할 수 있다.
+
+$$
+\left[\sum_{\mathbf{s}\in C}d(\mathbf{s},D)^q\right]^{1/q},\quad q>0
+$$ {#eq-sf-criterion}
+
+모수 $q$ 는 모든 결합점 $D$ 로부터 충분히 떨어진 관측치에 대하여 $d(\mathbf{s},D)$ 의 값이 크게 반영되도록 양수 값을 가져야 한다. 표준적인 값은 각각 $p=-20,\;q=20$ 이다.
+
+최적 결합점은 @eq-sf-criterion 을 최소화하는 점들로 정해지지만, 전역 최적해를 구하는 방법은 명확하지 않아서 경험적으로 국소 최적해를 구하는 다음 알고리즘을 이용한다.
+
+> **공간채우기 알고리즘(space filling algorithm)**
+>
+> 1. 임의의 시작 결합점 집합 $D$ 를 정하고, 이 결합점에 대한 @eq-sf-criterion 의 일치도를 구한다.
+> 2. 남아 있는 관측위치 $\mathbf{s}\in C\backslash D$ 와 현재 결합점 $\boldsymbol\kappa\in D$ 를 대상으로 순환한다. 각 쌍 $(\mathbf s,\boldsymbol\kappa)$ 에 대하여 $\boldsymbol\kappa$ 가 $\mathbf s$ 로 대체되었을 때의 일치도를 계산한다.
+> 3. @eq-sf-criterion 의 일치도를 가장 크게 감소시키는 교체를 실행한다.
+> 4. 더 이상 일치도가 향상되지 않으면 알고리즘을 중단한다. 그렇지 않으면 2번으로 돌아간다.
+
+### 방사 기저에 대한 벌점
+
+결합점을 바탕으로 기저함수가 주어지면, 방사 기저에 대한 벌점이 필요하다. 행과 열에 기반한 벌점은 여기에 적용할 수 없지만, 이변수 미분연산자와 같은 이차 미분의 제곱은 적용할 수 있다. 이 벌점은 가장 잘 알려진 방사 기저함수인 박판 스플라인과 밀접한 관련이 있다.
+
+서로 다른 위치 데이터 $\mathbf s_1,\ldots, \mathbf s_n$ 에 대하여, 연속적으로 두 번 미분가능한 모든 이변수 함수 $f(\mathbf s)$ 를 대상으로 벌점 최소제곱 기준
+
+$$
+\min_{f} \;\sum_{i=1}^n (y_i-f(\mathbf s_i))^2 +\lambda\int\!\!\int\left[\left(\frac{\partial^2}{\partial s_1^2}+2\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2} \right)f(s_1,s_2)\right]^2ds_1\,ds_2
+$$ {#eq-tps-criterion}
+
+을 적용하면, 평활 스플라인의 이변수 버전인 다음과 같은 함수를 구할 수 있다.
+
+$$
+\begin{aligned}
+f(\mathbf s)&=\beta_0+\beta_1 s_1 +\beta_2 s_2 +\sum_{k=1}^n \gamma_k B_k(\mathbf s),\\
+B_k(\mathbf s)&=B(\|\mathbf s-\mathbf s_k\|)=\|\mathbf s-\mathbf s_k\|^2\log(\|\mathbf s-\mathbf s_k\|)
+\end{aligned}
+$$ {#eq-tps}
+
+이 함수는 경계 결합점 바깥 지역에서 선형이기 때문에 박판 스플라인(thin plate spline)이라고 불린다. 선형 부분을 제외하면, 박판 스플라인은 기저함수가 $B(r)=r^2\log(r)$ 이고 서로 다른 관측점을 결합점으로 하는 방사 기저로 만들어진다.
+
+박판 스플라인의 단점은 그 최적성이 모든 관측점을 결합점으로 이용할 때 성립하기 때문에, 관측치가 많은 경우 실제로 이용하기 어렵다는 점이다. 그러나 박판 스플라인 기저 또는 다른 기저함수를 더 적은 수의 결합점과 함께 이용할 때에도 여전히 이 벌점항을 적용할 수 있다.
+
+즉, 기저함수에 적용되는 이변수 미분연산자의 축약 표현으로 이차형식의 벌점 $\lambda\boldsymbol\gamma^{\top} \mathbf K\boldsymbol\gamma$ 를 사용할 수 있는데, 여기서 벌점 행렬의 각 원소는
+
+$$
+\mathbf K[j,k]=\int B_j''(\mathbf s)B_k''(\mathbf s)\,d\mathbf s,\quad B_k''(\mathbf s)=\left(\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}\right)B_k(\mathbf s)
+$$
+
+이다.
+
+또 다른 벌점 개념은 방사 기저함수를 이용한 이변수 평활화와 재생 커널 힐베르트 공간(reproducing kernel Hilbert space; RKHS) 사이의 연관성에서 나온다. 방사 기저함수가 양의 정부호라면, 즉 임의의 $m\in \mathbb{N}$ 과 적어도 하나는 0이 아닌 임의의 상수 $a_1,\ldots,a_m$, 그리고 임의의 위치 데이터 $\mathbf s_1,\ldots,\mathbf s_m$ 에 대하여
+
+$$
+\sum_{i=1}^m\sum_{j=1}^m a_i a_j B(\|\mathbf s_i-\mathbf s_j\|)>0
+$$
+
+이면, 이 기저함수는 RKHS의 커널함수로 간주할 수 있다. RKHS 이론으로부터 이차형식의 벌점을 얻을 수 있는데, 그 벌점 행렬의 원소는 $B(\|\boldsymbol\kappa_j-\boldsymbol\kappa_k\|)$, 즉 결합점 사이의 거리에서의 방사 기저함수 값으로 구한다. 이 형태의 벌점항은 이후 [가우스 확률필드](smoothing19.qmd)에서 다시 살펴볼 것이다.
+
+## 텐서곱 대 방사 기저
+
+이제 텐서곱 스플라인과 방사 기저의 장단점을 정리해 보자.
+
+* **설명변수의 척도**: 텐서곱은 각 일변수 설명변수의 척도에 대한 가정을 하지 않으므로 어떤 설명변수 간의 결합에도 적용할 수 있다. 반면 유클리드 거리를 사용하는 방사 기저는 두 설명변수가 동일한 단위일 때 더 적합하다. 수학적 관점에서 텐서곱은 설명변수의 선형 변환에 불변이지만, 방사 기저함수는 설명변수의 회전에 불변이다.
+* **결합점의 위치**: 텐서곱 스플라인의 결합점은 변수축을 따라 놓여야 하지만, 방사 기저는 결합점을 자유롭게 배치할 수 있다.
+* **고차 평활화**: 두 방법 모두 고차 평활화로 확장 가능하지만, 유클리드 거리는 임의의 차원에서 바로 이용 가능하고 결합점의 수를 조절할 수 있어서 방사 기저가 더 유리하다. 다만 공간과 시간을 결합하여 3변수 평활함수로 확장하는 경우에는 단위가 서로 달라 방사 기저에 문제가 있을 수 있으므로 텐서곱 방식이 유리하다.
+
+## 다음 글
+
+[다음 글](smoothing18.qmd)에서는 연속 공간 데이터를 위한 정상 가우스 확률필드와 상관계수 함수를 살펴본다.

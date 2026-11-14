@@ -1,0 +1,237 @@
+---
+title: '공간 평활과 마코프 확률필드'
+date: '2022-10-16'
+categories: ['Bayesian smoothing', 'Spatial statistics']
+description: '공간 평활화 문제의 설정과 이산 공간에서의 마코프 확률필드'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing13.qmd)에서는 종단 데이터를 위한 가법혼합모형과 일반가법혼합모형을 살펴보았다. 이번 글부터는 제4장으로 넘어가 베이지안 공간 평활화(spatial smoothing)를 다룬다. 지금까지 살펴본 설명변수 간의 상호작용(interaction)을 공간효과(spatial effect)와 연계하여, 평활화 기법을 공간 가법모형(additive model)으로 확장하는 것이 이번 장의 목표이다.
+
+이번 장은 다음과 같이 구성된다.
+
+* 먼저 다양한 종류의 공간 데이터와 모형에 사용되는 기법을 소개하고,
+* 이산 공간에서의 마코프 확률필드(Markov random field)를 살펴본 다음,
+* 연속 공간 평활화(continuous spatial smoothing)와 상호작용 사이의 관계를,
+* 이어서 가우스 확률필드(Gaussian random field)를 다루고,
+* 마지막으로 공간가법 회귀모형의 일반적인 분석 방법을 제시한다.
+
+이번 글에서는 공간 평활화 문제를 정의하고, 이산 공간에서 공간효과의 사전분포를 구성하는 마코프 확률필드의 기본 이론을 정리한다.
+
+## 공간 평활화 문제
+
+우선 공간 평활화 문제를 정의하자. 점 $\mathbf s\in D \subset \mathbb{R}^d$ 를 연속공간상의 위치(continuous spatial location)라 하고, $y(\mathbf s)$ 를 위치 $\mathbf s$ 에서의 관측값이라고 할 때, 종속변수가 가우스분포를 따르는 모형을 다음과 같이 정의한다.
+
+$$
+y(\mathbf s)=f_{s}(\mathbf s)+\epsilon(\mathbf s)
+$$ {#eq-spatial-smoothing}
+
+여기서 $f_{s}$ 는 구하고자 하는 공간효과(이미지 또는 표면)를, $\epsilon(\mathbf s)$ 는 관측오차를 나타낸다. 공간상의 부가정보를 설명변수(covariate) 형태로 추가하면, 위 모형은 설명변수 $u(\mathbf s)$ 를 포함한 모형, 즉
+
+$$
+y(\mathbf s)=u(\mathbf s)^{\top}\beta+f_s(\mathbf s)+\epsilon(\mathbf s)
+$$
+
+로 확장할 수 있다. 종속변수를 가우스 분포가 아닌 보다 일반적인 지수족(exponential family) 분포로 고려하면 다음과 같이 일반 종속변수 모형(general response model)으로 확장이 가능하다.
+
+$$
+E(y(\mathbf s))=h(\eta(\mathbf s)),\quad \eta(\mathbf s)=u(\mathbf s)^{\top}\beta+f_s(\mathbf s)
+$$
+
+우리의 목표는 공간 관측값 $y(\mathbf s_1),\ldots, y(\mathbf s_n)$ 으로부터 공간효과 $f_s(\mathbf s)$ 를 도출하는 데 있다. 우리가 다루게 될 모형은 공간 가법모형으로, 준모수모형(semiparametric model)에 공간효과 항을 더하여 분석하는 방법이다.
+
+앞으로 다루게 될 공간정보는 크게 이산 공간정보와 연속 공간정보로 나눌 수 있다. 두 공간정보 간의 차이점은, 연속공간의 경우 공간상의 위치 $\mathbf s=(s_1,s_2),\;\mathbf s\in D\subset \mathbb{R}^2$ 가 연속인 좌표로 표시되고, 이산 공간의 경우 위치가 공간 지수(index) $s\in \mathbf S:=\{1,\ldots,S\}$ 로 나타난다는 점이다.
+
+공간 평활화는 상호작용을 포함하는 이변수 회귀모형과 밀접한 관련이 있다. 설명변수 $x_1$ 과 $x_2$ 가 연속일 때 이변수 평활화 문제는
+
+$$
+y_i = f(x_{i1},x_{i2})+\epsilon_i,\quad i=1,\ldots,n
+$$
+
+로 표현할 수 있으며, 이때 $f(x_{i1},x_{i2})$ 는 두 변수 $x_1$ 과 $x_2$ 사이의 상호작용을 나타내는 식으로 볼 수 있다. 일반적으로 상호작용과 공간효과는 밀접한 연관이 있으나, 경우에 따라서는 두 개념을 구분하여 적용해야 할 때도 있다.
+
+마지막으로, 공간상에서 지역 간의 상관관계를 무시한 모형은 설명변수에 대하여 잘못된 추론을 할 위험이 있다는 점을 지적하고자 한다. 모형에 공간효과를 도입하는 주된 이유는 공간상의 상관관계를 고려하여 다른 변수의 추정의 정확성을 높이기 위한 경우가 많지만, 공간효과 그 자체가 유의미한 정보를 제공하기도 한다.
+
+## 이산 공간: 마코프 확률필드
+
+이산 공간 자료에 대한 이론적 분석 도구로는 마코프 확률필드(Markov random field; MRF)와 가우스 확률필드(Gaussian random field; GRF)를 들 수 있다. 우선 예시를 통하여 공간 평활화 사전분포(prior)를 어떻게 구성할 수 있는지 살펴보자.
+
+### 공간 평활화 사전분포 예시
+
+이산공간 $S$ 에서 임의의 지역의 위치를 $s_i$, 공간상의 모든 지역의 집합을 $\mathbf S$ 라 하자. 즉, $s_i\in \mathbf S:=\{s_1,\ldots,s_S\}$ 이다. 특정 지역 $s_i$ 가 주어졌을 때 지역 $s_i$ 와 접하고 있는 주변지역의 집합을 $\delta_{s_i}\subset \mathbf S$ 라고 하자. 우리의 목표는 지역 $s_i$ 의 공간효과의 함수값이 아래와 같이 선형예측식에 기여할 때 공간효과에 대한 적절한 사전분포 구조를 정의하는 것이다.
+
+$$
+\eta_i=\cdots+\gamma_{s_i}+\cdots
+$$
+
+여기서 $\gamma_{s_i}=f_s(s_i)$ 는 지역 $s_i$ 에서의 공간효과를 나타낸다.
+
+지역 $s_i$ 의 공간효과의 사전분포는, 지역 $s_i$ 의 공간효과 값이 $s_i$ 와 가까운 지역들의 값과 비슷해야 한다는 성질을 이용하여 정의할 수 있다. 즉, 지역 $s$ 의 인접 지역이 주어졌을 때 지역 $s$ 의 조건부 확률분포를 가우스 분포라 가정하면
+
+$$
+\gamma_s\mid \gamma_{-s}\sim N\left(\frac{1}{N_s}\sum_{r\in \delta_s}\gamma_r,\frac{\tau^2}{N_s}\right)
+$$ {#eq-simple-gmrf}
+
+이다. 여기서 $N_s=|\delta_s|$ 는 지역 $s$ 의 인접 지역의 수를, $\tau^2$ 은 사전분포의 분산을 조절하는 모수이다. 문제는 모든 지역 $s\in \mathbf S$ 에 대한 공간효과의 조건부 분포 $\gamma_s\mid \gamma_{-s}$ 가 주어졌을 때 벡터 $\boldsymbol\gamma=(\gamma_1,\ldots, \gamma_S)^{\top}$ 의 결합분포를 구할 수 있는가에 있다. 다행히도 사전분포를 위와 같이 정의하는 경우, 공간효과 벡터 $\boldsymbol\gamma$ 는 다음과 같이 다변수 정규분포를 따른다는 것이 알려져 있다.
+
+$$
+p(\boldsymbol\gamma\mid \tau^2)\propto \exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top} \mathbf K \boldsymbol\gamma\right)
+$$ {#eq-simple-gmrf-joint}
+
+여기서 행렬 $\mathbf K$ 는 대각원소가 $\mathbf K_{s,s}=N_s$ 이고, 나머지 원소는 지역 $r$ 과 $s$ 가 이웃하는 경우 $\mathbf K_{r,s}=-1$, 그렇지 않은 경우 $\mathbf K_{r,s}=0$ 의 값을 갖는 행렬이다. 위와 같이 정의된 공간효과 벡터 $\boldsymbol\gamma$ 의 결합사전분포에 로그를 취하면 이전에 보았던 벌점항과 동일한 형태의 항을 얻을 수 있다.
+
+$$
+\boldsymbol\gamma^{\top} \mathbf K \boldsymbol\gamma=\sum_{s\in \mathbf S}\;\sum_{r\in\delta_s,\,r<s}(\gamma_s-\gamma_r)^2
+$$
+
+이 벌점항은 인접지역 간 공간효과의 차이를 전반적으로 측정해 주는 역할을 한다.
+
+이하에서 다룰 문제는 다음과 같다.
+
+1. 완전 조건부 사전분포로부터 유효한 결합 사전분포를 얻기 위한 조건은 무엇인가?
+2. 결합분포의 비정규성(impropriety)을 피하는 완전 조건부 사전분포의 형태는 무엇인가?
+3. MRF로부터 유도되는 주변확률분포의 종속성 유형에는 어떤 것들이 있는가?
+4. 종속변수에 직접 MRF를 적용하는 대신, 계수에 MRF를 부여하는 이유는 무엇인가?
+
+## 마코프 확률필드
+
+### 정의
+
+MRF는 공간효과 확률벡터에 부여되는 조건부 독립성 가정으로부터 출발한다. 조건부 독립성은 지역 간 인접 여부에 따라 결정되는데, 두 지역이 이웃하지 않는 경우 두 지역은 조건부 독립이라고 가정한다. 임의의 지역 $s$ 와 그 모든 인접지역 $\delta_s$ 의 공간효과 벡터 $\boldsymbol\gamma_{\delta_s}$ 에 대하여
+
+$$
+p(\gamma_s\mid \boldsymbol\gamma_{-s})=p(\gamma_s\mid \boldsymbol\gamma_{\delta_s})
+$$ {#eq-mrf-def}
+
+인 경우, 벡터 $\boldsymbol\gamma$ 의 결합분포가 주어진 주변지역 구조에 대한 MRF를 따른다고 말한다.
+
+> (예) 시간축(수직선): 1차 확률보행은 이전 시점과 이후 시점의 두 인접 시점에만 의존하는 MRF이다.
+
+MRF는 확률변수 간의 관계를 그래프로 쉽게 표현할 수 있다. 그래프 $\mathcal{G}=(\mathcal{K},\mathcal{E})$ 가 점(nodes)과 선(edges)으로 구성된다고 하자. 그래프상의 각 점은 공간상의 모든 지역 $\mathcal{K}=\{1,\ldots,S\}$ 을 나타내고, 연결선 $\mathcal{E}$ 는 지역들의 의존구조를 표현한다. 따라서 그래프상의 두 점이 조건부 종속이면 서로 연결되고, 조건부 독립인 경우에는 연결되지 않는다. 그래프 표현법과 MRF는 고차원의 평활화 문제나, 인접지역을 어떻게 정의하느냐에 따라 다양한 공간-시간 응용사례로 확장할 수 있다.
+
+모형 구성을 조건부 사전분포 $p(\gamma_s\mid \boldsymbol\gamma_{\delta_s})$ 에서 시작하고 있지만, 조건부 분포로부터 결합 확률분포를 구하는 것이 항상 가능한 것은 아니다. 결합 확률분포를 구하기 위하여 다음 2단계 방법을 이용하고자 한다.
+
+1. Brook의 보조정리에 따라 완전 조건부 분포로부터 $\boldsymbol\gamma$ 의 결합 확률분포를 비례상수를 제외한 부분까지 구한다.
+2. Hammersley-Clifford 정리에 따라 결합 확률분포의 형태를 결정한다.
+
+지수족(exponential family) 분포를 갖는 MRF의 경우, 일반화선형모형에서 자연 연결함수(natural link function) 형태로 도출되는 자기회귀(autoregressive) 모형이 유효한 결합 확률분포를 도출하게 해 준다.
+
+### Brook의 보조정리
+
+우선 주변 확률분포들과 결합 확률분포의 정의구간(support)에 대한 가정으로부터 시작해 보자. 결합 확률분포의 정의구간이 주변 확률분포의 정의구간을 계승한다(positivity)고 가정하는데, 이는 확률벡터 $\boldsymbol\gamma$ 의 결합 확률분포의 정의구간이 벡터의 각 원소 $\gamma_1,\ldots, \gamma_S$ 의 주변분포 정의구간들의 카테시안(Cartesian) 곱으로 이루어진다는 것을 말한다. 즉,
+
+$$
+p(\gamma_s)>0,\; s=1,\ldots,S\quad \Rightarrow \quad p(\boldsymbol\gamma)>0
+$$
+
+이다. 결합 확률분포의 정의구간이 주변 확률분포의 정의구간을 계승한다면, 결합확률분포 $p(\boldsymbol\gamma)$ 는 Brook의 전개에 따라 다음과 같이 분해될 수 있다.
+
+$$
+\begin{aligned}
+p(\boldsymbol\gamma)={}&\frac{ p(\gamma_1\mid \gamma_2,\ldots,\gamma_S)}{p(\gamma^{(0)}_1\mid \gamma_2,\ldots,\gamma_S)}\cdot\frac{p(\gamma_2\mid \gamma^{(0)}_1,\gamma_3,\ldots,\gamma_S)}{p(\gamma^{(0)}_2\mid \gamma^{(0)}_1,\gamma_3,\ldots,\gamma_S)}\cdot\frac{p(\gamma_3\mid \gamma^{(0)}_1,\gamma^{(0)}_2,\gamma_4,\ldots,\gamma_S)}{p(\gamma^{(0)}_3\mid \gamma^{(0)}_1,\gamma^{(0)}_2,\gamma_4,\ldots,\gamma_S)}\cdots\\
+&\cdots\frac{p(\gamma_S\mid \gamma^{(0)}_1,\gamma^{(0)}_2,\ldots,\gamma^{(0)}_{S-1})}{p(\gamma^{(0)}_S\mid \gamma^{(0)}_1,\gamma^{(0)}_2,\ldots,\gamma^{(0)}_{S-1})}\cdot p(\gamma^{(0)}_1,\ldots,\gamma^{(0)}_{S})
+\end{aligned}
+$$ {#eq-brook}
+
+여기서 $\boldsymbol\gamma^{(0)}=(\gamma_1^{(0)},\ldots,\gamma_S^{(0)})^{\top}$ 는 $\boldsymbol\gamma$ 의 정의구간에서 고정된 임의의 한 점을 의미한다. Brook의 전개는 결합 확률분포가 완전 조건부 확률분포로부터 비례상수를 제외하고 결정된다는 것을 알려준다. 위 식을 다시 정리하면
+
+$$
+\frac{p(\boldsymbol\gamma)}{p(\boldsymbol\gamma^{(0)})}=\prod_{s=1}^S \frac{p(\gamma_s\mid \gamma_1^{(0)},\ldots,\gamma_{s-1}^{(0)},\gamma_{s+1},\ldots,\gamma_S)}{p(\gamma_s^{(0)}\mid \gamma_1^{(0)},\ldots,\gamma_{s-1}^{(0)},\gamma_{s+1},\ldots,\gamma_S)}
+$$ {#eq-brook-ratio}
+
+인데, $\boldsymbol\gamma^{(0)}$ 는 고정되어 있으므로 $p(\boldsymbol\gamma^{(0)})$ 는 상수이고, 따라서 $p(\boldsymbol\gamma)$ 는 우변의 완전 조건부 확률분포들의 비의 곱에 비례한다. 정규화 상수는 Brook의 전개를 적분하여 구할 수 있으나, 이를 해석적으로 구하기는 쉽지 않다. 또한 완전 조건부 분포가 모두 정규(proper) 확률분포라고 해서 이로부터 도출되는 결합확률분포가 반드시 정규성(propriety)을 갖는 것은 아니라는 점에 유의해야 한다.
+
+Brook의 보조정리는 기준점 $\boldsymbol\gamma^{(0)}$ 에서 정의되지만, 공간에서는 시간축(time-line)과 달리 원소의 순서(ordering)가 따로 존재하지 않는다. 시간축에서는 결합확률분포가 다음과 같이 시간 순서에 따른 조건부 확률분포로 정의되나
+
+$$
+p(\boldsymbol\gamma)=p(\gamma_1)\prod_{t=2}^T p(\gamma_t\mid\gamma_{t-1},\ldots,\gamma_1)
+$$
+
+공간에서는 정해진 순서라는 것이 존재하지 않기 때문이다. 따라서 Brook의 전개는 유일하지 않고, 동일한 기준점에 대하여 모두 $S!$ 개의 Brook 전개가 존재한다. 다만, 이 전개들은 순서나 기준점 $\boldsymbol\gamma^{(0)}$ 에 관계없이 모두 같은 결합분포를 주어야 한다.
+
+### Negpotential 함수와 Hammersley-Clifford 정리
+
+먼저 negpotential 함수와 potential 함수를 정의하자. 결합 분포함수가 주변분포 정의구간을 계승(positivity)하고 $\mathbf 0$ 이 정의구간에 포함된다는 가정, 즉 $\mathbf{0}=(0,\ldots,0)\in \text{supp}(\boldsymbol\gamma)$ 라는 가정 아래에서 negpotential 함수는 아래와 같이 정의한다.
+
+$$
+\begin{aligned}
+Q(\boldsymbol\gamma)=\log\left(\frac{p(\boldsymbol\gamma)}{p(\mathbf{0})}\right)={}&\sum_{1\le s \le S}\gamma_s\phi(\gamma_s)+\mathop{\sum\sum}_{1\le r<s \le S}\gamma_r\gamma_s\phi(\gamma_r,\gamma_s)\\
+&+\mathop{\sum\sum\sum}_{1\le r<s<t \le S}\gamma_r\gamma_s\gamma_t\phi(\gamma_r,\gamma_s,\gamma_t)+\cdots+\gamma_1\cdots\gamma_S\,\phi(\gamma_1,\ldots,\gamma_S)
+\end{aligned}
+$$ {#eq-negpotential}
+
+여기서 $\phi(\cdot)$ 은 potential 함수로서 인자의 순서가 달라도 함수값이 동일한 함수이다. 위 식의 1차항의 경우 다음과 같은 함수를 정의하면 위와 같은 분해가 가능하다.
+
+$$
+\gamma_s\phi(\gamma_s)=Q(0,\ldots,0,\gamma_s,0,\ldots,0)-Q(\mathbf{0})
+$$
+
+Hammersley-Clifford 정리는 잘 정의된(admissible; 허용가능한) 결합분포를 주는 potential 함수에 대한 정리로, clique의 개념을 바탕으로 한 결과이다.
+
+* clique는 지역의 집합 $\mathcal{C}$ 로, 하나의 지역으로 이루어지거나($|\mathcal{C}|=1$), 집합에 속하는 모든 지역 $s,r\in \mathcal{C}$ 가 서로 주변지역인($s\sim r$) 경우를 말한다.
+* 주어진 주변구조를 가진 MRF에 대하여, potential 함수가 0이 아닌, 즉 $\phi(\gamma_{s_1},\ldots,\gamma_{s_p})\neq 0$ 인 것이 허용가능(admissible)하다면 $s_1,\ldots,s_p$ 는 하나의 clique를 구성한다.
+* $\boldsymbol\gamma$ 의 결합분포함수가 아래와 같이 clique의 potential로 정의될 때, 이를 Gibbs 분포라고 부른다.
+
+  $$
+  p(\boldsymbol\gamma)\propto \exp\left[\sum_{\mathcal{C}}\Big(\prod_{s\in\mathcal{C}}\gamma_s\Big)\phi_{\mathcal C}(\boldsymbol\gamma_{\mathcal C})\right]
+  $$ {#eq-gibbs}
+
+  여기서 합은 모든 가능한 clique $\mathcal{C}=\{s_1,\ldots,s_p\},\;s_1<\cdots<s_p$ 에 대하여 취한다.
+
+* (Hammersley-Clifford 정리) $\boldsymbol\gamma$ 의 결합분포가 Gibbs 분포로 정의되는 경우 이 분포는 MRF를 따른다.
+  - Hammersley-Clifford 정리는 허용가능한 MRF의 밀도함수를 규정하고, potential 함수들의 집합에 기반하여 유효한 MRF를 구축하는 방법을 제공한다.
+  - MRF 정의 시의 제약조건들은 potential 함수의 인자의 순열에 대한 불변성에서 도출된다.
+
+다음으로는 두 개 이하의 인자를 가진 potential 함수와 관련하여 지수족 밀도함수에 대한 자기(auto) 모형을 다룬다. 이 경우 자기회귀 모형의 정의는 자연연결함수를 가진 지수족 회귀분석으로 국한된다.
+
+### 자기회귀 모형
+
+자기회귀 모형은 다음 두 가지를 가정한다.
+
+* 조건부분포 $p(\gamma_s\mid \boldsymbol\gamma_{-s})$ 가 일변수 지수족 형태이다.
+* negpotential 함수가 $Q(\boldsymbol\gamma)=\sum_{s=1}^S \alpha_s \gamma_s+\sum_{s\sim r,\, s<r}\beta_{rs}\gamma_s\gamma_r$ 이다.
+  - clique가 두 개 이하의 원소로만 이루어지고,
+  - $\phi(\gamma_s)=\alpha_s,\; \phi(\gamma_s,\gamma_r)=\beta_{rs}$ 이다.
+
+이때 조건부분포는 negpotential 함수 @eq-negpotential 로부터
+
+$$
+p(\gamma_s\mid \boldsymbol\gamma_{-s})\propto \exp\Big(\gamma_s \alpha_s +\gamma_s\sum_{r:\,r\sim s}\beta_{rs}\gamma_r\Big)
+$$ {#eq-auto-cond}
+
+가 된다.
+
+**자기회귀 로지스틱 모형.** $\gamma$ 가 이진변수 $\gamma_s\in\{0,1\}$ 인 경우
+
+$$
+p(\gamma_s=1\mid \boldsymbol\gamma_{-s})=\frac{\exp(\alpha_s+\sum_{r\sim s} \beta_{rs}\gamma_r)}{1+\exp(\alpha_s+\sum_{r\sim s} \beta_{rs}\gamma_r)},\quad p(\gamma_s=0\mid \boldsymbol\gamma_{-s})=\frac{1}{1+\exp(\alpha_s+\sum_{r\sim s} \beta_{rs}\gamma_r)}
+$$
+
+이다.
+
+* 이웃하는 변수 $\gamma_r$ 이 설명변수에 포함되므로, 대상 변수가 종속변수와 설명변수 양쪽에 사용된다.
+* 자기회귀 프로빗 모형은 연결함수가 자연연결함수가 아니므로 Hammersley-Clifford 정리에 의해 배제된다.
+
+**Ising 모형.** 자기회귀 로지스틱 모형의 특별한 예이다. 로지스틱 자기회귀 모형의 계수를 $\alpha_s\equiv\alpha$, $\beta_{rs}\equiv\beta$ 로 두면
+
+$$
+p(\gamma_s=1\mid \boldsymbol\gamma_{-s})\propto\exp\Big\{\alpha+\beta\sum_{r\sim s} 1(\gamma_r=1)\Big\}
+$$
+
+이므로, 이웃하는 $\gamma_r$ 의 다수가 1이면 $\gamma_s=1$ 일 확률이 높아진다.
+
+* 예시: 흑백 이미지 복구, $\gamma_{s}=1$ (black), $\gamma_s=0$ (white).
+
+**자기회귀 포아송 모형.**
+
+$$
+E(\gamma_s\mid \boldsymbol\gamma_{-s})=\exp\Big(\alpha_s+\sum_{r:\,r\sim s}\beta_{rs}\gamma_r\Big)
+$$
+
+* 자연연결함수인 로그함수를 취하면 로그선형(log-linear) 포아송 모형이 된다.
+
+## 다음 글
+
+[다음 글](smoothing15.qmd)에서는 조건부 분포가 가우스 분포인 자기회귀 모형, 즉 가우스 마코프 확률필드를 살펴본다.

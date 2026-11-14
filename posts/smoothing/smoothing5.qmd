@@ -1,0 +1,148 @@
+---
+title: '베이지안 벌점 스플라인'
+date: '2022-10-07'
+categories: ['Bayesian smoothing', 'Splines']
+description: '벌점 스플라인의 벌점을 사전분포로 해석하고 Gibbs sampler와 유효 자유도를 살펴본다.'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing4.qmd)에서는 다항 스플라인 기저와 벌점최소자승(PLS) 추정으로 벌점 스플라인을 구성하였다. 이번 글에서는 같은 모형을 베이지안 관점에서 다시 살펴보고, 분산 파라미터에 사전분포를 부여한 완전베이즈 추론과 평활화의 복잡도를 나타내는 자유도를 다룬다.
+
+## 벌점과 사전분포
+
+베이지안 입장에서는 모든 형태의 벌점이 그에 해당하는 특정한 사전분포로 연결된다. 예를 들어, 절단 거듭제곱 급수(TPS) 기저함수는 능형회귀(ridge-type) 형태의 벌점을 갖는다. 전역 다항함수의 계수에는 다음과 같은 비정보 사전분포를 부여하고,
+
+$$
+p(\gamma_k)\propto \text{const.},\quad k=1,\dots,D+1
+$$
+
+절단 다항함수의 계수에는 다음과 같은 가우스 사전분포를 부여하자.
+
+$$
+\gamma_k\sim N(0,\tau^2),\quad k=D+2,\dots,K.
+$$
+
+$\sigma^2$와 $\tau^2$가 알려져 있다고 가정하면 사후분포는
+
+$$
+p(\boldsymbol\gamma\mid \mathbf y)\propto p(\mathbf y\mid \boldsymbol\gamma)\,p(\boldsymbol\gamma)\propto \exp\left\{-\frac{1}{2\sigma^2}(\mathbf y-\mathbf X\boldsymbol\gamma)^{\top}(\mathbf y-\mathbf X\boldsymbol\gamma)\right\}\exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma\right)
+$$ {#eq-posterior-gamma}
+
+이다. 여기서 $\mathbf K =\text{diag}(\mathbf 0_{D+1},\mathbf I_{M-1})$는 확률벡터 $\boldsymbol\gamma$의 결합분포의 정밀도 행렬을 나타낸다. 파라미터들은 사전적으로 독립이고, 결합분포는 $D+1$개의 평탄 분포와 $M-1$개의 가우스 분포의 곱의 형태가 된다. $\boldsymbol\gamma$ 중 $D+1$개의 계수의 사전분포가 비정칙(improper)이므로 정밀도 행렬 $\mathbf K$는 완전 계수(full rank)를 갖지 않고, 공분산 행렬도 존재하지 않는다. 로그 사후분포를 정리하면
+
+$$
+-2\sigma^2\log p(\boldsymbol\gamma\mid \mathbf y)= (\mathbf y -\mathbf X \boldsymbol\gamma)^{\top}(\mathbf y-\mathbf X\boldsymbol\gamma)+\frac{\sigma^2}{\tau^2}\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma+\text{const.}
+$$
+
+이므로 $\lambda=\sigma^2/\tau^2$로 두면 PLS 기준과 같아진다. 이 사후분포는 가우스 분포로서 최빈값(mode)과 평균이 벌점최소자승 추정값과 일치한다. 즉,
+
+$$
+\begin{aligned}
+\boldsymbol\gamma \mid \mathbf y &\sim N(\boldsymbol\mu, \boldsymbol\Sigma),\\
+\boldsymbol\Sigma &= \left(\frac{1}{\sigma^2}\mathbf X^{\top}\mathbf X+\frac{1}{\tau^2}\mathbf K\right)^{-1}=\sigma^2(\mathbf X^{\top}\mathbf X+\lambda\mathbf K)^{-1},\\
+\boldsymbol\mu &= \frac{1}{\sigma^2}\boldsymbol\Sigma\mathbf X^{\top}\mathbf y =(\mathbf X^{\top}\mathbf X+\lambda \mathbf K)^{-1}\mathbf X^{\top} \mathbf y.
+\end{aligned}
+$$ {#eq-gamma-conditional}
+
+## 분산 파라미터의 추론
+
+$\sigma^2$와 $\tau^2$에 대한 추론은 크게 두 가지 방향으로 접근할 수 있다. 경험베이즈(Empirical Bayes: EB) 추론은 회귀모형의 하이퍼파라미터 $(\sigma^2,\tau^2)$를 미지의 상수로 두고 주변우도로부터 이를 추정하는 방법으로, 혼합모형 접근법을 이용하여 추론을 완성한다. 반면 완전베이즈(Full Bayes: FB) 추론은 하이퍼파라미터들을 확률변수로 간주하고 적절한 사전분포를 부여하여 사후분포를 이끌어 내는 방법으로, 마코프체인 몬테카를로(Markov Chain Monte Carlo: MCMC) 시뮬레이션 기법을 이용한다.
+
+### 역감마 사전분포
+
+$\sigma^2$와 $\tau^2$에 대하여 다음과 같은 역감마(inverse gamma) 사전분포를 고려해 보자.
+
+$$
+\begin{aligned}
+\sigma^2\sim\text{IG}(a_{\sigma},b_{\sigma}):&\quad p(\sigma^2)\propto \frac{1}{(\sigma^2)^{a_{\sigma}+1}}\exp\left(-\frac{b_{\sigma}}{\sigma^2}\right),\quad a_{\sigma},b_{\sigma}>0,\\
+\tau^2\sim\text{IG}(a,b):&\quad p(\tau^2)\propto \frac{1}{(\tau^2)^{a+1}}\exp\left(-\frac{b}{\tau^2}\right),\quad a,b>0.
+\end{aligned}
+$$
+
+역감마 분포는 가우스 관측값 모형 및 가우스 확률보행(random walk) 모형과 켤레 관계에 있으므로, 완전조건부 분포로부터 Gibbs sampler를 구성할 수 있다. 완전조건부 분포는 다음과 같다.
+
+$$
+\begin{aligned}
+p(\boldsymbol\gamma\mid \cdot)&=p(\boldsymbol\gamma\mid \sigma^2,\tau^2,\mathbf y)\quad \Rightarrow\quad  \boldsymbol\gamma\mid \cdot \sim N(\boldsymbol\mu,\boldsymbol\Sigma),\\
+p(\sigma^2\mid \cdot)&= p(\sigma^2\mid \boldsymbol\gamma,\tau^2,\mathbf y)\propto p(\mathbf y \mid \boldsymbol\gamma,\sigma^2)\,p(\sigma^2),\\
+p(\tau^2\mid \cdot)&=p(\tau^2\mid \boldsymbol\gamma,\sigma^2,\mathbf y)\propto p(\boldsymbol\gamma \mid \tau^2)\,p(\tau^2).
+\end{aligned}
+$$
+
+분산 파라미터 $\sigma^2$의 완전조건부 분포는
+
+$$
+\sigma^2\mid \cdot \sim \text{IG}(\tilde{a}_{\sigma},\tilde{b}_{\sigma}),\quad
+\tilde{a}_{\sigma}=a_{\sigma}+\frac{n}{2},\quad
+\tilde{b}_{\sigma}=b_{\sigma}+\frac{1}{2}(\mathbf y-\mathbf X \boldsymbol \gamma)^{\top}(\mathbf y -\mathbf X\boldsymbol\gamma)
+$$ {#eq-sigma-conditional}
+
+이고, 분산 파라미터 $\tau^2$의 완전조건부 분포는
+
+$$
+\tau^2\mid \cdot \sim \text{IG}(\tilde{a},\tilde{b}),\quad \tilde{a}=a+\frac{\text{rank}(\mathbf K)}{2},\quad \tilde{b}=b+\frac{1}{2}\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma
+$$ {#eq-tau-conditional}
+
+이다.
+
+### Gibbs sampler
+
+> **알고리즘 1 (베이지안 P-스플라인의 Gibbs sampler)**
+>
+> 1. 주어진 $\sigma^2$과 $\tau^2$에서 다변수 정규분포 $N(\boldsymbol\mu, \boldsymbol\Sigma)$로부터 $\boldsymbol\gamma$를 업데이트한다.
+> 2. 주어진 $\boldsymbol\gamma$에서 역감마분포 $\text{IG}(\tilde{a},\tilde{b})$로부터 $\tau^2$를 업데이트한다.
+> 3. 주어진 $\boldsymbol\gamma,\; \tau^2$에서 역감마분포 $\text{IG}(\tilde{a}_{\sigma},\tilde{b}_{\sigma})$로부터 $\sigma^2$를 업데이트한다.
+
+## 평활화의 복잡도와 자유도
+
+평활화 파라미터 $\lambda$만으로는 P-스플라인 추정의 복잡도를 파악하기 어렵다. 동일한 값의 $\lambda$라도 차수나 벌점 구조에 따라 서로 다른 매끄러운 정도를 초래할 수 있다. 또한 $\lambda$가 종속변수의 변동성에 크게 의존하기 때문에, $\lambda$를 해석하려면 데이터의 척도를 명시적으로 고려할 필요가 있다.
+
+복잡도의 일반적인 측도인 자유도는 벌점의 도입으로 감소한 실제 차원을 고려한 파라미터의 개수를 의미한다. 일반적인 선형 평활화 함수는 관측된 종속변수들의 가중합으로 표현된다.
+
+$$
+\hat{f}(x)=\sum_{i=1}^n S(x,x_i)\,y_i=\mathbf s(x)^{\top} \mathbf y
+$$
+
+여기서 $x_i$는 관측된 설명변수이고, $\mathbf s(x)=(S(x,x_1),\dots,S(x,x_n))^{\top}$이다. 벌점 P-스플라인의 경우에는
+
+$$
+\mathbf s(x)^{\top}= \mathbf x^{\top}(\mathbf X^{\top} \mathbf X + \lambda \mathbf K)^{-1}\mathbf X^{\top},\quad \mathbf x=(B_1(x),\dots,B_K(x))^{\top}
+$$
+
+이다. 여기서 $\mathbf x$는 점 $x$에서 기저함수를 평가한 값이고, $\mathbf X$는 관측치 $x_1,\dots,x_n$으로 구성한 디자인 행렬이다. 이를 행렬 형태로 표현하면
+
+$$
+\mathbf S = \mathbf X(\mathbf X^{\top}\mathbf X +\lambda\mathbf K)^{-1}\mathbf X^{\top}
+$$ {#eq-smoother-matrix}
+
+이고, 이를 평활화 행렬(smoother matrix)이라고 부른다. 평활화 행렬은 관측치 $\mathbf y$를 예측값 $\hat{\mathbf y}$로 사영하는 역할을 한다. 선형 모형에서 회귀계수의 개수는 평활화 행렬(사영행렬)의 트레이스로 구할 수 있다. 이를 일반화하여
+
+$$
+\text{df}(\mathbf S)=\text{tr}(\mathbf S)
+$$ {#eq-df}
+
+로 정의하면, 이 값은 선형 평활화 함수에 대한 복잡도 측도로 사용된다. 벌점 기저함수 접근법의 경우 $\lambda\to 0$이면 $\text{df}(\mathbf S)= K$, 즉 기저함수의 개수와 같다. 또한 $\lambda\to \infty$이면 $\text{df}(\mathbf S)= d$로 벌점행렬 $\mathbf K$의 영공간(null space)의 차원과 같다. 트레이스는 $\text{tr}(\mathbf A\mathbf B)=\text{tr}(\mathbf B\mathbf A)$인 성질을 이용하여
+
+$$
+\text{tr}(\mathbf S) = \text{tr}\big(\mathbf X(\mathbf X^{\top}\mathbf X+\lambda\mathbf K)^{-1}\mathbf X^{\top}\big)=\text{tr}\big((\mathbf X^{\top}\mathbf X +\lambda\mathbf K)^{-1}\mathbf X^{\top} \mathbf X\big)
+$$
+
+로 계산할 수 있다. 그런데 스플라인 계수에 대한 Fisher 정보행렬과 벌점 Fisher 정보행렬은
+
+$$
+\mathbf F=\mathbf X^{\top}\mathbf X/\sigma^2,\quad \mathbf F_{\text{pen}}=(\mathbf X^{\top} \mathbf X + \lambda \mathbf K)/\sigma^2
+$$
+
+이므로, 명시적인 평활화 행렬이 없는 경우에도 자유도를 다음과 같이 정의할 수 있다.
+
+$$
+\text{df}=\text{tr}(\mathbf F\mathbf F^{-1}_{\text{pen}})
+$$ {#eq-df-fisher}
+
+즉, 자유도는 벌점이 없는 Fisher 정보행렬과 벌점 Fisher 정보행렬의 역행렬의 곱에 트레이스를 취한 것과 같다. 베이지안 관점에서는 $\tau^2$과 $\sigma^2$의 MCMC 표본마다 계산한 자유도의 표본평균이 자유도에 대한 점추정량을 제공한다. $\text{df}(\mathbf S)$가 $\lambda$에 비선형적으로 의존하므로, 단순히 $\lambda$의 사후평균 추정값을 대입하면 일반적으로 이와 다른 값을 얻게 된다.
+
+## 다음 글
+
+다음 글 [비정규분포 관측값의 벌점 스플라인](smoothing6.qmd)에서는 지수족 종속변수로 모형을 확장한다.

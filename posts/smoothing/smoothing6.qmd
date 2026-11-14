@@ -1,0 +1,163 @@
+---
+title: '비정규분포 관측값의 벌점 스플라인'
+date: '2022-10-08'
+categories: ['Bayesian smoothing', 'Splines']
+description: '지수족 종속변수에 대한 벌점 Fisher scoring과 IWLS 후보분포를 이용한 MH 알고리즘을 살펴본다.'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing5.qmd)에서는 정규분포 관측값에 대한 베이지안 벌점 스플라인과 Gibbs sampler를 살펴보았다. 이번 글에서는 비모수 평활화 모형을 보다 일반적인 종속변수 형태로 확장한다.
+
+## 일변수 비정규분포 관측값 모형
+
+회귀모형이 설명변수들의 선형결합 형태로 정의되면, 우도함수에 벌점항을 덧붙이는 형태로 모형을 설정할 수 있다. 일반화선형모형(Generalized Linear Model: GLM)에서와 같이 지수족(exponential family) 종속변수를 고려해 보자.
+
+$$
+E(y\mid x)=\mu=h(\eta),\quad \eta=f(x)
+$$ {#eq-glm}
+
+여기서 $f(x)$는 연속인 설명변수 $x$의 비모수 효과를 나타내고, $h$는 반응함수로서 그 형태를 이미 알고 있다고 가정한다. 또한 비모수 효과는
+
+$$
+f(x)=\mathbf x^{\top}\boldsymbol\gamma,\quad \mathbf x=(B_1(x),\dots,B_K(x))^{\top}
+$$
+
+로 표현한다. 여기서 $B_k(x)$는 점 $x$에서 평가한 기저함수이고, $\boldsymbol\gamma$는 회귀계수를 의미한다.
+
+## 벌점우도와 벌점 Fisher scoring
+
+$y_1,\dots,y_n$이 조건부 독립인 관측값이라고 하자. 회귀계수 $\boldsymbol\gamma$에 대한 우도함수는
+
+$$
+\mathcal L(\boldsymbol\gamma) = p(\mathbf y \mid \boldsymbol\gamma)=\prod_{i=1}^n p(y_i\mid \boldsymbol\gamma)
+$$
+
+이며, 여기서 $p(y_i\mid \boldsymbol\gamma)$는 $i$번째 관측값의 우도 기여분을 나타낸다. 로그우도함수 및 벌점로그우도함수는
+
+$$
+\begin{aligned}
+l(\boldsymbol\gamma)&=\log \mathcal L(\boldsymbol\gamma) = \sum_{i=1}^n l_i(\boldsymbol\gamma),\\
+l_{\text{pen}}(\boldsymbol\gamma)&=\sum_{i=1}^nl_i(\boldsymbol\gamma)-\frac{\lambda}{2}\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma
+\end{aligned}
+$$ {#eq-pen-loglik}
+
+이다. 종속변수가 정규분포를 따르는 경우 벌점로그우도 추정은 벌점최소자승법과 동일한 결과를 주지만, 정규분포가 아닌 경우에는 회귀계수 $\boldsymbol\gamma$에 대한 닫힌 형태의 해가 존재하지 않는다. 이런 경우 보통 반복 추정법인 벌점 Fisher scoring을 이용한다. Fisher scoring은 일반가법혼합모형의 경험베이즈 추정과 MCMC에서 적절한 후보분포를 생성하는 데에도 유용하다.
+
+### 스코어 함수와 Fisher 정보행렬
+
+스코어 함수는
+
+$$
+\begin{aligned}
+\mathbf s_{\text{pen}}(\boldsymbol\gamma)&=\frac{\partial l_{\text{pen}}(\boldsymbol\gamma)}{\partial \boldsymbol\gamma}=\mathbf s(\boldsymbol\gamma)-\lambda\mathbf K \boldsymbol\gamma,\\
+\mathbf s(\boldsymbol\gamma)&=\sum_{i=1}^n \mathbf s_i(\boldsymbol\gamma)=\sum_{i=1}^n \mathbf x_i \frac{d_i}{v_i^2}(y_i-\mu_i)
+\end{aligned}
+$$
+
+이다. 여기서 $\mathbf x_i$는 디자인 행렬 $\mathbf X$의 $i$번째 행을 나타내고, $v_i^2=\text{Var}(y_i)$는 종속변수의 조건부 분산을, $d_i=\partial h(\eta_i)/\partial \eta_i$는 반응함수의 도함수를 의미한다. 행렬 형태로 표기하면
+
+$$
+\mathbf s_{\text{pen}}(\boldsymbol\gamma)=\mathbf X^{\top}\mathbf D \mathbf V^{-1}(\mathbf y-\boldsymbol\mu)-\lambda \mathbf K \boldsymbol\gamma
+$$
+
+이며, 여기서 $\mathbf D=\text{diag}(d_1,\dots,d_n)$이고 $\mathbf V=\text{diag}(v_1^2,\dots,v_n^2)$이다. 벌점 Fisher 정보행렬은
+
+$$
+\begin{aligned}
+\mathbf F_{\text{pen}}(\boldsymbol\gamma)&=E\left(-\frac{\partial \mathbf s_{\text{pen}}(\boldsymbol\gamma)}{\partial \boldsymbol\gamma^{\top}}\right)=\mathbf F(\boldsymbol\gamma)+\lambda\mathbf K,\\
+\mathbf F(\boldsymbol\gamma)&=\sum_{i=1}^n \mathbf x_i w_i \mathbf x_i^{\top}=\mathbf X^{\top} \mathbf W \mathbf X
+\end{aligned}
+$$
+
+이다. 여기서 $\boldsymbol\eta=\mathbf X\boldsymbol\gamma$, $w_i=d_i^2/v_i^2$, $\mathbf W=\text{diag}(w_1,\dots,w_n)$이다.
+
+### 반복가중최소자승법
+
+벌점 최우추정량 $\hat{\boldsymbol\gamma}$는 아래 식을 $\hat{\boldsymbol\gamma}$가 수렴할 때까지 반복하여 구한다.
+
+$$
+\hat{\boldsymbol\gamma}^{(k+1)}=\hat{\boldsymbol\gamma}^{(k)}+\mathbf F_{\text{pen}}^{-1}(\hat{\boldsymbol\gamma}^{(k)})\,\mathbf s_{\text{pen}}(\hat{\boldsymbol\gamma}^{(k)})
+$$ {#eq-fisher-scoring}
+
+이를 반복가중최소자승법(IWLS) 형태로 다시 표기하면, 작업 관측값(working observation) $\tilde{\mathbf y}$를 이용하여
+
+$$
+\begin{aligned}
+\tilde{\mathbf y}&=\mathbf X\boldsymbol\gamma+\mathbf D^{-1}(\mathbf y-\boldsymbol\mu),\\
+\hat{\boldsymbol\gamma}^{(k+1)}&=(\mathbf X^{\top} \mathbf W^{(k)}\mathbf X+\lambda\mathbf K)^{-1}\mathbf X^{\top}\mathbf W^{(k)}\tilde{\mathbf y}^{(k)}
+\end{aligned}
+$$ {#eq-iwls}
+
+로 쓸 수 있다. 여기서 $\mathbf W^{(k)}$와 $\tilde{\mathbf y}^{(k)}$는 현재 추정치 $\hat{\boldsymbol\gamma}^{(k)}$에서 평가한 값을 나타낸다.
+
+## 베이지안 추론
+
+지수족 종속변수에 대한 관측값 모형은 다음과 같다.
+
+$$
+p(\mathbf y \mid \boldsymbol\gamma)=\prod_{i=1}^n p(y_i \mid \boldsymbol\gamma)
+$$
+
+베이지안 평활화 사전분포는
+
+$$
+p(\boldsymbol\gamma\mid \tau^2)\propto \left(\frac{1}{\tau^2}\right)^{\text{rank}(\mathbf K)/2} \exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top} \mathbf K \boldsymbol\gamma\right)
+$$ {#eq-smoothness-prior}
+
+이고, 여기서 산포(dispersion) 파라미터를 고정된 것으로 간주하면 분산 파라미터는 $\tau^2=1/\lambda$가 된다. 만약 $\tau^2$이 알려져 있거나 주어진 것으로 가정하면, 벌점 Fisher scoring으로 구한 벌점추정량은 사후분포의 최빈값과 동일하며 다음 사후분포를 극대화하는 값이다.
+
+$$
+p(\boldsymbol\gamma\mid \mathbf y)\propto p(\mathbf y \mid \boldsymbol\gamma)\,p(\boldsymbol\gamma\mid \tau^2)
+$$
+
+이 사후분포는 닫힌 형태로 구할 수 없으며, 사후분포가 $\boldsymbol\gamma$에 대하여 대칭적이지 않기 때문에 사후분포의 최빈값과 평균이 일치하지 않는다.
+
+### 완전베이즈 추정
+
+이제 완전베이즈 추정법을 고려해 보자. $\tau^2$에 대한 사전분포는 역감마 분포
+
+$$
+\tau^2 \sim \text{IG}(a,b)
+$$
+
+이고, 사후분포는
+
+$$
+p(\boldsymbol\gamma,\tau^2\mid \mathbf y) \propto p(\mathbf y\mid \boldsymbol\gamma)\cdot p(\boldsymbol\gamma\mid \tau^2)\cdot p(\tau^2)
+$$
+
+이다. 완전조건부 분포는 $\tau^2$의 경우 정규분포 모형과 마찬가지로
+
+$$
+p(\tau^2\mid \boldsymbol\gamma, \mathbf y)\propto p(\boldsymbol\gamma\mid\tau^2)\,p(\tau^2),\qquad \tau^2\mid \cdot \sim \text{IG}(\tilde{a},\tilde{b})
+$$
+
+이지만, 회귀계수 $\boldsymbol\gamma$의 경우에는
+
+$$
+p(\boldsymbol\gamma\mid \tau^2,\mathbf y)\propto p(\mathbf y\mid \boldsymbol\gamma)\,p(\boldsymbol\gamma\mid \tau^2)
+$$
+
+이고 더 이상 닫힌 형태의 분포를 이용할 수 없으므로 Metropolis-Hastings(MH) 알고리즘을 이용해야 한다.
+
+### IWLS 후보분포
+
+MH 알고리즘의 후보분포로는 반복가중최소자승(Iteratively Weighted Least-Squares: IWLS) 후보분포를 이용한다. IWLS 후보분포는 별도의 미세조정 없이도 회귀계수 $\boldsymbol\gamma$의 블록 업데이트를 자동으로 가능하게 하며, 보다 복잡한 모형을 구축하는 데 있어 기본 구성요소(building block)로 사용된다. 기본 아이디어는 최빈값을 평균으로 하고 벌점 Fisher 정보행렬을 정밀도 행렬로 하는 정규분포를 이용하여 완전조건부 분포 $p(\boldsymbol\gamma\mid\cdot)$를 근사하는 것이다. 이 근사 정규분포는 MH 알고리즘에서 후보밀도함수로 이용되며, 완전조건부 분포와 최빈값 및 최빈값에서의 곡률이 일치한다. 즉,
+
+$$
+\phi(\cdot\,;\boldsymbol\mu,\boldsymbol\Sigma),\quad \boldsymbol\mu=\boldsymbol\Sigma\mathbf X^{\top}\mathbf W \tilde{\mathbf y},\quad \boldsymbol\Sigma=\left(\mathbf X^{\top}\mathbf W\mathbf X+\frac{1}{\tau^2}\mathbf K\right)^{-1}
+$$ {#eq-iwls-proposal}
+
+이다. 여기서 GLM 가중치 행렬 $\mathbf W=\mathbf W(\boldsymbol\gamma)$와 작업 관측값 $\tilde{\mathbf y}=\tilde{\mathbf y}(\boldsymbol\gamma)$는 현재 값에서 평가한다. 즉, 현재 값 $\boldsymbol\gamma^c$와 ${\tau}^{2c}$ 하에서 후보값을
+
+$$
+{\boldsymbol\gamma}^p \sim \phi (\cdot\,;\boldsymbol\mu^c,\boldsymbol\Sigma^c)
+$$
+
+로부터 추출한다.
+
+## 다음 글
+
+다음 글 [범주형 관측값 모형과 평활화 스플라인](smoothing7.qmd)에서는 범주형 종속변수로 모형을 확장하고, 적분 벌점을 사용하는 평활화 스플라인을 살펴본다.

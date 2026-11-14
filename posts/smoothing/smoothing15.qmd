@@ -1,0 +1,166 @@
+---
+title: '가우스 마코프 확률필드'
+date: '2022-10-17'
+categories: ['Bayesian smoothing', 'Spatial statistics']
+description: '자기회귀 가우시안 모형과 가우스 마코프 확률필드(GMRF)'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing14.qmd)에서는 마코프 확률필드(MRF)의 정의와 Brook의 보조정리, Hammersley-Clifford 정리, 그리고 지수족 분포에 대한 자기회귀 모형을 살펴보았다. 이번 글에서는 조건부 분포가 가우스 분포인 자기회귀 가우시안 모형, 즉 가우스 마코프 확률필드(Gaussian Markov random field; GMRF)를 다룬다.
+
+## 자기회귀 가우시안 모형
+
+다음과 같은 회귀 모형을 고려해 보자.
+
+* 선형예측식: $\eta=u^{\top}\boldsymbol\beta+f_1(x_1)+\cdots+f_r(x_r)+f_s(s)$
+* MRF 사전분포: 공간회귀효과 $\gamma_s=f_s(s)$ 는 조건부 가우시안 구조를 갖는다.
+
+### 조건부 분포
+
+negpotential 함수에서 $\phi(\gamma_s)=-\gamma_s/(2\tau_s^2)$, $\phi(\gamma_s,\gamma_r)=\beta_{rs}/\tau_s^2$ 로 두면, 조건부분포는
+
+$$
+\gamma_s\mid \boldsymbol\gamma_{-s}\sim N\Big(\mu_s+\sum_{r:\,r\sim s}\beta_{rs}(\gamma_r-\mu_r),\;\tau_s^2\Big)
+$$ {#eq-car}
+
+이다. 위 모형은 [앞 글](smoothing14.qmd)의 공간 평활화 사전분포 예시를 일반화한 모형으로, $\mu_s=0$, $\beta_{rs}=1/|\delta_s|$, $\tau_s^2=\tau^2/|\delta_s|$ 로 두면 앞의 예시 모형이 도출된다.
+
+조건부 기대값은
+
+$$
+E(\gamma_s\mid \boldsymbol\gamma_{-s})=\mu_s+\sum_{r:\,r\sim s}\beta_{rs}(\gamma_r-\mu_r)
+$$
+
+이며, 이 모형을 조건부 자기회귀(conditionally autoregressive; CAR) 모형이라 부르는 이유이기도 하다.
+
+### 결합분포
+
+기준점 $\boldsymbol\gamma^{(0)}=\boldsymbol\mu=(\mu_1,\ldots,\mu_S)^{\top}$ 에서의 Brook 전개에 따른 결합분포함수는
+
+$$
+\frac{p(\boldsymbol\gamma)}{p(\boldsymbol\mu)}=\prod_{s=1}^S\frac{p(\gamma_s\mid \mu_1,\ldots,\mu_{s-1},\gamma_{s+1},\ldots,\gamma_S)}{p(\mu_s\mid \mu_1,\ldots,\mu_{s-1},\gamma_{s+1},\ldots,\gamma_S)}
+$$
+
+이다. $s\not\sim r$ 일 때 $\beta_{rs}=0$ 으로 두면 Brook의 전개에 따라
+
+$$
+\begin{aligned}
+\log p(\boldsymbol\gamma)&\propto \sum_{s=1}^S\log\left(\frac{p(\gamma_s\mid \mu_1,\ldots,\mu_{s-1},\gamma_{s+1},\ldots,\gamma_S)}{p(\mu_s\mid \mu_1,\ldots,\mu_{s-1},\gamma_{s+1},\ldots,\gamma_S)}\right)\\
+&=\sum_{s=1}^S\frac{1}{2\tau_s^2}\left[\left\{\sum_{r=s+1}^S\beta_{rs}(\gamma_r-\mu_r)\right\}^2-\left\{\gamma_s-\mu_s-\sum_{r=s+1}^S\beta_{rs}(\gamma_r-\mu_r)\right\}^2\right]\\
+&=\sum_{s=1}^S\frac{1}{2\tau_s^2}\left\{-(\gamma_s-\mu_s)^2+2(\gamma_s-\mu_s)\sum_{r=s+1}^S\beta_{rs}(\gamma_r-\mu_r)\right\}\\
+&=-\sum_{s=1}^S\frac{1}{2\tau_s^2}(\gamma_s-\mu_s)^2+\sum_{s=1}^S\sum_{r=s+1}^S\frac{\beta_{rs}}{\tau_s^2}(\gamma_s-\mu_s)(\gamma_r-\mu_r)
+\end{aligned}
+$$
+
+를 얻는다. 여기서 $\propto$ 는 상수항 차이를 무시한다는 의미이다. 따라서 확률밀도함수는
+
+$$
+p(\boldsymbol\gamma)\propto\exp\left[-\frac{1}{2}(\boldsymbol\gamma-\boldsymbol\mu)^{\top}\boldsymbol\Sigma^{-1}(\mathbf I_S-\mathbf B)(\boldsymbol\gamma-\boldsymbol\mu) \right]
+$$ {#eq-car-joint}
+
+이며, 여기서
+
+- $\boldsymbol\Sigma=\text{diag}(\tau_1^2,\ldots,\tau_S^2)$,
+- $\mathbf B[s,r]= \begin{cases} \beta_{rs}, & s\sim r,\\ 0, & \text{otherwise}, \end{cases}$
+- $\boldsymbol\Sigma^{-1}(\mathbf I_S-\mathbf B)$ 는 양의 정부호(positive definite)
+
+이다.
+
+### 가중치의 설정
+
+계수 $\beta_{rs}$ 는 이웃과의 공간 종속성을 감안한 가중치를 반영하여 결정한다. 격자공간의 경우 축 방향으로 직접 이웃하는 지역과 대각선상에 있는 지역에 서로 다른 가중치를 부여하거나, 지역 데이터의 경우 경계선의 길이 또는 지역 중심 간의 거리에 따라 가중치를 부여한다. 예를 들어
+
+$$
+\mu_s=0,\quad\beta_{rs}=\rho\frac{w_{rs}}{w_{s+}},\quad \tau_s^2=\frac{\tau^2}{w_{s+}},\quad
+w_{s+}=\sum_{r:\,r\sim s}w_{sr},\quad \rho\in[0,1]
+$$ {#eq-weights}
+
+로 두는 경우, 조건부 분포는
+
+$$
+\gamma_s\mid\boldsymbol\gamma_{-s}\sim N\left(\rho\sum_{r:\,r\sim s}\frac{w_{sr}}{w_{s+}}\gamma_r,\;\frac{\tau^2}{w_{s+}}\right)
+$$
+
+이 되며, 이 모형은 단순 GMRF 모형의 확장판으로 볼 수 있다.
+
+가중치 $w_{sr}$ 는 대칭성($w_{rs}=w_{sr}$)을 만족해야 유효한 GMRF가 성립하며, 다음과 같은 가중치를 생각할 수 있다.
+
+1. 동일 가중치: $w_{sr}=1,\; w_{s+}=|\delta_s|$ (앞 글 예시의 단순 GMRF)
+2. 지역 중심 간의 거리에 반비례: $w_{sr}\propto \exp(-d(s,r))$, 여기서 $d(s,r)$ 은 지역 $s$ 와 $r$ 의 중심 간의 거리
+3. 지역 간 경계선의 길이에 비례
+
+### 정규 GMRF와 내재 GMRF
+
+계수 $\rho$ 의 값에 따라 결합분포의 정규성(propriety)이 결정되는데, $0<\rho<1$ 인 경우 사전분포가 정규성을 만족한다. $\rho=1$ 이면 내재 가우스 마코프 확률필드(intrinsic Gaussian Markov random field; IGMRF)라고 부르는데, 이 경우 $(\mathbf I-\mathbf B)$ 가 완전 랭크(full rank)가 아니어서 역행렬이 존재하지 않고, 사전분포는 비정규적(improper)이 된다. 앞 글의 예시가 여기에 해당하며, 앞으로 IGMRF를 기본 사전분포로 이용할 예정이다.
+
+비정규 사전분포는 상수 수준의 편차에 벌점을 부여하지 않는 반면, 정규 사전분포는 전체적인 공간효과를 사전분포의 기대값 $\boldsymbol\mu$ 방향으로 끌어당기는 효과가 있다. IGMRF에서는 모수 $\rho$ 를 추정할 필요가 없으며, 정규 GMRF의 경우 완전 베이즈 모형에서는 $\rho$ 에 사전분포를 부여할 수도 있다.
+
+정규 GMRF와 IGMRF의 관계는 1차 정상 자기회귀과정과 1차 확률보행과정의 관계와 흡사하다.
+
+$$
+\begin{aligned}
+\gamma_t&=\rho\gamma_{t-1}+u_t,\quad u_t\sim N(0,\tau^2),\quad -1<\rho<1,\\
+\gamma_t&=\gamma_{t-1}+u_t,\quad u_t\sim N(0,\tau^2).
+\end{aligned}
+$$
+
+다만 MRF로 표현하면 원소 사이에 별도의 순서가 존재하지 않으므로, 시간축에서도 근접한 두 시점을 대칭적으로 이웃으로 간주한다는 점이 다를 뿐이다. 즉, 확률보행과 자기회귀과정의 완전 조건부 분포는 각각
+
+$$
+\begin{aligned}
+\gamma_t\mid\boldsymbol\gamma_{-t}&\sim N\left(\frac{1}{2}(\gamma_{t-1}+\gamma_{t+1}),\;\frac{\tau^2}{2}\right),\\
+\gamma_t\mid\boldsymbol\gamma_{-t}&\sim N\left(\frac{\rho}{1+\rho^2}(\gamma_{t-1}+\gamma_{t+1}),\;\frac{\tau^2}{1+\rho^2}\right)
+\end{aligned}
+$$
+
+이다.
+
+### 결합분포로부터 조건부 분포 구하기
+
+지금까지 GMRF의 완전 조건부분포로부터 결합분포함수를 구하는 방법을 살펴보았는데, 그 반대도 가능하다. 정밀도(precision) 행렬을 $\mathbf P$ 라 할 때 벡터 $\boldsymbol\gamma$ 가 $\boldsymbol\gamma\sim N(\boldsymbol\mu, \mathbf P^{-1})$ 이라면, $\gamma_s$ 의 조건부분포는 다음과 같다.
+
+$$
+\gamma_s\mid \boldsymbol\gamma_{-s}\sim N\left(\mu_{s}-\sum_{r\neq s}\frac{\mathbf P[s,r]}{\mathbf P[s,s]}(\gamma_r-\mu_r),\;\frac{1}{\mathbf P[s,s]}\right)
+$$ {#eq-precision-cond}
+
+$\gamma_s$ 의 조건부분포는 정밀도 행렬의 원소 $\mathbf P[s,r]=\mathbf P[r,s]$ 가 0이 아닌 $\gamma_r$ 에만 의존하는데, 이는 MRF에서 $s$ 와 $r$ 이 이웃인 경우와 일치한다. 정밀도 행렬로부터 조건부 공분산, 분산, 상관계수를 구하면
+
+$$
+\begin{aligned}
+Cov(\gamma_s,\gamma_r\mid \boldsymbol\gamma_{-\{r,s\}})&=\frac{-\mathbf P[s,r]}{\mathbf P[s,s]\mathbf P[r,r]-\mathbf P[s,r]^2},\\
+Var(\gamma_s\mid \boldsymbol\gamma_{-\{r,s\}})&=\frac{\mathbf P[r,r]}{\mathbf P[s,s]\mathbf P[r,r]-\mathbf P[s,r]^2},\\
+Cor(\gamma_s,\gamma_r\mid \boldsymbol\gamma_{-\{r,s\}})&=-\frac{\mathbf P[s,r]}{\sqrt{\mathbf P[s,s]\mathbf P[r,r]}}
+\end{aligned}
+$$
+
+인데, 조건부 상관관계가 없다면($\mathbf P[s,r]=0$) 두 원소는 조건부 독립이다.
+
+## GMRF의 기저함수 표현
+
+MRF를 공간회귀 모형에 포함하기 위해서는 공간함수 $f_s(s)$ 를 공간효과를 나타내는 벡터 $\boldsymbol\gamma$ 로 나타내야 한다. $f_s(s)=\gamma_s$ 이므로, $n\times S$ 행렬 $\mathbf X$ 의 원소를 관측치 $i$ 가 지역 $s$ 에서 수집된 경우 $\mathbf X[i,s]=1$, 그렇지 않은 경우 0으로 정의하면, 함수값 벡터 $\mathbf f_s=(f_s(s_1),\ldots,f_s(s_n))^{\top}$ 는 다음과 같다.
+
+$$
+\mathbf f_s=\mathbf X\boldsymbol\gamma
+$$ {#eq-gmrf-basis}
+
+변동하는 공간효과 $u\gamma_s$ 를 부여하는 경우, 공간효과에 대한 디자인 행렬은 변동계수 모형과 유사하게 설명변수 값들로 이루어진 대각행렬을 앞에 곱하여 만든다. 즉 $\mathbf f_s=(u_1f_s(s_1),\ldots,u_nf_s(s_n))^{\top}$ 는
+
+$$
+\mathbf f_s=\text{diag}(u_1,\ldots,u_n)\mathbf X \boldsymbol\gamma =\mathbf X^* \boldsymbol\gamma
+$$
+
+이다.
+
+## 마코프 확률필드 모형의 확장
+
+마코프 확률필드 모형은 다음과 같은 방향으로 확장할 수 있다.
+
+* Ising 사전분포
+* 텐서곱(tensor product) 사전분포
+* 그래프의 연결선에 부여하는 가중치의 변동(adaptive weights)
+
+## 다음 글
+
+[다음 글](smoothing16.qmd)에서는 연속 공간 평활화로 넘어가 텐서곱 벌점 스플라인을 살펴본다.

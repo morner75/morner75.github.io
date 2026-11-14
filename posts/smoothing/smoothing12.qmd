@@ -1,0 +1,183 @@
+---
+title: '유한 혼합모형'
+date: '2022-10-14'
+categories: ['Bayesian smoothing', 'Mixed models']
+description: '비정규 확률효과 사전분포와 유한 혼합모형의 MCMC 추론'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing11.qmd)에서는 가우시안 확률효과를 갖는 선형혼합모형의 경험 베이즈·완전 베이즈 추론과 깁스 샘플링을 살펴보았다. 이번 글에서는 확률효과의 정규분포 가정을 완화하는 선형혼합모형의 확장, 특히 유한 혼합모형을 다룬다.
+
+## 선형혼합모형의 확장
+
+선형혼합모형(linear mixed model)은 종단 자료에서 개체별 변동성을 모형화하는 동시에 개체 전체에 걸쳐 나타나는 정보도 함께 나타낼 수 있어 매력적이다. 하지만 경우에 따라 확률효과를 정규분포(normal distribution)로 모형화하는 데에 문제가 발생할 수 있다. 만약 실제 확률효과(random effect)의 분포가 정규분포와 유사하지 않다면 고정효과(fixed effect)의 추정값에 상당한 오차가 발생하는 등 모형 설정상의 오류가 나타나기 때문이다. 그 결과 특정 개체에 대한 확률효과의 추정값이 모집단 평균 방향으로 과도하게 축소될 수 있고, 실제 분포가 여러 개의 최빈값(mode)을 갖는 경우 비슷한 효과를 가진 개체들이 동일한 집단으로 제대로 모형화되지 않을 수 있다. 이 경우 정규분포보다는 데이터의 성격에 따라 변할 수 있는 유연한 확률효과 분포를 이용하는 것을 고려할 수 있다.
+
+### 두꺼운 꼬리를 갖는 확률효과 분포
+
+우선 두꺼운 꼬리를 갖는 확률효과 분포로는 작은 자유도를 갖는 Student $t$ 분포나 Laplace 분포를 이용할 수 있으며, 확률효과 분포를 정규분포의 규모 혼합(scale mixture)으로 계층적으로 나타내는 것도 가능하다. 즉,
+
+$$
+\boldsymbol\alpha_i\mid \mathbf Q\sim t_v(\mathbf 0, \mathbf Q)\quad
+\Leftrightarrow \quad \boldsymbol\alpha_i\mid \mathbf Q,\lambda_i \sim N(\mathbf 0, \mathbf Q/ \lambda_i),\quad \lambda_i\sim \Gamma(v/2,v/2),\quad i=1,\ldots,n
+$$ {#eq-t-mixture}
+
+이고, 공분산 행렬에는 $\mathbf Q\sim IW(a,\mathbf B)$를 부여한다. 위 조건부 분포를 $\lambda_i$에 대하여 적분하면 Student $t$ 분포가 된다. 파라미터 $\lambda_i$와 $\mathbf Q$는 깁스 추출법을 이용하여 다음과 같이 업데이트할 수 있다.
+
+$$
+\begin{aligned}
+\lambda_i \mid \cdot &\sim \Gamma\left(\frac{v}{2}+\frac{q}{2},\;\frac{v}{2}+\frac{1}{2}\boldsymbol\alpha_i^{\top}\mathbf Q^{-1}\boldsymbol\alpha_i\right),\quad q=\dim(\boldsymbol\alpha_i)\\
+\mathbf Q \mid \cdot& \sim IW\left(a+\frac{n}{2},\;\mathbf B +\frac{1}{2}\sum_{i=1}^n\lambda_i \boldsymbol\alpha_i\boldsymbol\alpha_i^{\top}\right)
+\end{aligned}
+$$ {#eq-t-gibbs}
+
+### 비대칭 확률효과 분포
+
+다음으로 비대칭적인 분포의 확률효과를 고려해 보자. 0에 대하여 대칭인 단봉 밀도함수 $f$에 대하여 원점을 기준으로 양쪽에 서로 다른 규모 요소를 부여하면
+
+$$
+p(\alpha_i\mid \lambda)=\frac{2}{\lambda+1/\lambda}\left[f\left(\frac{\alpha_i}{\lambda}\right)1_{[0,\infty)}(\alpha_i)+f(\lambda\alpha_i)1_{(-\infty,0)}(\alpha_i)\right]
+$$ {#eq-skew}
+
+이다. 여기서 $\lambda$는 기울어진 정도를 조절한다. $\lambda=1$이면 $f(\alpha_i)$가 되어 대칭이고, $0<\lambda<1$이면 음의 비대칭성을, $\lambda>1$이면 양의 비대칭성을 갖는다.
+
+그러나 단봉 형태의 모수적 사전분포는 여전히 확률효과의 군집을 모형화하기에는 부족하다. 이를 모형화하기 위한 방법으로 유한 혼합모형, Dirichlet 과정 모형, Dirichlet 과정 혼합모형을 생각할 수 있으며, 이 글에서는 유한 혼합모형을 살펴본다.
+
+## 유한 혼합모형
+
+확률효과의 사전분포가 여러 개의 봉우리를 갖는 모수적 분포라고 가정해 보자. 유한 혼합 사전분포는
+
+$$
+p(\alpha_i\mid \boldsymbol\pi, \boldsymbol\phi) = \sum_{k=1}^K \pi_kp(\alpha_i\mid \phi_k)
+$$ {#eq-finite-mixture}
+
+로 정의되며, 여기서 $\boldsymbol\pi=(\pi_1,\dots,\pi_K),\; \pi_1+\cdots+\pi_K=1$은 혼합분포의 가중치이고, $\boldsymbol\phi=(\phi_1,\dots,\phi_K)$는 구성분포 $p(\alpha_i\mid \phi_k),\;k=1,\dots,K$의 파라미터이다.
+
+$K$개의 구성분포 중 $k$번째 구성분포의 평균을 $\mu_k$라 하면, 확률효과의 기대값은
+
+$$
+E(\alpha_i\mid c_i=k)=\mu_k,\qquad E(\alpha_i)=\sum_{k=1}^K\pi_k\mu_k\neq0
+$$
+
+로 일반적으로 0이 아니다. 따라서 확률효과를 다음과 같이 다시 정의해 보자.
+
+$$
+\alpha_i = \tilde{\alpha}+\tilde{\alpha}_i
+$$
+
+여기서 $\tilde\alpha=E(\alpha_i)$는 설명변수 $\mathbf z_{ij}$의 고정효과를, $\tilde{\alpha}_i$는 $E(\tilde{\alpha}_i)=0$인 확률효과를 나타낸다. 따라서 확률효과 변수 $\mathbf z_{ij}$는 고정효과 변수 $\mathbf u_{ij}$의 일부가 되어야 한다.
+
+관측 모형은 다음과 같이 정의한다.
+
+$$
+\begin{gathered}
+\mathbf y_i =\mathbf U_i \boldsymbol\beta +\mathbf Z_i \boldsymbol\alpha_i +\boldsymbol\varepsilon_i,\quad \boldsymbol\varepsilon_i \sim N(\mathbf 0,\sigma^2\mathbf I)\\
+\boldsymbol\alpha_i\sim\sum_{k=1}^K \pi_kp(\boldsymbol\alpha_i\mid \phi_k)
+\end{gathered}
+$$ {#eq-mixture-obs}
+
+여기서 확률효과 $\boldsymbol\alpha_i$는 확률 $\pi_k$로 선택된 혼합분포 구성항목 $p(\boldsymbol\alpha_i\mid \phi_k)$에서 추출된 것으로 간주한다. 이는 잠재 분류 변수 $c_i\in \{1,\ldots,K\}$를 도입하여 군집 형태로 표현할 수도 있다.
+
+$$
+\begin{gathered}
+p(\boldsymbol\alpha_i\mid \boldsymbol\pi,\boldsymbol\phi)=\sum_{k=1}^K p(c_i=k\mid \boldsymbol\pi)p(\boldsymbol\alpha_i\mid c_i=k,\boldsymbol\phi)=\sum_{k=1}^K\pi_k p(\boldsymbol\alpha_i\mid \phi_k)\\
+\boldsymbol\alpha_i\mid c_i \sim p(\boldsymbol\alpha_i\mid \phi_{c_i})
+\end{gathered}
+$$ {#eq-latent-class}
+
+### 정규분포의 유한 혼합
+
+이제 서로 다른 정규분포로 구성된 유한 혼합 사전분포를 살펴보자. 혼합모형의 각 구성항목을 다변량 정규분포로 설정하면 다음과 같다.
+
+$$
+\boldsymbol\alpha_i \mid \boldsymbol\pi,\boldsymbol\mu,\mathbf Q \sim  \sum_{k=1}^K \pi_k N(\boldsymbol\mu_k,\mathbf Q_k)
+$$ {#eq-normal-mixture}
+
+여기서 $\boldsymbol\mu=(\boldsymbol\mu_1,\ldots,\boldsymbol\mu_K)$는 미지의 평균, $\mathbf Q=(\mathbf Q_1,\ldots,\mathbf Q_K)$는 미지의 공분산, $\boldsymbol\pi=(\pi_1,\ldots, \pi_K)$는 혼합분포의 가중치를 의미한다. 이와 같은 확률효과를 갖는 선형혼합모형을 이질성 모형(heterogeneity model)이라고 부른다. $K=1$인 경우에는 정규분포 확률효과 사전분포를 갖는 전통적인 선형혼합모형이 된다. 잠재 분류 변수를 이용한 조건부 모형은
+
+$$
+\mathbf y_i = \mathbf U_i \boldsymbol\beta +\mathbf Z_i\boldsymbol\alpha_i +\boldsymbol\varepsilon_i,\quad \boldsymbol\varepsilon_i\sim N(\mathbf 0,\sigma^2\mathbf I), \quad \boldsymbol\alpha_i\mid c_i\sim N(\boldsymbol\mu_{c_i}, \mathbf Q_{c_i})
+$$
+
+이고, 확률효과를 적분한 주변 모형은
+
+$$
+\mathbf y_i =\mathbf U_i \boldsymbol\beta+\mathbf Z_i\boldsymbol \mu_{c_i}+\tilde{\boldsymbol\varepsilon}_i,\quad \tilde{\boldsymbol\varepsilon}_i\sim N(\mathbf 0,\boldsymbol\nu_i),\quad \boldsymbol\nu_i=\mathbf Z_i\mathbf Q_{c_i}\mathbf Z_i^{\top}+\sigma^2\mathbf I
+$$
+
+이다. 주변 모형 표현으로 보면, 이질성 모형은 유한 개의 선형혼합모형으로 이루어진 혼합모형으로 간주할 수 있다.
+
+::: {.callout-note}
+## 예시: 잠재 그룹 혼합모형 (latent class mixed model)
+
+공분산이 영행렬, 즉 $\mathbf Q_1=\cdots=\mathbf Q_K=\mathbf 0$인 모형을 고려해 보자. 이때 $p(\boldsymbol\alpha_i\mid \boldsymbol\pi, \boldsymbol\mu)$는 정의역(support)이 점 $\boldsymbol\mu_1,\ldots, \boldsymbol\mu_K$이고 확률질량함수가 $p(\boldsymbol\alpha_i=\boldsymbol\mu_k)=\pi_k$인 이산형 분포가 된다. 잠재 그룹 혼합모형의 주변 분포는 다음과 같다.
+
+$$
+p(\mathbf y_i\mid \boldsymbol\pi,\boldsymbol\mu)=\sum_{k=1}^K \pi_k\,\psi(\mathbf y_i\mid \mathbf U_i\boldsymbol\beta+\mathbf Z_i \boldsymbol\mu_k, \sigma^2 \mathbf I)
+$$
+
+여기서 $\psi$는 정규분포 밀도함수이다. 위 분포는 선형회귀모형의 유한 혼합모형으로 귀결된다.
+:::
+
+## 유한 혼합모형의 MCMC 추론
+
+유한 혼합모형의 파라미터 $\boldsymbol\pi=(\pi_1,\ldots,\pi_K)$와 $\boldsymbol\phi=(\phi_1,\ldots,\phi_K)$에 사전분포를 부여해 보자. 먼저 $\boldsymbol\phi$에 대한 사전분포로는 모형에 적합한 특정한 분포 $G_0$를 가정한다. 즉,
+
+$$
+\phi_k\overset{\text{i.i.d.}}{\sim} G_0
+$$
+
+이다. 예를 들면 켤레분포인 정규분포와 역위샤트 사전분포가 될 수 있다. 분포 $G_0$가 초모수(hyper-parameter)를 가지고 있다면 초모수에도 초사전분포(hyper-prior)를 부여할 수 있다.
+
+혼합 가중치 $\boldsymbol\pi$의 사전분포로는 보통 대칭인 Dirichlet 사전분포를 부여한다.
+
+$$
+\boldsymbol\pi \sim \text{Dir}(\nu_0/K,\ldots, \nu_0/K)
+$$ {#eq-dirichlet}
+
+여기서 $\nu_0$는 정밀도를 나타내는 파라미터이다. 모든 모수가 같다는 것은 혼합분포 구성항목들의 라벨이 서로 바뀔 수 있다는(교환 가능하다는) 가정을 나타낸다. Dirichlet 분포의 성질로부터
+
+$$
+E(\pi_k)=\frac{1}{K},\quad \operatorname{Var}(\pi_k)=\frac{1-1/K}{K(\nu_0+1)}
+$$
+
+이다.
+
+이제 고정효과 계수 $\boldsymbol\beta$, 확률효과 계수 $\boldsymbol\alpha=(\boldsymbol\alpha_1,\ldots,\boldsymbol\alpha_n)$, 혼합모형 파라미터 $\boldsymbol\phi$와 $\boldsymbol\pi$, 분류 변수 $\mathbf c=(c_1,\ldots,c_n)$의 사후분포를 구하기 위한 MCMC 알고리즘을 살펴보자. 잠재 분류 변수 $\mathbf c$가 주어지면 각 확률효과 계수가 어떤 군집(cluster)에서 나온 것인지 알 수 있으므로, 잠재 분류 변수 $\mathbf c$를 추가하여 전체 모형을 구성한다. 깁스 추출의 구조는 다음과 같다.
+
+1. 다항분포(multinomial distribution)와 Dirichlet 분포의 켤레성(conjugacy)을 이용하여 $p(\boldsymbol\pi\mid \mathbf c, \boldsymbol\phi,\mathbf y)=p(\boldsymbol\pi\mid \mathbf c)$로부터 추출한다.
+2. 선형모형과 동일한 방식으로 $p(\boldsymbol\beta\mid \mathbf c, \boldsymbol\phi,\boldsymbol\alpha,\sigma^2,\mathbf y)$로부터 고정효과 계수 $\boldsymbol\beta$를 업데이트한다.
+3. 켤레성을 이용하여 각각의 $\phi_k$를 개별적으로 업데이트하여 $p(\boldsymbol\phi\mid \mathbf c, \boldsymbol\beta,\boldsymbol\alpha,\sigma^2,\mathbf y)$로부터 추출한다.
+4. 켤레성을 이용하여 각각의 $\boldsymbol\alpha_i$를 개별적으로 $p(\boldsymbol\alpha_i\mid\boldsymbol\beta,\phi_{c_i},\sigma^2,\mathbf y_i)$로부터 업데이트한다.
+5. 업데이트된 파라미터를 이용하여 역감마분포 $p(\sigma^2\mid\boldsymbol\beta,\boldsymbol\alpha,\mathbf y)$로부터 추출한다.
+
+이질성 모형(heterogeneity model)을 예로 들면, 고정효과 계수 $\boldsymbol\beta$에는 약정보 정규 사전분포
+
+$$
+\boldsymbol\beta\sim N(\mathbf c, \mathbf C)
+$$
+
+를, $\boldsymbol\phi$에 대한 사전분포 $G_0$로는 켤레분포인 정규·역위샤트 분포
+
+$$
+\boldsymbol\mu_k\sim N(\mathbf m,\mathbf M),\quad \mathbf Q_k\sim IW(a,\mathbf B)
+$$
+
+를 부여한다. 또한 오차항의 분산에는 역감마분포 $\sigma^2\sim IG(a_{\sigma},b_{\sigma})$를, 가중치 $\boldsymbol\pi$에는 Dirichlet 사전분포
+
+$$
+\boldsymbol\pi\sim \text{Dir}(\nu_0/K,\ldots,\nu_0/K)
+$$
+
+를 부여한다. (여기서 사전평균 $\mathbf c$는 분류 변수 $\mathbf c$와는 다른 것이다.)
+
+## 정규 사전분포의 벌점 혼합모형
+
+혼합모형에서 구성분포의 개수 $K$에 대하여 좀 더 살펴보자. 보통은 계산 부담을 덜기 위하여 확률효과 계수 $\boldsymbol\alpha$의 차원과 혼합분포의 개수 $K$를 작게 유지하고, 암묵적으로 그 수가 알려져 있거나 주어진 것으로 가정한다. 데이터를 바탕으로 $K$를 구하는 일반적인 방법으로는 교차검증(CV) 또는 DIC를 이용하는 방법이 있다. 베이지안 접근법은 $K$에 포아송 사전분포를 부여하는 모수적 방법과 Dirichlet 과정(Dirichlet process) 사전분포를 부여하는 비모수적 방법으로 나눌 수 있다.
+
+디리클레 과정과 이에 기반한 확률효과 사전분포, 그리고 비정규 종속변수를 위한 일반선형혼합모형은 추후 보완할 예정이다.
+
+## 다음 글
+
+[가법혼합모형과 일반가법혼합모형](smoothing13.qmd)에서는 제3장으로 넘어가 종단 데이터를 위한 비모수 혼합모형을 소개한다.

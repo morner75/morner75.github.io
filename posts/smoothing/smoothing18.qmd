@@ -1,0 +1,333 @@
+---
+title: '정상 가우스 확률필드'
+date: '2022-10-20'
+categories: ['Bayesian smoothing', 'Spatial statistics']
+description: '정상 가우스 확률필드와 상관계수 함수, Bochner 정리와 이방형 상관계수'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing17.qmd)에서는 방사 기저를 이용한 공간 평활화와 텐서곱 기저와의 비교를 살펴보았다. 이번 글에서는 연속 공간 데이터로 돌아가, 정상 가우스 확률필드와 그 핵심 구성요소인 상관계수 함수를 다룬다.
+
+## 연속 공간 데이터와 크리깅
+
+이번에는 본격적으로 공간 데이터로 돌아가서, 지구통계학(geostatistics)과 크리깅(Kriging)이라는 제목으로 요약될 수 있는 접근방법을 살펴본다. 크리깅은 공간상의 어떤 위치에서 함수값을 모르는 경우, 이미 그 값을 알고 있는 주변 지역의 함수값의 선형결합을 이용하여 해당 값을 구하는 보간법을 말한다.
+
+회귀모형의 선형예측식에 공간적 상관관계가 있는 확률과정 $\gamma(\mathbf s)$ 를 추가하면
+
+$$
+y(\mathbf s)=\mathbf u (\mathbf s)^{\top}\boldsymbol\beta+\gamma(\mathbf s)+\epsilon(\mathbf s)
+$$ {#eq-kriging}
+
+이다. 여기서 $\mathbf s$ 는 공간 정의역 안의 점을 의미하고, $\mathbf s\in \mathbb{R}^2$ 또는 보다 일반적으로 $\mathbf s\in \mathbb{R}^d$ 이다.
+
+앞으로 확률과정 $\gamma(\mathbf s)$ 를 종종 공간함수 $f_{spat}(\mathbf s)$ 로 표기할 것인데, 이후 공간 확률과정을 기저함수를 이용하여 다시 표현할 수 있으므로 $f_{spat}(\mathbf s)$ 표기법이 여전히 유효하다는 것을 보일 것이다. 공간 확률과정 $\gamma(\mathbf s)$ 의 사전분포로 가우스 확률과정(Gaussian process)을 가정하는데, 이는 공간 위치 간의 상관관계를 상관계수 함수(correlation function)로 명시적으로 나타낼 수 있게 해준다. 앞으로 상당 부분은 공간 상관계수 함수를 구체화하는 문제를 다룬다.
+
+## 모형 구축
+
+일반적인 크리깅 기법은 다음과 같은 모형을 고려한다.
+
+$$
+y(\mathbf s)=\mathbf u(\mathbf s)^{\top}\boldsymbol\beta+f(\mathbf s)+\epsilon(\mathbf s)
+$$
+
+이 모형으로 임의의 지역에서의 공간 표면 $\hat f(\mathbf s)$ 를 예측하거나 종속변수의 조건부 기대값 $\hat y(\mathbf s)=\mathbf u(\mathbf s)^{\top}\boldsymbol\beta+\hat f(\mathbf s)$ 를 구한다. 여기서는 공간 확률과정 $f(\mathbf s)$ 를 준모수 혼합모형의 선형예측식에 추가하는 것을 고려하고자 한다.
+
+### 가우스 확률필드와 정상성
+
+가우스 확률필드는 확률과정 $\{f(\mathbf s),\;\mathbf s \in \mathbb{R}^d\}$ 로, 위치 $\mathbf s_1,\ldots, \mathbf s_m,\;m\ge 1$ 의 임의의 조합에 대하여 확률과정의 값 벡터 $\mathbf f=(f(\mathbf s_1),\ldots,f(\mathbf s_m))^{\top}$ 가 다변수 가우스 분포를 따른다. 가우스 확률필드는 기대값 함수와 공분산 함수
+
+$$
+\mu(\mathbf s)=E(f(\mathbf s)),\quad c(\mathbf s,\tilde{\mathbf s}) = Cov(f(\mathbf s), f(\tilde{\mathbf s}))
+$$
+
+로 규정할 수 있다. 다시 공분산을 분산과 상관계수로 분해할 수 있고, 분산함수와 상관계수 함수는 다음과 같다.
+
+$$
+\tau^2(\mathbf s)=Var(f(\mathbf s)),\quad \rho(\mathbf s, \tilde{\mathbf s})=Cor(f(\mathbf s),f(\tilde{\mathbf s}))
+$$
+
+그러나 일반적인 가우스 확률필드는 너무 광범위하기 때문에 정상 확률필드로 한정하여 모형화할 필요가 있다. 정상 확률필드는 유한차원 분포가 공간 평행이동(translation)에 불변인 것을 말한다. 즉, 평행이동 벡터 $\mathbf h\in \mathbb R^d$ 에 대하여
+
+$$
+(f(\mathbf s_1),\ldots,f(\mathbf s_m))\overset{D}{=}(f(\mathbf s_1+\mathbf h),\ldots,f(\mathbf s_m + \mathbf h))
+$$
+
+이며, 여기서 $\overset{D}{=}$ 는 분포가 동일하다는 것을 의미한다. 정상성은 대부분의 분포에서는 성립을 보이기 어렵지만, 가우스 확률필드는 처음 두 적률에 대한 조건만으로 성립한다. 즉, 정상성하에서 가우스 확률필드의 기대값 함수는 공간상에서 일정한 값(여기서는 0)을 갖고,
+
+$$
+\mu(\mathbf s)=E(f(\mathbf s))=0,\quad \forall \mathbf s \in \mathbb R^d
+$$
+
+두 점 $\mathbf s$ 와 $\tilde {\mathbf s}$ 사이의 공분산은 두 점의 차이 $\mathbf s - \tilde{\mathbf s}$ 에만 의존한다. 즉,
+
+$$
+c(\mathbf s , \tilde{\mathbf s})=Cov(f(\mathbf s),f(\tilde{\mathbf s}))=c(\mathbf s - \tilde{\mathbf s})
+$$
+
+이다. 일반적으로 기대값이 상수이고 공분산 함수가 차이에만 의존하는 것을 약정상성, 평행이동에 대한 분포의 불변성을 강정상성으로 정의한다. 일반적인 공간 확률과정에서는 이 두 가지 정상성 개념이 일치하지 않지만, 가우스 확률필드에서는 두 개념이 일치한다.
+
+정상 가우스 확률필드는 동분산성을 갖는다. 즉, 분산함수가 공간상에서 상수로 주어진다.
+
+$$
+Var(f(\mathbf s))=\tau^2,\quad \mathbf s\in \mathbb R^d
+$$
+
+따라서 상관계수 함수도 공분산과 마찬가지로 차이 벡터 $\mathbf s - \tilde{\mathbf s}$ 에만 의존한다. 일단 상관계수 함수가 알려져 있다고 가정하면, 공간 확률과정의 함수값 $\mathbf f=(f(\mathbf s_1),\ldots, f(\mathbf s_n))^{\top}$ 의 공분산 행렬을 도출할 수 있다.
+
+$$
+Cov(\mathbf f)=\tau^2 \mathbf R ,\quad \mathbf R[i,j]=Cor(f(\mathbf s_i),f(\mathbf s_j))=\rho(\mathbf s_i-\mathbf s_j)
+$$
+
+여기서 $\mathbf f$ 를 가법회귀모형의 선형예측식에 포함시키면, 가우스 확률필드 가정을 공간 상관관계에 대한 사전분포로 이용할 수 있다. 빈도주의나 경험 베이즈 관점에서는 공간효과를 공간 상관관계가 있는 확률효과(random effect)로 해석할 수 있다.
+
+### 중복 관측과 사전분포
+
+모형을 일반화하기 위하여 동일한 지점에서의 중복 관측을 허용해야 하는데, 이 경우 벡터 $\mathbf f$ 에서 상관계수가 1인 인위적인 상관관계가 생긴다. 이 어려움을 해결하기 위해서는 벡터 $\boldsymbol\gamma$ 로 모든 $K$ 개의 서로 다른 관측점에서의 확률과정 값을 요약해야 한다. 즉, $\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K,\; K\le n$ 이 데이터에서 서로 다른 모든 위치를 나타낸다면 $\boldsymbol\gamma=(f(\boldsymbol\kappa_1),\ldots,f(\boldsymbol\kappa_K))^{\top}$ 이다. 확률과정 값들의 전체 벡터는 $\mathbf f = \mathbf X \boldsymbol \gamma$ 로 나타낼 수 있고, 행렬 $\mathbf X$ 는 마코프 확률필드와 마찬가지로 $n\times K$ 차원의 0과 1로 구성된 발생행렬(incidence matrix)이다. 즉, $i=1,\ldots,n$ 과 $k=1,\ldots,K$ 에 대하여
+
+$$
+\mathbf{X}[i,k]=\begin{cases}1, & \mathbf s_i = \boldsymbol\kappa_k,\\ 0, & \text{otherwise} \end{cases}
+$$
+
+이다. 가우스 확률과정 분포에 대한 가정은 계수벡터 $\boldsymbol\gamma$ 와 행렬 $\mathbf R$ 로 주어지는데,
+
+$$
+\boldsymbol\gamma\sim N(\mathbf 0,\tau^2\mathbf R)
+$$
+
+이고, 여기서 행렬 $\mathbf R$ 은 관측된 위치들 사이의 상관계수로 구성된 $K\times K$ 차원 행렬
+
+$$
+\mathbf R[j,k] = \rho (\boldsymbol\kappa_j - \boldsymbol\kappa_k),\quad j,k=1,\ldots,K
+$$
+
+이다. 계수 $\boldsymbol\gamma$ 의 결합 밀도함수는 준모수 혼합모형의 사전분포에서 벌점 행렬이 $\mathbf K=\mathbf R^{-1}$ 인 형태로
+
+$$
+p(\boldsymbol\gamma\mid \tau^2)\propto\exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top} \mathbf R^{-1}\boldsymbol\gamma\right)
+$$ {#eq-grf-prior}
+
+로 주어진다. 앞에서 살펴본 경험 베이즈 추론과 완전 베이즈 추론 모두, 공간 항에 대한 가우스 확률필드 사전분포를 포함하는 공간 회귀 모형의 추정에 사용될 수 있다. 그러나 실제로는 상관계수 함수를 알 수 없기 때문에 추론이 복잡해진다. 상관계수 함수는 비모수적으로 구하거나, 특정 모수적 상관계수 함수를 가정하여 구할 수 있다.
+
+## 상관계수 함수
+
+상관계수 함수를 구성하는 데에는 몇 가지 제약조건이 필요하다. 첫째, 상관계수 함수는 대칭적이어야 한다. 즉,
+
+$$
+Cor(f(\mathbf s),f(\tilde{\mathbf s}))=Cor(f(\tilde{\mathbf s}),f(\mathbf s))
+$$
+
+이다. 둘째, 상관계수 함수는 양의 정부호(positive definite)이어야 한다. 즉, 모든 $m\ge 1$ 과 임의의 상수 $a_1,\ldots, a_m$ (적어도 하나의 $a_i$ 는 0이 아님), 그리고 임의의 위치 $\mathbf s_1,\ldots, \mathbf s_m$ 에 대하여
+
+$$
+\sum_{i=1}^m\sum_{j=1}^m a_i a_j \rho(\mathbf s_i,\mathbf s_j)>0
+$$
+
+이어야 한다. 두 번째 성질은 확률과정 함수값의 선형결합에 대한 분산이 양이 되도록 만들어 준다.
+
+$$
+Var\Big(\sum_{i=1}^m a_i f(\mathbf s_i)\Big)=\tau^2 \sum_{i=1}^m\sum_{j=1}^m a_i a_j \rho(\mathbf s_i,\mathbf s_j)>0
+$$
+
+하지만 양의 정부호 함수를 구성하는 것은 실제로 어려우므로, 보통은 차이 벡터의 노름(norm)을 인수로 취하는 형태로 상관계수 함수를 구성한다.
+
+$$
+\rho(\mathbf s, \tilde{\mathbf s} )=\rho(\|\mathbf s - \tilde{\mathbf s}\|)=\rho(h)
+$$
+
+상관계수 함수가 스칼라 값인 거리에만 의존한다는 설정은 모수를 절약(parsimony)하기 위하여 도입된 가정이다. 예를 들어 유클리드 거리 $h=\|\mathbf h\| =\sqrt{h_1^2+\cdots+h_d^2}$ 를 적용하면, 차이 벡터 $\mathbf h=\mathbf s -\tilde {\mathbf s}$ 의 방향은 더 이상 중요하지 않고 거리 $h$ 만 고려하면 된다. 이 경우 상관계수 함수는 원형 등고선을 갖기 때문에 등방형(isotropic)이라고 한다. 다른 거리함수를 쓰는 경우 원형에서 벗어난 비등방형(anisotropic) 상관계수 함수를 얻기도 한다.
+
+### 너겟과 범위
+
+다음으로 상관계수 함수의 특성을 묘사하는 몇 가지 개념을 정의하자.
+
+너겟(nugget)은 원점($\mathbf h=\mathbf 0$) 근처에서의 상관계수 함수의 움직임을 묘사한다. $\rho(\mathbf 0)=1$ 은 항상 성립하지만, $\alpha\to 0$ 일 때 $\rho(\alpha\mathbf h)\to \rho(\mathbf 0)$ 으로 가는 과정이 반드시 연속일 필요는 없다. 일반적으로 방향 $\mathbf h /\|\mathbf h\|$ 에 대한 너겟은 다음과 같이 정의한다.
+
+$$
+N_{\mathbf h} = \lim_{\alpha\to0} \rho(\alpha \mathbf h)
+$$
+
+만약 너겟이 방향 $\mathbf h$ 에 의존한다면 상관계수 함수는 너겟 이방형이라고 한다. 반면 등방형 상관계수 함수는 오직 하나의 너겟 $N=\lim_{\mathbf h\to \mathbf 0}\rho (\mathbf h)$ 을 갖는다. 너겟이 $\rho(\mathbf 0)=1$ 과 다르다는 것은 공간효과에 미시변화가 존재하는 경우에 의미가 있다. 예를 들어 @eq-kriging 의 일반적인 크리깅 모형에서 종속변수의 상관계수는
+
+$$
+\begin{aligned}
+Cor(y(\mathbf s), y(\tilde{\mathbf s}))&=\frac{Cov(y(\mathbf s),y(\tilde{\mathbf s}))}{\sqrt{Var(y(\mathbf s)) Var(y(\tilde{\mathbf s}))}}\\
+&=\frac{Cov(y(\mathbf s),y(\tilde{\mathbf s}))}{\sqrt{\big(Var(f(\mathbf s))+Var(\epsilon(\mathbf s))\big)\big(Var(f(\tilde{\mathbf s}))+Var(\epsilon(\tilde{\mathbf s}))\big)}}=\frac{\tau^2\rho(\mathbf s -\tilde{\mathbf s})}{\tau^2+\sigma^2}
+\end{aligned}
+$$
+
+이다. 여기서 너겟은 추가적인 오차항 $\epsilon (\mathbf s)$ 에서 고려되며, $\mathbf s - \tilde{\mathbf s}\to \mathbf 0$ 일 때
+
+$$
+Cor(y(\mathbf s),y(\tilde{\mathbf s}))\to \frac{\tau^2}{\tau^2+\sigma^2}<1
+$$
+
+이다. 공간 평활화에서는 $f(\mathbf s)$ 가 매끄럽다고 가정하기 때문에 상관계수 함수의 너겟이 $N\neq 1$ 이라는 것은 잘 맞는 가정이 아니다. 너겟 효과가 있는 상관계수 함수는 주로 고전 지구통계학에서 관측치가 없는 위치의 종속변수를 예측할 때 다루어졌다.
+
+상관계수 함수의 범위(range)는 방향 $\mathbf h/\|\mathbf h\|$ 에 대하여 극한값
+
+$$
+R_{\mathbf h} = \lim_{\alpha\to\infty} \rho(\alpha \mathbf h)
+$$ {#eq-range}
+
+과 관련하여 정의한다. 대부분의 경우 상관계수는 거리가 증가할수록 0으로 감소하기 때문에 이 극한값은 0이 된다. 이 경우 범위는 두 관측치의 상관관계가 없어지게 되는 거리를 알려준다. 그러나 많은 상관계수 함수의 경우 모든 $\alpha$ 에 대하여 $\rho(\alpha \mathbf h)>0$ 이어서 범위가 무한인 경우가 있다. 따라서 실제로는 상관계수가 특정 값보다 작아지는 거리 $R_{\mathbf h}$ 를 유효범위(effective range)로 정의한다. 유효범위는 상관계수 함수가 0으로 천천히 수렴하는 경우 넓고, 그 반대의 경우 좁다. 유효범위 이방형은 실제로 가장 많이 고려되는 이방형의 형태로, 상관계수가 특정 방향으로 더 빨리 0으로 수렴하는 경우를 말한다.
+
+### 상관계수 함수와 확률과정의 매끄러움
+
+너겟을 통하여 원점에서의 상관계수 함수의 움직임으로부터 가우스 확률과정의 매끄러운 특성을 읽어내는 것이 가능함을 보았다. 우리의 관심사는 확률과정의 경로(표면)의 매끄러움(평활성)에 있기 때문에 매끄러움에 대한 적절한 정의를 내릴 필요가 있다. 확률과정 $f$ 는 다음 조건을 만족하면 $L^2$-연속이라고 부른다.
+
+$$
+\lim_{\alpha\to0}E\big(|f(\mathbf s+\alpha \mathbf h)-f(\mathbf s)|^2\big)=0,\quad \forall \mathbf h
+$$
+
+또한 확률과정 $f$ 는 다음을 만족하는 확률과정 $f'$ 가 존재하는 경우 $L^2$-미분가능하다고 한다.
+
+$$
+\lim_{\alpha\to0}E\left(\left|\frac{f(\mathbf s+\alpha \mathbf h)-f(\mathbf s)}{\alpha\|\mathbf h\|}-f'(\mathbf s)\right|^2\right)=0,\quad \forall \mathbf h
+$$
+
+어떤 확률과정에 대하여 직접 연속성과 미분가능성을 보여 매끄러움을 확인하는 것은 어려운 일이다. 하지만 상관계수 함수를 이용하면 다음과 같은 동치 관계를 이용하여 쉽게 평활성을 보일 수 있다.
+
+정상 확률과정(stationary process) $f$ 에 대하여
+
+* $f$ 가 $L^2$-연속이라는 것은 $\rho(\mathbf h)$ 가 $\mathbf h=\mathbf 0$ 에서 연속이라는 것(또는 모든 $\mathbf h$ 에 대하여 너겟 $N_{\mathbf h}=1$ 인 것)과 동치이다.
+* $f$ 가 $k$ 번 $L^2$-미분가능하다는 것은 $\rho(\mathbf h)$ 가 $\mathbf h=\mathbf 0$ 에서 $2k$ 번 미분가능하다는 것과 동치이다.
+
+## 모수를 가진 상관계수 함수의 종류
+
+다음으로 모수를 가진 상관계수 함수의 종류에 대하여 알아보자. 앞으로 살펴볼 상관계수 함수들은 스칼라 인자 $h$ 를 가진 등방형 유형이다.
+
+### 거듭제곱 지수 유형
+
+거듭제곱 지수(power exponential) 유형의 상관계수 함수는 다음과 같이 정의된다.
+
+$$
+\rho(h;\phi,\nu)=\exp(-|h/\phi|^{\nu})
+$$ {#eq-powexp}
+
+여기서 $\phi>0$ 은 상관계수 함수의 감소율을 조절하여 유효범위를 결정하고, $0<\nu\le 2$ 는 원점에서의 매끄러운 정도와 미분가능성을 조절하여 결과적으로 확률과정 전반의 부드러운 정도를 결정한다. $\nu=2$ 인 경우 가우스 상관계수 함수 $\rho(h;\phi,\nu=2)=\exp(-h^2/\phi^2)$ 를 얻는데, 이는 무한히 미분가능한 함수로 아주 부드러운 확률과정을 만들어 낸다. $\nu=1$ 인 경우 단순 지수 상관계수 함수 $\rho(h;\phi,\nu=1)=\exp(-|h|/\phi)$ 를 얻는데, 1차 자기회귀(autoregressive) 시계열 과정의 상관계수 함수와 비슷하게 지수적으로 감소하며, 가우스 상관계수 함수에 비해 훨씬 울퉁불퉁한 표면을 만들어낸다.
+
+### 마턴 유형
+
+다음으로 마턴(Matérn) 유형의 상관계수 함수는 다음과 같다.
+
+$$
+\rho(h;\phi,\nu)=\frac{1}{2^{\nu-1}\Gamma(\nu)}\left(\frac{h}{\phi}\right)^{\nu} K_{\nu}\left(\frac{h}{\phi}\right)
+$$ {#eq-matern}
+
+마찬가지로 $\phi>0$ 은 유효범위를, $\nu>0$ 은 전반적인 부드러운 정도를 결정하며, $K_{\nu}$ 는 차수가 $\nu$ 인 제3종 수정 Bessel 함수를 나타낸다. 마턴 유형은 유연하게 적용할 수 있어 실무적으로 많이 사용된다. 하지만 일반적으로 Bessel 함수가 닫힌 형식(closed form)으로 존재하지 않기 때문에 함수 계산과 수치적 최적화에 시간이 오래 걸리는 단점이 있다. 다행히 $\nu=0.5,1.5,2.5,\ldots$ 인 경우 마턴 상관계수 함수는 닫힌 형식으로 표현이 가능하다.
+
+$$
+\begin{aligned}
+\rho(h;\phi,\nu=0.5)&=\exp(-|h/\phi|),\\
+\rho(h;\phi,\nu=1.5)&=\exp(-|h/\phi|)\,(1+|h/\phi|),\\
+\rho(h;\phi,\nu=2.5)&=\exp(-|h/\phi|)\left(1+|h/\phi|+\tfrac{1}{3}|h/\phi|^2\right)
+\end{aligned}
+$$
+
+단순 지수 상관계수 함수는 마턴 유형의 한 특수한 경우로 볼 수 있다. 보통 $\nu$ 가 증가하면 상관계수 함수가 더 부드럽고 유효범위도 늘어나는데, $\nu\to\infty$ 일 때 마턴 상관계수 함수는 가우스 상관계수 함수에 수렴한다.
+
+### 이차비 유형
+
+또 다른 유형의 상관계수 함수는 다음과 같이 정의되는 이차비(rational quadratic) 상관계수 함수이다.
+
+$$
+\rho(h;\phi,\nu)=\left\{1+\left(\frac{h}{\phi}\right)^2\right\}^{-\nu}
+$$ {#eq-ratquad}
+
+여기서 $\phi>0$ 와 $\nu>0$ 는 마찬가지로 범위와 부드러운 정도를 나타내는 모수이다.
+
+거듭제곱 지수(power exponential), 마턴(Matérn), 이차비(rational quadratic) 세 가지 상관계수 함수는 범위가 무한이기 때문에 유효범위를 지정하기 위하여 범위 모수 $\phi$ 가 이용되었다.
+
+### 구형 유형
+
+마지막으로 구형(spherical) 상관계수 함수는 유한한 범위를 갖고 오직 하나의 모수를 갖는 경우이다.
+
+$$
+\rho(h;\phi)=\begin{cases}1-\frac{3}{2}|h/\phi|+\frac{1}{2}|h/\phi|^3, & 0\le h\le \phi,\\ 0, & h>\phi.\end{cases}
+$$ {#eq-spherical}
+
+여기서 범위는 모수 $\phi$ 에 의하여 주어진다. 구형 상관계수 함수는 실제로는 잘 사용되지 않는데, 이는 $\phi$ 에 대하여 한 번만 미분가능하여 범위를 추정할 때 최우추정법을 사용하기 어렵기 때문이다.
+
+## Bochner 정리
+
+Bochner 정리(Bochner's theorem)는 등방형 정상 상관계수 함수의 양의 정부호성을 검사하는 기준을 제공해 준다. 기본적으로 상관계수 함수 $\rho(h)$ 가 양의 정부호라는 것은 그 함수가 대칭인 확률변수 $Z$ 의 특성함수가 된다는 것이다. 즉, $\rho(h)$ 가 다음과 같이 표현될 수 있다.
+
+$$
+\rho(h)=\int_{-\infty}^{\infty} \exp(ihz)f_Z(z)\, dz
+$$ {#eq-bochner}
+
+여기서 $i=\sqrt{-1}$ 이고, $f_Z(z)$ 는 $Z$ 의 확률밀도함수로 대칭성 $f_Z(z)=f_Z(-z)$ 을 만족한다. 복소지수함수 항등식 $\exp(ihz)=\cos(hz)+i\sin(hz)$ 에 따라 @eq-bochner 는 다음과 같이 정리된다.
+
+$$
+\rho(h)=2\int_{0}^{\infty} \cos(hz) f_Z(z)\,dz
+$$ {#eq-bochner-cos}
+
+Bochner 정리에는 세 가지 이점이 있다. 첫째, 상관계수 함수가 유효한지 확인할 수 있다. @eq-bochner-cos 의 기준은 다음과 같이 변환할 수 있는데,
+
+$$
+f_Z(z)=\frac{1}{\pi}\int_0^{\infty} \cos(hz)\, \rho(h)\,dh
+$$ {#eq-bochner-inv}
+
+@eq-bochner-inv 를 통하여 $\rho(h)$ 가 유효한 상관계수 함수인지 검사할 수 있다. 만약 $f_Z(z)$ 가 0에 대하여 대칭인 확률변수 $Z$ 의 밀도함수라면 $\rho(h)$ 는 양의 정부호이고, 유효한 상관계수 함수이다.
+
+둘째, 이 정리를 이용하면 대칭인 밀도함수를 대입하여 새로운 유형의 상관계수 함수를 만들 수 있다. 예를 들어 표준정규분포를 대입하면 ($\phi=\sqrt 2$ 인) 가우스 상관계수 함수를 얻을 수 있고, 지수 상관계수 함수는 Cauchy 분포 $f_Z(z)=\frac{1}{\pi(1+z^2)}$ 로부터 도출된다. 시계열분석에서 Bochner 정리는 상관계수 함수와 밀도함수 $f_Z(z)$ 사이의 이산 Fourier 변환과 역 Fourier 변환에 해당하며, 이때 $f_Z(z)$ 를 스펙트럼 밀도함수(spectral density)라고 부른다.
+
+셋째, 이 정리는 유효한 상관계수 함수들의 곱이 유효한 상관계수 함수라는 것을 보여 준다. 독립이고 대칭인 확률변수 $Z_1$ 과 $Z_2$ 가 밀도함수 $f_{Z_1}(z)$ 와 $f_{Z_2}(z)$ 를 갖는다고 생각해 보자. 두 확률변수의 합 $Z=Z_1+Z_2$ 또한 대칭이고, 그 특성함수는 단순히 두 특성함수의 곱이다. 따라서 주어진 두 상관계수 함수 $\rho_1(h)$ 과 $\rho_2(h)$ 에 대하여 Bochner 정리는 대칭인 확률변수 $Z_1$ 과 $Z_2$ 가 존재한다는 것을 확인해 주며, 상관계수 함수의 곱 $\rho(h)=\rho_1(h)\cdot\rho_2(h)$ 는 대칭인 $Z=Z_1+Z_2$ 의 특성함수이므로 유효한 상관계수 함수이다.
+
+위의 성질들은 새로운 유형의 상관계수 함수를 생성하는 데에도 이용될 수 있다. 예를 들어 상관계수 함수를 유한한 범위로 제한하고 싶다면, 단순히 유한한 범위를 가진 상관계수 함수를 곱하여 이러한 성질을 가진 상관계수 함수를 얻을 수 있다. 이것을 상관계수 함수의 단축화(tapering)라고 부른다.
+
+## 범위 이방형 상관계수 함수
+
+등방형 가정을 만족하지 않는 공간효과가 존재하는 경우, 유클리드 거리 대신 기하적 이방성(geometric anisotropy) 거리를 다음과 같이 정의한다.
+
+$$
+\|\mathbf s\|_{\mathbf B} =\sqrt{\mathbf s^{\top}\mathbf B \mathbf s}
+$$
+
+여기서 $\mathbf B$ 는 대칭이고 양의 정부호인 행렬이다. 이 경우 원형 등고선은 타원형 등고선으로 바뀌고, 이방성의 강도와 방향에 해당하는 타원의 확장과 회전이 일어난다. $d=2$ 인 경우 행렬 $\mathbf B$ 를 구성적으로 정의(constructive definition)하면 다음과 같다.
+
+$$
+\mathbf B=\mathbf R(\psi_A)^{\top}\mathbf P(\psi_R) \mathbf R(\psi_A)
+$$ {#eq-aniso-B}
+
+여기서 $\mathbf R(\psi_A)$ 는 이방성 각도 $\psi_A\in[0,2\pi]$ 를 가진 회전행렬로
+
+$$
+\mathbf R (\psi_A) = \begin{pmatrix}\cos(\psi_A) &\sin(\psi_A)\\-\sin(\psi_A) & \cos(\psi_A) \end{pmatrix}
+$$
+
+로 정의되고, $\mathbf P(\psi_R)$ 은 이방성 비율 $\psi_R \ge 1$ 을 가진 확장행렬로
+
+$$
+\mathbf P (\psi_R) = \begin{pmatrix}\psi_R^{-1} & 0 \\ 0 & 1 \end{pmatrix}
+$$
+
+이다. 두 모수 $\psi_A$ 와 $\psi_R$ 은 직관적인 해석이 가능하다. $\psi_R=1$ 이면 등방형 상관계수 함수이고, $\psi_R>1$ 이면 타원형 상관계수 함수를 얻는데, $\psi_R$ 은 타원의 두 주축을 따라 계산되는 상관계수 함수의 범위의 비율이다. 이방성 각도 $\psi_A$ 는 원점을 기준으로 상관계수 함수를 회전시킨다.
+
+또 다른 거리 개념으로는 맨해튼 거리(Manhattan distance)와 측지거리(geodesic distance)를 들 수 있다.
+
+맨해튼 거리는 격자형 도로를 가진 도시에서 블록을 따라 두 점의 거리를 잰 것으로, $\|\mathbf s\|=\sum_{i=1}^d |s_i|$ 로 정의된다.
+
+측지거리는 지구의 곡면을 따라 잰 최단 거리(반지름이 $R$ 인 구에서 대원 호의 길이)이다. $\mathbf s_i=(s_{i1}, s_{i2})^{\top}$ 를 위도와 경도로 표현한 지구 표면 위의 한 점이라고 하자. 지구의 반지름이 $R$ 이라면 두 점 $\mathbf s_i$ 와 $\mathbf s_j$ 사이의 거리는
+
+$$
+d(\mathbf s_i , \mathbf s_j)=R \arccos(\phi_{ij}), \quad \phi_{ij}=\sin(s_{i1})\sin(s_{j1})+\cos(s_{i1})\cos(s_{j1})\cos(s_{i2}-s_{j2})
+$$
+
+이고, 여기서 각도는 호도(radian) 단위로 나타낸다.
+
+어떤 유형의 거리측도를 사용할 것인지는 응용 문제에 달려 있다. 고려하는 지역이 작다면 지구의 곡률을 고려할 필요 없이 유클리드 거리나 그 이방형 버전으로 충분하다.
+
+보다 일반적인 형태의 비기하적 범위 이방성은 일변수 등방형 상관계수 함수열 $\rho_1(h),\ldots,\rho_k(h)$ 과 양의 정부호 행렬열 $\mathbf B_1,\ldots,\mathbf B_k$ 를 가지고 만들 수 있다. Bochner 정리에 따라 상관계수 함수
+
+$$
+\rho(\mathbf h)=\rho_1\Big(\sqrt{\mathbf h^{\top} \mathbf B_1 \mathbf h}\Big)\cdots\rho_k\Big(\sqrt{\mathbf h^{\top} \mathbf B_k \mathbf h}\Big)
+$$
+
+또한 유효한 상관계수 함수가 된다. 이 상관계수 함수는 일반적인 범위 이방형이고, 타원형의 기하적 범위 이방성에서 벗어나 있다. 행렬 $\mathbf B_1,\ldots,\mathbf B_k$ 각각은 서로 다른 이방성 각도와 비율을 정의할 수 있지만, 이 경우 곱으로 연결된 상관계수 함수를 해석하기 어렵다. 실제로는 대부분 적은 수의 단순한 모수를 가진 상관계수 함수를 이용한다.
+
+## 다음 글
+
+[다음 글](smoothing19.qmd)에서는 베리오그램과 공분산 모수의 추정, 그리고 가우스 확률필드를 방사 기저 평활로 해석하는 관점을 살펴본다.

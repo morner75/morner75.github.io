@@ -1,0 +1,173 @@
+---
+title: '베리오그램과 공분산 모수의 추정'
+date: '2022-10-21'
+categories: ['Bayesian smoothing', 'Spatial statistics']
+description: '베리오그램, 공분산 모수의 추정과 방사 기저 평활로서의 가우스 확률필드'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing18.qmd)에서는 정상 가우스 확률필드와 여러 가지 모수적 상관계수 함수, Bochner 정리와 이방형 상관계수 함수를 살펴보았다. 이번 글에서는 공간 의존성을 묘사하는 또 다른 도구인 베리오그램과 공분산·상관계수 모수의 추정 방법을 다루고, 가우스 확률필드를 방사 기저 평활로 해석하는 관점과 전통 공간통계기법과의 관계를 정리한다.
+
+## 베리오그램
+
+전통적인 지구통계기법에서는 공간 의존성을 묘사하기 위하여 상관계수 함수가 아닌 다른 통계량을 이용해 왔다. 확률과정 $f$ 의 베리오그램(variogram)은
+
+$$
+v(\mathbf s, \tilde{\mathbf s}) = \frac{1}{2} Var\big(f(\mathbf s)-f(\tilde{\mathbf s})\big)
+$$ {#eq-variogram}
+
+으로 정의한다. 베리오그램이 오직 차이 벡터 $\mathbf h=\mathbf s -\tilde{\mathbf s}$ 에만 의존하는 경우, 즉
+
+$$
+E(f(\mathbf s))=\mu,\quad v(\mathbf s,\tilde{\mathbf s})= v(\mathbf s -\tilde{\mathbf s})
+$$
+
+인 경우를 내재 정상성(intrinsic stationarity)으로 정의한다. 또한 베리오그램이 오직 유클리드 거리에 의해서만 결정되면, 즉 $v(\mathbf s,\tilde{\mathbf s})= v(\|\mathbf s -\tilde{\mathbf s}\|)$ 이면 확률과정이 등방형이라고 한다. 공분산 또는 상관계수 함수로 정의하는 정상성은 내재 정상성보다 더 강한 개념으로, 정상 확률과정은 내재적으로도 정상이지만 그 역은 성립하지 않는다. 또한 정상 확률과정에 대한 베리오그램은 상관계수 함수를 이용하여 $v(\mathbf h)= \tau^2(1-\rho(\mathbf h))$ 로 구할 수 있다.
+
+어떤 모수적 상관계수 함수도 그에 상응하는 베리오그램으로 변환할 수 있으나, 실제로는 베리오그램에 대한 비모수 추정 방법이 더 많이 사용된다.
+
+## 공분산과 상관계수 모수의 추정
+
+가우스 확률필드 자체는 지금까지 사용한 추정기법을 그대로 이용할 수 있지만, 상관계수 행렬 $\mathbf R = \mathbf R(\boldsymbol\theta)$ 에 들어 있는 모수들, 즉 유효범위 $\phi$, 매끄러운 정도 $\nu$, 이방성 각도 $\psi_A$ 및 이방성 비율 $\psi _R$ 을 추가로 추정해야 하므로 복잡해진다. 가우스 확률필드를 공간 상관관계가 있는 확률효과로 생각한다면, 모수 $\boldsymbol\theta$ 를 ML이나 REML로 추정할 수 있다. 예를 들어 가우스 종속변수 모형
+
+$$
+\mathbf y= \mathbf U\boldsymbol\beta+\mathbf X \boldsymbol\gamma + \boldsymbol\epsilon
+$$
+
+에 대하여 $\boldsymbol\theta$ 의 제한 로그우도함수(restricted log-likelihood)는
+
+$$
+l^*(\boldsymbol\theta)=-\frac{1}{2} \log|\mathbf V(\boldsymbol\theta)|-\frac{1}{2}\log|\mathbf U^{\top}\mathbf V(\boldsymbol \theta)^{-1}\mathbf U|-\frac{1}{2}(\mathbf y - \mathbf U\hat{\boldsymbol\beta})^{\top}\mathbf V(\boldsymbol \theta)^{-1}(\mathbf y-\mathbf U \hat{\boldsymbol \beta})
+$$ {#eq-reml}
+
+이고, 여기서 $\mathbf V(\boldsymbol \theta)=\sigma^2\mathbf I +\tau^2\mathbf X\mathbf R(\boldsymbol\theta)\mathbf X^{\top}$ 는 관측벡터 $\mathbf y$ 의 주변 공분산행렬이다. REML을 통해 얻은 추정값을 벌점 최소제곱(penalised least squares) 추정량에 대입하여 $\boldsymbol\beta$ 와 $\boldsymbol\gamma$ 를 구할 수 있다.
+
+비가우스 종속변수에 대해서는 일반적인 GLM에서와 같이 잠정모형(working model) $\tilde{\mathbf y}\sim N(\mathbf U\boldsymbol\beta+\mathbf X\boldsymbol\gamma, \mathbf W^{-1})$ 의 잠정 종속변수와 가중치를 이용한 반복 REML 방법으로 $\boldsymbol\theta$ 의 추정치를 구한다. 이때 $\boldsymbol\beta$ 와 $\boldsymbol\gamma$ 의 추정치는 반복가중최소제곱법(IWLS)으로 구한다. 베이지안 입장에서 REML 추정은 $\boldsymbol\theta$ 의 추정치를 $\boldsymbol\beta$ 와 $\boldsymbol\gamma$ 의 사후 추정치에 대입하는 경험 베이즈 방법에 해당한다.
+
+완전 베이즈 분석을 위해서는 모든 모수 $\boldsymbol\theta$ 에 대한 사전분포를 지정해야 한다. 모든 상관계수 함수에서 범위 모수는 양이어야 하므로, 정밀도(precision) 모수에 사용되는 감마(gamma)나 역감마(inverse gamma) 분포를 이용한다. 마턴 유형에서는 복잡한 추정과정을 피하기 위하여 종종 매끄러움 모수를 미리 고정해 둔다. 공간 평활화에서는 범위 모수가 적절하게 설정되어 있다면 매끄러움 모수가 그리 큰 영향을 주지 않는다. 그 근거는 크리깅을 기저함수가 정확히 상관계수 함수에 해당하는 방사 기저함수 평활화 접근법으로 볼 수 있다는 점에 있다(아래 참조). 따라서 매끄러움과 범위 측면에서 내재된 공간효과에 대한 가정에 부합하는 상관계수 함수를 선택하는 것이 중요하며, 모수의 작은 변동은 결과에 큰 영향을 주지 않는다. 또한 가우스 확률과정 가정은 실제 데이터 생성 메커니즘을 근사할 뿐이고, 베이지안 관점에서는 평활화를 위한 사전분포를 제공할 뿐이라는 점도 근거가 된다.
+
+## 비모수 covariogram과 variogram 추정
+
+특정한 종류의 상관계수 함수를 선택하기 위해서는 비모수 추정값을 구하는 것이 중요하다. 비모수 추정값은 가우스 모형에서는 쉽게 도출될 수 있지만, 일반적인 모형에서는 대개 도출이 불가능하다. 설명변수 효과 $\boldsymbol\beta$ 가 존재하는 경우 공간 의존성의 형태를 파악하기 위해서 잔차
+
+$$
+\epsilon(\mathbf s) = y(\mathbf s)-\mathbf u(\mathbf s)^{\top}\boldsymbol\beta
+$$
+
+를 살펴볼 것이다. 실제로는 공간효과를 무시한 채 얻어지는 추정치로 $\boldsymbol\beta$ 를 대신하여 구한 잔차 $\hat{\epsilon}(\mathbf s)$ 를 이용한다. 잔차를 구하기 위해서는 불편추정량 $\hat{\boldsymbol\beta}=(\mathbf U^{\top} \mathbf U)^{-1}\mathbf U^{\top} \mathbf y$ 이면 충분하다.
+
+공분산이나 베리오그램의 비모수 추정의 기초가 되는 것은 클라우드(cloud)라 불리는 경험 covariogram과 경험 variogram의 모음이다. 모든 관측치 쌍 $(i,j)$ 와 거리 $d_{ij}=\|\mathbf s_i - \mathbf s_j\|,\; i,j=1,\ldots,n$ 에 대하여 경험 covariogram과 경험 variogram은 각각
+
+$$
+c_{ij}=(\hat\epsilon(\mathbf s_i)-\bar\epsilon)(\hat\epsilon(\mathbf s_j)-\bar\epsilon),\quad v_{ij}=\frac{1}{2}\big[\hat\epsilon(\mathbf s_i)-\hat \epsilon(\mathbf s_j)\big]^2
+$$
+
+로 정의되며, 여기서 $\bar\epsilon=\frac{1}{n}\sum_{i=1}^n \hat\epsilon(\mathbf s_i)$ 는 평균잔차이다.
+
+covariogram과 variogram의 클라우드 $(d_{ij},c_{ij})$ 와 $(d_{ij},v_{ij})$ 를 그래프로 나타내면 대략적인 공분산 구조를 알 수 있다. 하지만 이 클라우드는 두 관측점만으로 계산되어 변동성이 매우 크고 부정확하다. 따라서 변동성을 줄이기 위하여 다음과 같이 특정 거리 $h$ 에 해당하는 모든 관측쌍의 covariogram과 variogram의 평균을 구할 수 있다.
+
+$$
+\hat c (h)=\frac{1}{|N(h)|}\sum_{(i,j)\in N(h)} (\hat\epsilon(\mathbf s_i)-\bar\epsilon)(\hat\epsilon(\mathbf s_j)-\bar\epsilon), \quad \hat v(h)=\frac{1}{2|N(h)|}\sum_{(i,j)\in N(h)}\big[\hat\epsilon(\mathbf s_i)-\hat\epsilon(\mathbf s_j)\big]^2
+$$ {#eq-empirical-vario}
+
+여기서 집합 $N(h)=\{(i,j):\|\mathbf s_i-\mathbf s_j\|=h\}$ 는 거리가 $h$ 인 모든 관측치의 쌍을, $|N(h)|$ 는 그 쌍의 수를 나타낸다. 이렇게 계산된 경험 variogram은 실제 variogram의 불편추정량이지만, 공분산 추정치는 잔차평균 $\bar\epsilon$ 의 추정을 고려하지 않기 때문에 편의가 발생한다. 따라서 실무적으로는 covariogram보다 variogram이 더 자주 사용된다.
+
+모든 거리에 대하여 $N(h)$ 에 포함된 관측쌍의 수가 너무 적은 경우에는 거리를 여러 개의 구간 $0=h_0<h_1<\cdots<h_M$ 으로 나눈 다음, 각 구간에 해당하는 관측쌍들에 대하여 평균을 구한다. 즉, 집합 $N(h_m)=\{(i,j):h_{m-1}<\|\mathbf s_i -\mathbf s_j\|\le h_m\}$ 을 거리가 $m$ 번째 구간 $(h_{m-1},h_m]$ 에 해당하는 관측쌍의 집합이라고 정의하면, 공분산 함수의 추정치는 다음과 같다.
+
+$$
+\hat c(h_m)=\frac{1}{|N(h_m)|}\sum_{(i,j)\in N(h_m)} (\hat\epsilon(\mathbf s_i)-\bar\epsilon)(\hat\epsilon(\mathbf s_j)-\bar\epsilon),\quad m=1,\ldots,M
+$$
+
+두 가지 비모수 추정치는 이방형 공분산인 경우에도 구간을 거리뿐 아니라 방향에 따라 정의함으로써 적용할 수 있다. 그러나 구간의 수가 급격하게 증가하므로 신뢰할 만한 추정치를 얻기 위해서는 많은 데이터가 필요하다.
+
+## 방사 기저 평활화 함수로서의 가우스 확률필드
+
+지금까지 공간 가우스 확률필드(GRF)를 확률효과와 유사하지만 공간 상관관계가 있는 확률과정으로 간주해 왔다. 베이지안 입장에서는 가우스 확률필드가 공간표면을 추정하게 해 주는 평활화 도구라는 것이 당연해 보이지만, 여기서는 보다 명확하게 가우스 확률필드를 사실상 [방사 기저함수 접근법](smoothing17.qmd)으로도 해석할 수 있다는 것을 보이려고 한다.
+
+공간 확률과정의 함수값 벡터를 $\mathbf f = \mathbf X\boldsymbol\gamma$ 로 표기하자. 여기서 $\mathbf X$ 는 서로 다른 공간위치 $\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K$ 에 대한 0/1로 구성된 발생행렬이고, $\boldsymbol\gamma \sim N(\mathbf 0,\tau^2\mathbf R)$ 를 그에 상응하는 사전분포라고 하자. 이제 $\tilde{\mathbf X}=\mathbf X \mathbf R$ 과 $\tilde{\boldsymbol\gamma}=\mathbf R^{-1}\boldsymbol\gamma$ 로 모수를 재조정하여
+
+$$
+\mathbf f =\mathbf X \mathbf R \mathbf R^{-1}\boldsymbol\gamma = \tilde{\mathbf X}\tilde{\boldsymbol\gamma}
+$$
+
+를 고려해 보자. 그러면 회귀계수는 $\tilde{\boldsymbol\gamma} \sim N(\mathbf 0,\tau^2\mathbf R^{-1})$ 을 따르고, 행렬 $\tilde{\mathbf X}$ 의 $i$ 번째 행에 해당하는 벡터는
+
+$$
+\tilde{\mathbf x}_i=\big(\rho(\|\mathbf s_i-\boldsymbol\kappa_1\|),\ldots,\rho(\|\mathbf s_i-\boldsymbol\kappa_K\|)\big)^{\top}
+$$
+
+이며 $f(\mathbf s_i)=\tilde{\mathbf x}_i^{\top}\tilde{\boldsymbol\gamma}$ 가 된다. 위 식은 다음과 같이 해석할 수 있다. 서로 다른 관측위치 $\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K$ 를 결합점이라 생각하고 기저함수를 $B_k(\mathbf s)=\rho(\|\mathbf s-\boldsymbol\kappa_k\|)$ 로 정의하면, $f(\mathbf s)$ 는 이 기저함수를 이용하여 다음과 같이 표현할 수 있다.
+
+$$
+f(\mathbf s)=\sum_{k=1}^K\tilde{\gamma}_kB_k(\mathbf s)
+$$ {#eq-grf-radial}
+
+즉 모수를 재조정하면, 공간 확률과정 $f(\mathbf s)$ 는 상관계수 함수에 의해 정의되는 방사 기저함수 평활화로 표현할 수 있다. 이 관점은 상관계수 함수의 성질이 공간 확률과정의 매끄러운 정도로 해석될 수 있다는 사실을 뒷받침해 준다. 다만 그 대상이 확률과정의 (평균제곱) 매끄러움에서 경로의 매끄러움으로 바뀌었을 뿐이다. 또한 이 기저함수 표현에는 [방사 기저](smoothing17.qmd)에서처럼 결합점의 수를 줄여 $\tilde{\boldsymbol\gamma}$ 의 차원을 줄이는 전략을 이용할 수 있으며, RKHS 평활화 원리와도 연결지을 수 있다. 양의 정부호 상관계수 함수는 유효한 양의 정부호 커널을 정의하여 RKHS를 구성하게 해 준다.
+
+기저함수 해석은 공간표면을 재현하는 데 있어 정확한 상관계수 함수를 설정하는 것이 그리 중요하지 않다는 점을 설명해 준다. 특히 상관계수 함수들은 유효범위를 같게 만들면 매우 비슷한 모양을 만들어 낸다. 범위 모수는 기저함수가 얼마나 멀리 떨어진 관측치에까지 영향을 미치는지를 결정하기 때문에 공간 평활화에서 가장 중요하다. 경험적으로는 범위 모수를 제외한 다른 모수들을 고정한다. 예를 들어 마턴 유형의 경우 매끄러움 모수 $\nu$ 를 0.5, 1.5, 2.5 로 조정하는 것은 스플라인 함수의 차수를 조정하여 매끄러움을 조정하는 것과 유사하게 볼 수 있다. 경험적으로 범위 모수 $\phi$ 를
+
+$$
+\hat\phi=\max_{j,k}\|\boldsymbol\kappa_j-\boldsymbol\kappa_k\|/c
+$$
+
+로 주면 기저함수의 척도 불변성(scale-invariance)을 만족한다. 상수 $c>0$ 는 원하는 유효범위를 결정하는데, $\rho(c;\phi=1)$ 이 작은 수(예: 0.001)가 되도록 선택한다. 그러면 $\|\mathbf s-\boldsymbol\kappa_j\|/\hat\phi$ 값이 상관계수 함수의 거리축을 따라 고르게 분포하게 된다.
+
+## 공간통계 모형에서의 식별 문제
+
+모형 설정에서 저차원의 다항식을 고정효과 $\mathbf u (\mathbf s)^{\top}\boldsymbol\beta$ 에 포함시키면, 가우스 확률필드의 기저함수 접근법에서도 식별의 문제가 발생할 수 있다. 다음 모형을 고려해 보자.
+
+$$
+y(\mathbf s)=\mathbf u(\mathbf s)^{\top}\boldsymbol\beta +g(\mathbf s)+ f(\mathbf s)+\epsilon(\mathbf s)
+$$
+
+여기서 $f(\mathbf s)$ 는 가우스 확률필드를, $g(\mathbf s)$ 는 추가적인 공간표면을 나타낸다. 빈도주의 입장에서는 $g(\mathbf s)$ 를 비확률적인 표면으로, $f(\mathbf s)$ 를 공간 상관관계를 고려한 확률변수로 간주하지만, 베이지안 입장에서는 이러한 구분이 더 이상 의미가 없다. 특히 $f(\mathbf s)$ 의 방사 기저함수 표현에서 보았듯이 두 표면은 모두 모형에서 같은 방식으로 결정된다. 따라서 이 문제는 일변수 평활화에서 식별을 위한 제약조건을 부과하는 것과 유사하게 다룰 수 있다.
+
+## 전통 공간통계기법
+
+여기서 기술한 지구통계기법은 전통적인 지구통계기법과 상당히 다르다. 전통적인 관점에서는 $f(\mathbf s)$ 가 확률과정으로 간주되고, 그 확률적 성격이 공간 데이터를 분석하는 데 필수적이다. 반면 여기서는 정상 가우스 확률과정이 특정한 사전분포를 지닌 기저함수 접근법에 해당한다는 것을 보았다. 전통적인 접근법은 관측치가 없는 지역의 공간효과나 종속변수의 예측에 초점이 맞춰져 있다. 전통적인 지구통계기법의 추정과 예측 문제는 가우스 확률필드를 포함한 모형
+
+$$
+\mathbf y =\mathbf U \boldsymbol\beta +\mathbf X \boldsymbol\gamma +\boldsymbol\epsilon
+$$
+
+에서 출발하며, 여기서 $\mathbf U\boldsymbol\beta$ 는 고정된 것으로 간주하는 설명변수의 효과를, $\boldsymbol\gamma$ 는 모형에서 고려하지 않은 설명변수를 반영하는 확률효과를 나타낸다. 혼합모형과 유사하게 오차항과 공간효과의 결합 가우스분포와 독립성을 가정하자. 즉,
+
+$$
+\begin{pmatrix}\boldsymbol\gamma \\ \boldsymbol\epsilon\end{pmatrix}\sim N\left(\begin{pmatrix}\mathbf 0\\ \mathbf 0\end{pmatrix},\begin{pmatrix}\tau^2\mathbf R &\mathbf 0\\ \mathbf 0&\sigma^2\mathbf I\end{pmatrix}\right)
+$$
+
+이다.
+
+$\boldsymbol\epsilon$ 은 종속변수의 측정오차와 미시적 국소편차(너겟 효과)를 반영하기 위하여 사용된다. 그 근거는 미시적 국소편차가 매우 짧은 거리 범위 내에서만 존재하는 공간 상관 변동이라는 것이다. 원칙적으로 너겟 효과를 설명하기 위하여 두 번째 가우스 확률필드를 모형에 포함시켜 그 공간적 상관관계를 반영할 수 있지만, 모든 관측치 사이의 거리가 특정 기준을 넘어선다면 오차항으로부터 미시적 확률과정을 분리해내기가 어렵거나 불가능하다. 그 결과 전통기법의 관심사는 종종 관측 데이터를 평활화하기보다는 보간(interpolation)하는 데 있고, 이는 암묵적으로 미시적 공간변동이 측정오차를 압도한다는 가정을 따른다고 볼 수 있다.
+
+이제 관측되지 않은 위치에서의 종속변수 예측 문제를 살펴보자. 혼합모형과 유사하게 공간효과를 적분하면 종속변수의 주변분포는 다음과 같다.
+
+$$
+\mathbf y \sim N(\mathbf U\boldsymbol\beta,\; \sigma^2\mathbf I +\tau^2 \mathbf X\mathbf R\mathbf X^{\top})
+$$
+
+공분산행렬의 $\sigma^2\mathbf I$ 항은 종속변수 $\mathbf y$ 의 너겟 효과를 나타낸다. 미관측 위치 $\mathbf s_0$ 의 예측치는 고정효과와 공간효과의 합 $\mathbf u(\mathbf s_0)^{\top}\boldsymbol\beta +f(\mathbf s_0)$ 로 표현된다. $\mathbf r = (\rho(\mathbf s_1-\mathbf s_0),\ldots, \rho(\mathbf s_n - \mathbf s_0))^{\top}$ 이고 $y_0=y(\mathbf s_0)$ 라고 하면, $\mathbf y$ 와 $y_0$ 의 결합분포는
+
+$$
+\begin{pmatrix}\mathbf y \\ y_0\end{pmatrix}\sim N\left(\begin{pmatrix}\mathbf U\boldsymbol\beta\\ \mathbf u(\mathbf s_0)^{\top}\boldsymbol\beta\end{pmatrix},\begin{pmatrix}\sigma^2\mathbf I +\tau^2 \mathbf X\mathbf R\mathbf X^{\top} &\tau^2\mathbf r\\ \tau^2\mathbf r^{\top}&\tau^2\end{pmatrix}\right)
+$$
+
+이다. 결합 가우스분포로부터 $y_0$ 에 대한 평균제곱오차(MSE) 최적 예측치는 다음과 같은 조건부 기대값
+
+$$
+\hat y_0=E(y_0\mid \mathbf y) = \mathbf u(\mathbf s_0)^{\top}\boldsymbol\beta+\tau^2\mathbf r^{\top}(\tau^2\mathbf X\mathbf R\mathbf X^{\top}+\sigma^2\mathbf I)^{-1}(\mathbf y-\mathbf U\boldsymbol\beta)
+$$ {#eq-kriging-pred}
+
+이고, 그 예측분산은
+
+$$
+Var(y_0\mid \mathbf y)=\tau^2-\tau^2\mathbf r^{\top}(\tau^2\mathbf X \mathbf R\mathbf X^{\top}+\sigma^2\mathbf I)^{-1}\mathbf r\,\tau^2
+$$ {#eq-kriging-var}
+
+이다. 실제로 예측식을 적용하려면 분산 모수와 회귀계수의 추정값을 대입해야 하는데, 전통기법에서는 경험 variogram과 그에 상응하는 최소제곱 추정치(또는 REML)로 구한다. 한 가지 문제점은 이 예측기준을 비가우스 분포로 일반화하기 어렵다는 점이다. 반면 기저함수 해석법은 비가우스 분포에 대해서도 벌점 추정 기준을 쉽게 적용할 수 있으며, 준모수 혼합모형(SPMM)의 틀에도 정확하게 들어맞는다.
+
+## 다음 글
+
+[다음 글](smoothing20.qmd)에서는 지금까지 살펴본 공간효과들을 하나의 틀로 묶는 공간가법 회귀분석과 그 추론 방법을 정리한다.

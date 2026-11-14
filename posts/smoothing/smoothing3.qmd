@@ -1,0 +1,175 @@
+---
+title: '시계열 평활 모형의 확장과 비정규 관측값'
+date: '2022-10-05'
+categories: ['Bayesian smoothing', 'Time series']
+description: '시계열 평활 모형의 여러 확장과 이항·포아송 관측값에 대한 평활'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing2.qmd)에서는 정규분포 관측값에 대하여 PLS 추정량과 베이지안 사후평균이 일치함을 보였다. 이번 글에서는 시계열 평활 모형을 확장하는 여러 방법을 간단히 소개하고, 관측값이 정규분포를 따르지 않는 경우의 평활 모형을 살펴본다.
+
+## 모형의 확장
+
+### 평활화 파라미터와 분산의 추정
+
+먼저 평활화 파라미터 $\tau^2$과 분산 $\sigma^2$을 함께 추정하는 문제를 살펴보자. 전통적 빈도주의 입장에서는 교차검증(cross validation)을 이용하여 두 파라미터를 정할 수 있다. 베이지안 입장에서는 두 가지 접근방법이 있다.
+
+- **완전 베이즈(full Bayes) 접근법**: 두 파라미터에 적절한 사전분포를 부여하고, 마코프 체인 몬테카를로(MCMC) 기법 등을 이용하여 $\boldsymbol\mu$와 함께 추정한다. 즉, 결합 사후분포 $p(\boldsymbol\mu,\sigma^2,\tau^2\mid \mathbf y)$를 추정한다.
+- **경험적 베이즈(empirical Bayes) 접근법**: $\tau^2$과 $\sigma^2$을 미지의 상수로 보고, 최우추정(MLE) 등 빈도주의 추정절차로 두 파라미터를 추정한 다음 그 값을 대입하여 $p(\boldsymbol\mu\mid \mathbf y)$를 구한다.
+
+### 계절효과
+
+두 번째로 시계열 모형에 계절효과를 추가하여 모형을 확장할 수 있다. 분기별 자료의 계절효과를 $\xi_t$라고 하면 모형은 다음과 같다.
+
+$$
+\begin{gathered}
+y_t=\mu_t+\xi_t+\varepsilon_t,\quad t=1,\ldots,T,\\
+\xi_t+\xi_{t-1}+\xi_{t-2}+\xi_{t-3}=v_t,\quad v_t\sim N(0,\tau^2_{\text{season}}).
+\end{gathered}
+$$ {#eq-season}
+
+모수적인 계절효과 모형은 각 계절에 별도의 회귀계수를 부여하고 그 합이 0이 되도록 제약을 둔다. 반면 위와 같은 계절효과의 자기회귀식 표현은 계절성의 시간적 변화를 허용한다. 계절효과의 분산 $\tau^2_{\text{season}}$은 계절효과의 합이 0에서 얼마나 벗어날 수 있는지, 즉 계절 패턴이 얼마나 변할 수 있는지를 결정한다. 계절효과 $\boldsymbol\xi=(\xi_1,\ldots,\xi_T)^{\top}$의 가우스 사전분포는
+
+$$
+p(\boldsymbol\xi)\propto\exp\left(-\frac{1}{2\tau^2_{\text{season}}}\boldsymbol\xi^{\top}\mathbf K_{\text{season}} \boldsymbol\xi\right)
+$$
+
+이며, 이 모형은 다시 설명변수를 추가한 가법모형의 형태로 확장할 수 있다. 즉,
+
+$$
+y_t=\mu_t+\xi_t+\mathbf x_t^{\top}\boldsymbol\beta+\mathbf z_t^{\top}\boldsymbol\alpha_t+\varepsilon_t
+$$
+
+여기서 파라미터 $\boldsymbol\beta$는 설명변수 $\mathbf x_t$의 시점에 관계없이 고정된 효과를, $\boldsymbol\alpha_t$는 설명변수 $\mathbf z_t$의 시간에 따라 변하는 효과를 나타낸다. 이러한 유형의 모형은 가우스 선형 상태공간모형(state space model)으로 볼 수 있으며, 칼만 필터(Kalman filter)와 평활기(smoother)를 이용하면 사후분포의 평균을 효율적으로 구할 수 있다.
+
+### 상관된 오차
+
+세 번째로 오차항의 상관관계를 고려하여 모형을 확장할 수 있다. 처음에 도입한 오차항 $\varepsilon_t,\; t=1,\ldots, T$가 i.i.d.라는 가정은 현실적이지 않은 경우가 많다. $\boldsymbol\varepsilon=(\varepsilon_1,\ldots,\varepsilon_T)^{\top}$가 정상(stationary) 확률과정을 따른다고 가정해 보자. 예를 들어 $\varepsilon_t$가 AR(1) 과정, 즉
+
+$$
+\varepsilon_t=\phi\varepsilon_{t-1}+v_t,\quad v_t\sim N(0,\sigma^2)
+$$
+
+을 따른다고 하면 모형은 다음과 같다.
+
+$$
+y_t=\mu_t+\varepsilon_t,\quad \mu_t-\mu_{t-1}=u_t,\quad \varepsilon_t-\phi\varepsilon_{t-1}=v_t
+$$ {#eq-ar1}
+
+만약 $\phi$가 1에 가깝다면 추세 $\mu_t$와 오차의 상관구조를 어떻게 분리(식별)할 것인가 하는 문제를 추가로 고려해야 한다.
+
+### 국소적응 평활
+
+다음으로 함수의 구간마다 매끄러운 정도가 다른 평활 모형을 생각할 수 있다. 이를 국소적응(locally adaptive) 평활기법이라고 부른다.
+
+가우스 확률보행 평활 사전분포는 전체적인 매끄러움을 조절하는 하나의 파라미터 $\tau^2$를 가진다. 이는 부드럽게 변하는 시간 추세를 모형화하는 데에는 적합하지만, 뾰족한 봉우리나 갑작스러운 변동처럼 매끄럽지 않은 추세를 추정하는 데에는 적합하지 않을 수 있다. 결국 어떤 구간은 지나치게 평활되어 매끄럽지 않은 특징이 감춰지고, 어떤 구간은 평활이 부족하여 너무 구불구불한 추정치가 만들어질 수 있다. 국소적응 또는 뾰족함을 보존하는 평활 방법으로는 다음과 같은 것들이 있다.
+
+1. **가우스 분포의 척도 혼합(scale mixture)을 이용하는 방법.** 오차항의 분포를 가우스 분포의 척도 혼합으로 만드는 것이다. 예를 들어 $\chi^2$ 분포 또는 감마 분포로 혼합하면 $t$ 분포를 얻는다. 추세에 대한 다음의 2차 확률보행 모형을 생각해 보자.
+
+    $$
+    \mu_t=2\mu_{t-1}-\mu_{t-2}+u_t,\quad u_t\mid w_t \sim N(0,\tau^2/w_t)
+    $$ {#eq-rw2-t}
+
+    여기서 $w_t$는 서로 독립이며 $\nu w_t\sim\chi^2_\nu$를 따른다. 그러면 $u_t$의 주변분포는 자유도 $\nu$인 $t$ 분포(의 척도 변환)가 되어 기존의 가우스 확률보행 사전분포보다 두꺼운 꼬리를 가진다. 따라서 구간별로 다른 정도의 평활이 가능해진다.
+
+2. **시간에 따라 변하는 평활화 분산을 도입하는 방법.** 확률보행 모형에 다음과 같이 계층을 하나 더 추가한다.
+
+    $$
+    u_t\sim N(0,\tau_t^2),\quad \delta_t=\log(\tau_t^2)
+    $$
+
+    이 방법은 상태공간모형에서 볼 수 있으며, 벌점 스플라인 모형에서도 고려할 수 있다.
+
+### 불규칙한 관측 간격
+
+마지막으로 시계열이 불규칙한 간격으로 관측되는 경우를 생각해 보자. 이 경우에는 수정된 확률보행 사전분포를 이용하거나 연속시간 모형을 이용하여 모형을 확장할 수 있다. 1차 확률보행 사전분포는
+
+$$
+\mu_t=\mu_{t-1}+u_t,\quad u_t\sim N(0,\tau^2\delta_t)
+$$
+
+이고, 여기서 $\delta_t$는 $t$번째와 $t-1$번째 관측 사이의 시간 간격을 나타낸다. 따라서 $\boldsymbol\mu$의 사전분포는 다음과 같이 바뀐다.
+
+$$
+p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu^{\top}\mathbf K\boldsymbol\mu\right),\quad \mathbf K=\mathbf D_1^{\top}\boldsymbol\Delta^{-1}\mathbf D_1,\quad \boldsymbol\Delta =\text{diag}(\delta_2,\ldots,\delta_T)
+$$ {#eq-weighted-rw}
+
+이러한 1차 가중 확률보행 모형은 연속시간 브라운 운동(Brownian motion)을 이산화한 것으로도 얻을 수 있다. 브라운 운동은 주어진 시간 구간 동안의 증가분에 대하여 동일한 구조를 만들어 낸다. 또한 불규칙하게 관측되는 데이터는 추세 함수에 벌점 스플라인 모형을 가정함으로써 쉽게 다룰 수 있다.
+
+## 비정규분포 관측값 모형
+
+이번에는 관측값이 가우스 분포를 따르지 않는 시계열 모형을 다루어 보자.
+
+### 이항 관측값
+
+우선 관측값 $y_t$가 이항 반응변수(binomial response variable)인 경우를 살펴보자. 즉,
+
+$$
+y_t\sim \text{Bin}(n_t,p_t),\quad t=1,\ldots,T
+$$
+
+이며, 베르누이(Bernoulli) 시행의 수 $n_t$는 알려져 있다고 가정한다. 목표는 평활 곡선 $\mathbf p=(p_1,\ldots,p_T)^{\top}$를 추정하는 것이다. 일반화선형모형(generalized linear model)에서처럼 로짓 연결함수(logit link)를 통해 $p_t$를 $\mu_t$에 대응시키면
+
+$$
+\mu_t=\log\left(\frac{p_t}{1-p_t}\right)\quad \Longleftrightarrow\quad p_t=p(\mu_t)=\frac{\exp(\mu_t)}{1+\exp(\mu_t)}
+$$
+
+이다. 비가우스 관측값 모형에서는 최소제곱 기준 대신 벌점 로그우도(penalized log-likelihood; PLL) 기준을 적용한다. 사실 가우스 관측값 모형의 PLS 기준은 PLL 기준을 적용한 것과 같은 결과를 준다.
+
+$$
+\text{PLL}(\boldsymbol\mu)=\sum_{t=1}^T \left\{y_t\log p(\mu_t)+(n_t-y_t)\log\left(1-p(\mu_t)\right)\right\}-\frac{\lambda}{2}\sum_{t=d+1}^{T}(\Delta^d\mu_t)^2=l(\boldsymbol\mu)-\frac{\lambda}{2}\boldsymbol\mu^{\top}\mathbf K\boldsymbol\mu
+$$ {#eq-pll}
+
+여기서 $l(\boldsymbol\mu)$는 조건부 독립인 이항 관측값의 로그우도, $\Delta^d\mu_t$는 $d$차 차분, $\mathbf K$는 그에 대응하는 벌점행렬이다. 벌점항에 $1/2$을 곱한 것은 가우스 반응변수의 경우 PLL로부터 PLS를 쉽게 도출하기 위함이다. 벌점 최우추정량은
+
+$$
+\hat{\boldsymbol\mu} =\arg \max_{\boldsymbol\mu}\; \text{PLL}(\boldsymbol\mu)
+$$
+
+이고, 이로부터 $\mathbf p$의 추정량 $\hat p_t=p(\hat\mu_t)$를 구할 수 있다. $\hat{\boldsymbol\mu}$는 명시적인 닫힌 형태의 해가 없으므로 반복(iterative) 알고리즘을 이용하여 수치적으로 계산해야 한다.
+
+### 포아송 관측값
+
+시계열 반응변수 $y_t$가 셈(count) 자료인 경우에는 다음과 같은 로그-선형 포아송 모형을 이용할 수 있다.
+
+$$
+y_t\mid \lambda_t\sim \text{Poi}(\lambda_t),\quad \lambda_t=\exp(\mu_t)
+$$
+
+포아송 로그우도함수는
+
+$$
+l(\boldsymbol\lambda)=\sum_{t=1}^T(y_t\log\lambda_t-\lambda_t)=\sum_{t=1}^T \left(y_t \mu_t-\exp(\mu_t)\right)
+$$
+
+와 같고(상수항 제외), 이항분포의 경우와 같은 추론 절차를 거치면 추정량 $\hat\lambda_t$를 구할 수 있다. 이항 자료나 포아송 셈 자료에 대한 이러한 시계열 모형을 동적 일반화선형모형(dynamic generalized linear model)이라고 부른다.
+
+보다 일반적으로, 추세 $\boldsymbol\mu$가 주어졌을 때 $y_t$의 조건부 밀도가 단순한 지수족(exponential family) 분포라면
+
+$$
+E(y_t\mid \mu_t)=\gamma_t=h(\mu_t)
+$$
+
+의 형태로 나타낼 수 있다. 여기서 평균 $\gamma_t,\;t=1,\ldots,T$는 반응함수(response function) $h$를 통하여 추세 $\mu_t$와 연결된다.
+
+### 베이지안 접근
+
+비가우스 관측분포에 대한 베이지안 접근은 다음과 같은 절차를 따른다. 우선 관측모형으로부터 우도함수 $p(\mathbf y\mid \boldsymbol\mu)$를 구하고, 추세 $\boldsymbol\mu$에 가우스 확률보행 사전분포
+
+$$
+p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu^{\top}\mathbf K\boldsymbol\mu\right)
+$$
+
+를 부여한다. 이로부터 사후분포 $p(\boldsymbol\mu\mid \mathbf y)\propto p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)$를 얻는다. 이 사후분포는 가우스 분포가 아니고 일반적으로 대칭도 아니므로, 사후분포의 기대값과 최빈값이 일치하지 않는다. 사후 최빈값은 다음과 같이 로그 사후분포를 최대화하는 값이다.
+
+$$
+\hat{\boldsymbol\mu} = \arg\max_{\boldsymbol\mu}\; \log p(\boldsymbol\mu\mid \mathbf y )=\arg\max_{\boldsymbol\mu}\left\{\log p(\mathbf y \mid \boldsymbol\mu)-\frac{1}{2\tau^2}\boldsymbol\mu^{\top}\mathbf K\boldsymbol\mu\right\}
+$$ {#eq-post-mode}
+
+여기서 $1/\tau^2$은 @eq-pll 의 파라미터 $\lambda$에 해당한다. 사후분포에 대해서는 닫힌 형태의 표현이나 정확한 표본분포가 알려져 있지 않으므로, 사후평균 등은 마코프 체인 몬테카를로(Markov chain Monte Carlo; MCMC) 방법 등으로 계산한다.
+
+## 다음 글
+
+다음 글 [벌점 스플라인](smoothing4.qmd)에서는 벌점 스플라인 함수에 기반한 비모수 회귀분석을 다룬다.

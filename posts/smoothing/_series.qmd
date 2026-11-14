@@ -1,0 +1,35 @@
+::: {.callout-note appearance="simple" collapse="true"}
+## 연재: 베이지안 평활기법 — 전체 목차
+
+**제1장 평활기법과 비모수 회귀분석의 기본 개념**
+
+1. [평활화 기법 소개](smoothing1.qmd)
+2. [베이지안 평활기법](smoothing2.qmd)
+3. [시계열 평활 모형의 확장과 비정규 관측값](smoothing3.qmd)
+4. [벌점 스플라인](smoothing4.qmd)
+5. [베이지안 벌점 스플라인](smoothing5.qmd)
+6. [비정규분포 관측값의 벌점 스플라인](smoothing6.qmd)
+7. [범주형 관측값 모형과 평활화 스플라인](smoothing7.qmd)
+8. [다변수 가법모형과 백피팅](smoothing8.qmd)
+
+**제2장 선형혼합모형**
+
+9. [선형혼합모형](smoothing9.qmd)
+10. [선형혼합모형의 우도 기반 추론](smoothing10.qmd)
+11. [선형혼합모형의 베이지안 추론](smoothing11.qmd)
+12. [유한 혼합모형](smoothing12.qmd)
+
+**제3장 종단 데이터를 위한 비모수 혼합모형**
+
+13. [가법혼합모형과 일반가법혼합모형](smoothing13.qmd)
+
+**제4장 공간 평활화와 공간가법 회귀모형**
+
+14. [공간 평활과 마코프 확률필드](smoothing14.qmd)
+15. [가우스 마코프 확률필드](smoothing15.qmd)
+16. [텐서곱 벌점 스플라인](smoothing16.qmd)
+17. [방사 기저 평활](smoothing17.qmd)
+18. [정상 가우스 확률필드](smoothing18.qmd)
+19. [베리오그램과 공분산 모수의 추정](smoothing19.qmd)
+20. [공간가법 회귀분석](smoothing20.qmd)
+:::

@@ -1,0 +1,241 @@
+---
+title: '선형혼합모형의 우도 기반 추론'
+date: '2022-10-12'
+categories: ['Bayesian smoothing', 'Mixed models']
+description: '선형혼합모형의 ML·REML 추정과 가설검정을 정리한다'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing9.qmd)에서는 종단 자료에 대한 선형혼합모형과 일반 선형혼합모형, 그리고 그 베이지안 표현을 소개하였다. 이번 글에서는 고정효과와 확률효과, 그리고 공분산 행렬의 각 원소들을 우도에 기반하여 추정하는 방법과 그에 대한 가설을 검정하는 방법을 살펴본다.
+
+## 고정효과와 공분산 행렬의 추정
+
+전통적인 추정방법은 고정효과 $\boldsymbol\beta$와 공분산 행렬 $\mathbf V(\boldsymbol\theta)$의 추정에 일차적인 관심이 있다. 확률효과 $\boldsymbol\alpha$의 추정은 확률값이나 예측값을 구하는 것으로 부차적인 중요성을 지니며, 비조건부 모형을 구성하는 데 유용한 도구로서 기능할 뿐이다. $\boldsymbol\beta$와 $\mathbf V(\boldsymbol\theta)$에 대한 추론은 다음 비조건부 모형에 기초한다.
+
+$$
+\mathbf y\sim N(\mathbf U\boldsymbol\beta,\mathbf V),\quad \mathbf V(\boldsymbol\theta)=\boldsymbol\Sigma+\mathbf Z\mathbf G\mathbf Z^{\top}
+$$ {#eq-marginal}
+
+분산이 주어졌다고 가정하면, 가중최소제곱(WLS) 추정값은 $\hat{\boldsymbol\beta}=(\mathbf U^{\top}\mathbf V^{-1}\mathbf U)^{-1}\mathbf U^{\top}\mathbf V^{-1}\mathbf y$이다. 이 추정값을 비조건부 우도함수에 대입하면 $\mathbf V(\boldsymbol\theta)$의 프로파일 우도함수를 통하여 최우추정값을 구할 수 있다.
+
+확률효과는 개체 효과에 대한 정보(종단 모형)나 평활 함수의 추정값에 대한 정보(베이지안 평활화)를 담고 있다. 고정효과와 확률효과를 동시에 추정하는 방법은 우도에 기반한 반복 추정법이다. 이 방법은 조건부 모형을 기반으로 다음 두 단계를 수렴할 때까지 반복하는 것이다.
+
+1. 주어진 분산행렬을 바탕으로 $\mathcal L(\boldsymbol\beta,\boldsymbol\alpha)=p(\mathbf y\mid \boldsymbol\beta,\boldsymbol\alpha)p(\boldsymbol\alpha)$에서 벌점최소제곱법으로 $\hat{\boldsymbol\beta}$와 $\hat{\boldsymbol\alpha}$를 업데이트한다.
+2. 주어진 $\hat{\boldsymbol\beta}$와 $\hat{\boldsymbol\alpha}$를 바탕으로 Fisher scoring 또는 EM 알고리즘을 이용하여 $\hat{\boldsymbol\theta}$를 업데이트한다.
+
+## 고정효과와 확률효과의 추정
+
+고정효과와 확률효과의 결합 우도함수는 다음과 같다.
+
+$$
+\mathcal L(\boldsymbol\beta,\boldsymbol\alpha)=p(\mathbf y\mid \boldsymbol\beta,\boldsymbol\alpha)p(\boldsymbol\alpha)
+$$
+
+극대화 조건 $\max_{\boldsymbol\beta,\boldsymbol\alpha} \mathcal L(\boldsymbol\beta,\boldsymbol\alpha)$를 다시 표현하면
+
+$$
+\min_{\boldsymbol\beta,\boldsymbol\alpha}\; (\mathbf y -\mathbf U\boldsymbol\beta - \mathbf Z\boldsymbol\alpha)^{\top}\boldsymbol\Sigma^{-1}(\mathbf y -\mathbf U\boldsymbol\beta - \mathbf Z\boldsymbol\alpha) + \boldsymbol\alpha^{\top}\mathbf G^{-1}\boldsymbol\alpha
+$$ {#eq-pls}
+
+이다. 이 구조는 오차항에 대한 보다 일반적인 공분산 구조 $\boldsymbol\Sigma$를 제외하면 벌점최소제곱법의 구조와 동일하며, 그로부터 얻는 추정값은 다음 연립방정식(혼합모형 방정식)의 해와 같다.
+
+$$
+\begin{pmatrix}\mathbf U^{\top}\boldsymbol\Sigma^{-1}\mathbf U&\mathbf U^{\top}\boldsymbol\Sigma^{-1}\mathbf Z\\ \mathbf Z^{\top}\boldsymbol\Sigma^{-1}\mathbf U &\mathbf Z^{\top}\boldsymbol\Sigma^{-1}\mathbf Z+\mathbf G^{-1}\end{pmatrix}\begin{pmatrix}\boldsymbol\beta\\\boldsymbol\alpha\end{pmatrix}=\begin{pmatrix}\mathbf U^{\top}\boldsymbol\Sigma^{-1}\mathbf y\\\mathbf Z^{\top}\boldsymbol\Sigma^{-1}\mathbf y\end{pmatrix}
+$$ {#eq-mme}
+
+고정효과와 확률효과의 해는 각각
+
+$$
+\hat{\boldsymbol\beta}=(\mathbf U^{\top}\mathbf V^{-1}\mathbf U)^{-1}\mathbf U^{\top}\mathbf V^{-1}\mathbf y,\qquad
+\hat{\boldsymbol\alpha}=(\mathbf  Z^{\top}\boldsymbol\Sigma^{-1}\mathbf Z+\mathbf G^{-1})^{-1}\mathbf Z^{\top}\boldsymbol\Sigma^{-1}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})
+$$
+
+이다. $\hat{\boldsymbol\alpha}$는 고정효과 추정값 $\hat{\boldsymbol\beta}$를 대입해 얻은 잔차를 가지고 구한 축소 추정값으로 볼 수 있다.
+
+## 분산 파라미터의 최우추정
+
+분산 파라미터 $\boldsymbol\theta$의 최우추정값은 다음 로그우도함수로부터 구한다.
+
+$$
+l(\boldsymbol\beta,\boldsymbol\theta)=-\frac{1}{2}\log|\mathbf V(\boldsymbol\theta)|-\frac{1}{2}(\mathbf y-\mathbf U\boldsymbol\beta)^{\top}\mathbf V(\boldsymbol\theta)^{-1}(\mathbf y-\mathbf U\boldsymbol\beta)
+$$ {#eq-loglik}
+
+$\boldsymbol\beta$에 대한 최우추정값 $\hat{\boldsymbol\beta}=\hat{\boldsymbol\beta}(\boldsymbol\theta)$를 로그우도함수에 대입하면 프로파일 로그우도함수 $l_p(\boldsymbol\theta)$를 얻고, 이로부터 다음과 같이 $\boldsymbol\theta$에 대한 최우추정량을 구할 수 있다.
+
+$$
+\hat{\boldsymbol\theta}_{ML}=\underset{\boldsymbol\theta}{\arg\max}\; l_p(\boldsymbol\theta)
+$$
+
+하지만 분산의 최우추정량에는 편의(bias)가 존재한다. 전통적인 선형모형에서 분산의 최우추정값
+
+$$
+\hat\sigma^2=\frac{1}{n}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})^{\top}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})
+$$
+
+은 편의추정값이고, 불편추정량은
+
+$$
+\hat\sigma^2=\frac{1}{n-m}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})^{\top}(\mathbf y-\mathbf U\hat{\boldsymbol\beta}),\quad m=\dim(\boldsymbol\beta)
+$$
+
+이다. 이는 최우추정량이 $\hat{\boldsymbol\beta}$를 추정하는 데 사용된 자유도의 손실을 고려하지 않기 때문이다. 혼합모형에서는 이러한 편의를 보정하는 일반적인 방법인 제한된 최우추정량(REML)을 이용한다.
+
+## 제한된 최우추정 (REML)
+
+분산 구성요소에 대한 추론은 원래의 우도함수 $l(\boldsymbol\beta,\boldsymbol\theta)$가 아니라 분산 구성요소에만 의존하는 수정 우도함수를 이용한다. $\mathbf a^{\top} \mathbf y$를 $\mathbf a^{\top}\mathbf U=\mathbf 0$을 만족하여 $\mathbf a^{\top} \mathbf y \sim N(0, \mathbf a^{\top}\mathbf V\mathbf a)$인 오차 대비(error contrast)라고 하자. 이 분포는 $\boldsymbol\beta$와는 무관하고 동일한 분산 파라미터 $\boldsymbol\theta$에 의존하므로, 이를 바탕으로 $\boldsymbol\theta$를 추정할 수 있다.
+
+잔차를 예로 들어보자. 전체 표본의 수를 $N=\sum_{i=1}^nn_i$라 하고, 잔차 행렬을 $\mathbf R = \mathbf I_N-\mathbf U(\mathbf U^{\top}\mathbf U)^{-1}\mathbf U^{\top}$라 하면, 잔차 벡터 $\hat {\boldsymbol\varepsilon} = \mathbf R\mathbf y$의 $l$번째 원소는 $\mathbf R$의 $l$번째 행과 $\mathbf y$의 곱으로 주어지는 오차 대비이다. 잔차 벡터의 분포는
+
+$$
+\hat{\boldsymbol\varepsilon}\sim N(\mathbf 0, \mathbf R\mathbf V\mathbf R)
+$$
+
+이고, 이 우도함수를 분산 파라미터를 구하는 데 이용할 수 있다. 다만 $\mathbf R$의 계수는 $N-m$이므로, $N-m$개의 선형독립인 오차 대비 $\mathbf e=\mathbf A^{\top}\mathbf y$를 구성하는 행렬 $\mathbf A$를 찾는다. 여기서 행렬 $\mathbf A$는 다음 조건을 만족해야 한다.
+
+$$
+\mathbf A\mathbf A^{\top}=\mathbf I_N-\mathbf U(\mathbf U^{\top}\mathbf U)^{-1}\mathbf U^{\top},\quad \mathbf A^{\top}\mathbf A=\mathbf I_{N-m}
+$$
+
+이로부터 구한 확률밀도함수는 특정한 행렬 $\mathbf A$의 선택과 무관하게 다음과 같이 주어진다.
+
+$$
+p(\mathbf e)=\left(\frac{1}{2\pi}\right)^{\frac{N-m}{2}}|\mathbf U^{\top}\mathbf U|^{\frac{1}{2}}\,|\mathbf V|^{-\frac{1}{2}}\,|\mathbf U^{\top}\mathbf V^{-1}\mathbf U|^{-\frac{1}{2}}\exp\left[-\frac{1}{2}(\mathbf y -\mathbf U\hat{\boldsymbol\beta})^{\top}\mathbf V^{-1}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})\right]
+$$ {#eq-reml-density}
+
+$\mathbf y$를 $\mathbf e$로 대체하면서 자유로운 관측값의 수가 $m$개 줄어들지만, 오차 대비는 분산 파라미터에 대한 충분통계량이기 때문에 $\boldsymbol\theta$에 대한 정보의 손실은 발생하지 않는다. 또한 제한된 최우추정에서 확률밀도함수는 원래 관측값만의 함수이기 때문에 오차 대비를 명시적으로 구할 필요가 없다. 제한된 로그우도함수는 다음과 같다.
+
+$$
+\begin{aligned}
+l^*(\boldsymbol\theta)&=-\frac{1}{2}\log |\mathbf V|  -\frac{1}{2}\log|\mathbf U^{\top}\mathbf V^{-1}\mathbf U|-\frac{1}{2}(\mathbf y -\mathbf U\hat{\boldsymbol\beta})^{\top}\mathbf V^{-1}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})\\
+&=l_p(\boldsymbol\theta)-\frac{1}{2}\log|\mathbf U^{\top}\mathbf V^{-1}\mathbf U|
+\end{aligned}
+$$ {#eq-reml}
+
+여기서 기존 (프로파일) 로그우도함수에 추가되는 항은 $-\frac{1}{2}\log|\mathbf U^{\top}\mathbf V^{-1}\mathbf U|$이며, 추정량은 Newton-Raphson 방법이나 Fisher scoring을 이용하여 구한다.
+
+### Fisher scoring 알고리즘
+
+Fisher scoring 알고리즘을 이용한 REML 추정에 대하여 살펴보자. 이하에서 $\mathbf P=\mathbf V^{-1}-\mathbf V^{-1}\mathbf U(\mathbf U^{\top}\mathbf V^{-1}\mathbf U)^{-1}\mathbf U^{\top}\mathbf V^{-1}$로 둔다. 스코어 함수는 아래와 같이 구한다.
+
+$$
+\begin{aligned}
+s^*(\boldsymbol\theta)&=\frac{\partial l^*(\boldsymbol\theta)}{\partial \boldsymbol \theta}=(s^*_j(\boldsymbol\theta)),\quad j=1,\ldots,\dim(\boldsymbol\theta)\\
+s^*_j(\boldsymbol\theta)&=\frac{\partial l^*(\boldsymbol\theta)}{\partial \theta_j}
+=-\frac{1}{2}\operatorname{tr}\left(\mathbf P\frac{\partial \mathbf V }{\partial \theta_j}\right)+\frac{1}{2}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})^{\top}\mathbf V^{-1}\frac{\partial \mathbf V }{\partial \theta_j}\mathbf V^{-1}(\mathbf y-\mathbf U\hat{\boldsymbol\beta})
+\end{aligned}
+$$ {#eq-score}
+
+Fisher 정보행렬은 다음과 같다.
+
+$$
+\begin{aligned}
+F_{obs}^*(\boldsymbol\theta)&=-\frac{\partial s^*(\boldsymbol\theta)}{\partial \boldsymbol\theta^{\top}}=-\frac{\partial^2 l^*(\boldsymbol\theta)}{\partial \boldsymbol\theta\,\partial\boldsymbol\theta^{\top}}=\left(F^*_{obs,jh}(\boldsymbol\theta)\right)\\
+F^*_{obs,jh}(\boldsymbol\theta)&=-\frac{\partial^2 l^*(\boldsymbol\theta)}{\partial \theta_j\partial \theta_h}=\frac{1}{2}\operatorname{tr}\left(\mathbf P \frac{\partial^2 \mathbf V}{\partial \theta_j\partial \theta_h}-\mathbf P \frac{\partial \mathbf V}{\partial \theta_j}\mathbf P \frac{\partial \mathbf V}{\partial \theta_h}\right)\\
+&\quad-\frac{1}{2}(\mathbf y -\mathbf U\hat{\boldsymbol\beta})^{\top}\mathbf V^{-1}\left(\mathbf P \frac{\partial^2 \mathbf V}{\partial \theta_j\partial \theta_h}-\mathbf P \frac{\partial \mathbf V}{\partial \theta_j}\mathbf P \frac{\partial \mathbf V}{\partial \theta_h}\right)\mathbf V^{-1}(\mathbf y -\mathbf U\hat{\boldsymbol\beta})\\
+F^*(\boldsymbol\theta)&=E\left(F^*_{obs}(\boldsymbol\theta)\right)\\
+\Rightarrow\quad F^*_{jh}(\boldsymbol\theta)&=E\left(F^*_{obs,jh}(\boldsymbol\theta)\right)=\frac{1}{2}\operatorname{tr}\left(\mathbf P\frac{\partial \mathbf V}{\partial \theta_j}\mathbf P\frac{\partial \mathbf V}{\partial \theta_h}\right)
+\end{aligned}
+$$ {#eq-fisher}
+
+파라미터는 다음 과정을 통해 업데이트한다.
+
+$$
+\hat{\boldsymbol\theta}^{(k+1)}=\hat{\boldsymbol\theta}^{(k)}+\left(F^*(\hat{\boldsymbol\theta}^{(k)})\right)^{-1}s^*(\hat{\boldsymbol\theta}^{(k)})
+$$ {#eq-fisher-update}
+
+구체적인 계산은 공분산 행렬 $\mathbf V$의 도함수를 통해 모형의 구조에 의존한다. 이때 $N\times N$ 행렬의 역행렬을 직접 구하는 것은 피해야 한다.
+
+단순한 예로 $\boldsymbol\Sigma=\sigma^2\mathbf I_N$을 고려해 보자. 파라미터에 대하여 1차 미분하면
+
+$$
+\boldsymbol\Sigma=\sigma^2\mathbf I_N\quad \Rightarrow\quad \frac{\partial \mathbf V}{\partial \sigma^2}=\mathbf I_N
+$$
+
+이고, 확률효과의 분포에 대해서는
+
+$$
+\begin{aligned}
+&\mathbf Q=\operatorname{blockdiag}(\delta^2_1\mathbf I,\ldots,\delta^2_q\mathbf I),\quad \mathbf Z=(\mathbf z_1,\ldots,\mathbf z_q)\\
+&\Rightarrow\quad \frac{\partial\mathbf V}{\partial\delta_j^2}=\mathbf z_j \mathbf z_j^{\top}
+\end{aligned}
+$$
+
+이다. 또 다른 반복 추정 방법으로는 EM 알고리즘이 있다.
+
+## ML, REML과 베이지안 추론의 관계
+
+이제 최우추정량(ML)과 제한된 최우추정량(REML)을 베이지안 방법과 비교하여 모형의 특성에 대한 통찰을 얻어 보자. 모형의 파라미터 $\boldsymbol\beta,\;\boldsymbol\alpha,\;\boldsymbol\theta$가 모두 확률변수인 완전 베이지안 모형을 고려하자. 고정효과와 분산 파라미터에 대하여 비정보 평탄 사전분포를, 확률효과에 대해서는 정보 사전분포를 부여하면
+
+$$
+p(\boldsymbol\beta)\propto \text{const.} ,\qquad p(\boldsymbol\theta)\propto \text{const.},\qquad
+\boldsymbol\alpha\sim N(\mathbf 0, \mathbf Q)
+$$
+
+이다. 이때 ML 추정량은 결합 사후분포 $p(\boldsymbol\beta,\boldsymbol\theta\mid \mathbf y)$의 최빈값에서의 $\boldsymbol\theta$이고, REML 추정량은 주변 사후분포 $p(\boldsymbol\theta\mid \mathbf y)$의 최빈값이다. $\boldsymbol\theta$의 주변 사후분포는
+
+$$
+p(\boldsymbol\theta\mid \mathbf y)=\int p(\boldsymbol\beta,\boldsymbol\theta\mid \mathbf y)\,d\boldsymbol\beta\propto\int p(\mathbf y\mid \boldsymbol\beta,\boldsymbol\theta) p(\boldsymbol\beta)p(\boldsymbol\theta)\,d\boldsymbol\beta=\int p(\mathbf y \mid \boldsymbol\beta,\boldsymbol\theta)\,d\boldsymbol\beta
+$$
+
+이고, $\boldsymbol\beta$의 완전조건부분포는
+
+$$
+p(\boldsymbol\beta\mid \mathbf y,\boldsymbol\theta)=\frac{p(\mathbf y \mid \boldsymbol\beta,\boldsymbol\theta)p(\boldsymbol\beta)}{\int p(\mathbf y \mid \boldsymbol\beta,\boldsymbol\theta)p(\boldsymbol\beta)\,d\boldsymbol\beta}=\frac{p(\mathbf y \mid \boldsymbol\beta,\boldsymbol\theta)}{\int p(\mathbf y \mid \boldsymbol\beta,\boldsymbol\theta)\,d\boldsymbol\beta}
+$$
+
+이다. 이 조건부분포는 WLS 추정량을 평균으로 하는 가우시안 분포이다. 즉,
+
+$$
+\boldsymbol\beta\mid\mathbf y,\boldsymbol\theta\sim N\left(\hat{\boldsymbol\beta},(\mathbf U^{\top}\mathbf V^{-1}\mathbf U)^{-1}\right)
+$$
+
+최종적으로 $\boldsymbol\theta$의 주변 사후분포는
+
+$$
+p(\boldsymbol\theta\mid \mathbf y )\propto \int p(\mathbf y \mid \boldsymbol\beta,\boldsymbol\theta)\,d\boldsymbol\beta=\frac{p(\mathbf y\mid \boldsymbol\beta,\boldsymbol\theta)}{p(\boldsymbol\beta\mid \mathbf y, \boldsymbol\theta)}\propto p(\mathbf e)
+$$ {#eq-reml-posterior}
+
+이다. 결국 $\boldsymbol\theta$에 대하여 REML을 극대화하는 것은 $\boldsymbol\theta$의 주변 사후분포의 최빈값을 추정값으로 취하는 것과 동일하다. 따라서 경험 베이즈 분석에서는 주변 사후분포의 최빈값을 사용하게 되므로, 경험 베이즈 방법은 최우추정법(ML)보다 제한된 최우추정법(REML)을 선호한다고 할 수 있다.
+
+## 가설검정
+
+### 고정효과에 대한 검정
+
+고정효과에 대한 선형 가설의 검정 문제를 고려해 보자.
+
+$$
+H_0:\mathbf C\boldsymbol\beta=\mathbf d\quad \text{vs.}\quad H_1: \mathbf C \boldsymbol\beta\neq \mathbf d
+$$
+
+Wald 통계량은
+
+$$
+W=(\mathbf C\hat{\boldsymbol\beta}-\mathbf d)^{\top}\left[\mathbf C(\mathbf U^{\top}\hat {\mathbf V}^{-1}\mathbf U)^{-1}\mathbf C^{\top}\right]^{-1}(\mathbf C\hat{\boldsymbol\beta}-\mathbf d)
+$$ {#eq-wald}
+
+이고, LR 통계량은
+
+$$
+LR=2\left\{l(\hat{\boldsymbol\beta},\hat{\boldsymbol\theta})-l(\tilde{\boldsymbol\beta},\tilde{\boldsymbol\theta})\right\}
+$$ {#eq-lr}
+
+이다. 여기서 $l(\boldsymbol\beta,\boldsymbol\theta)$는 주변(marginal) 모형의 로그우도함수, $(\hat{\boldsymbol\beta},\hat{\boldsymbol\theta})$는 $H_1$ 하의 최우추정량, $(\tilde{\boldsymbol\beta},\tilde{\boldsymbol\theta})$는 $H_0$ 하의 최우추정량이다. 표본의 수가 적은 경우에는 $\operatorname{Cov}(\hat{\boldsymbol\beta})$에 대한 추정값 $(\mathbf U^{\top}\hat{\mathbf V}^{-1}\mathbf U)^{-1}$의 편의가 클 수 있으므로 Wald 검정이나 $F$ 검정을 할 때 유의하여야 한다.
+
+### 확률효과에 대한 검정
+
+이제 확률효과 또는 확률효과의 분산과 관련한 다음 검정을 고려해 보자.
+
+$$
+\begin{aligned}
+&H_0: \alpha_i=0,\;\; \forall i\quad \text{vs.}\quad  H_1: \exists\, i \;\; \text{s.t.}\;\; \alpha_i\neq 0\\
+\Rightarrow\quad &H_0: \delta^2=\operatorname{Var}(\alpha_i)=0\quad \text{vs.} \quad H_1:\delta^2>0
+\end{aligned}
+$$
+
+$\delta^2=0$이면 파라미터 공간의 경계점에 있기 때문에 일반적인 점근 이론이 성립하지 않는다. 종속변수 벡터가 i.i.d. 부분벡터로 분해될 수 있다면, $H_0$ 하의 점근 분포는 0에서 점질량(point mass)을 갖는 분포와 $\chi^2$ 분포의 혼합분포이다.
+
+## 다음 글
+
+[선형혼합모형의 베이지안 추론](smoothing11.qmd)에서는 경험 베이즈와 완전 베이즈 관점에서 선형혼합모형의 사후분포와 깁스 샘플링을 살펴본다.

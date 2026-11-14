@@ -1,0 +1,374 @@
+---
+title: '범주형 관측값 모형과 평활화 스플라인'
+date: '2022-10-09'
+categories: ['Bayesian smoothing', 'Splines']
+description: '범주형 종속변수에 대한 비모수 회귀모형과 적분 벌점을 이용한 평활화 스플라인을 살펴본다.'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing6.qmd)에서는 지수족 종속변수에 대한 벌점 스플라인과 IWLS 후보분포를 이용한 MH 알고리즘을 살펴보았다. 이번 글에서는 종속변수가 범주형인 경우로 비모수 회귀분석을 확장하고, 이어서 미분계수의 적분에 기반한 벌점을 사용하는 평활화 스플라인을 소개한다.
+
+## 일변수 범주형 관측값 모형
+
+비모수 회귀분석은 종속변수가 범주형(categorical) 관측값인 경우로 확장하여 적용할 수 있다. 범주형 관측값 모형은 설명변수에 따라 종속변수의 범주(category)가 달라지거나, 설명변수가 해당 범주가 선택될 확률에 영향을 미치는 경우에 유용하다.
+
+범주형 종속변수 $Y_i$가 전체 $C$개의 범주 중 하나의 값을 갖는다고 하자. 그러면 범주형 종속변수는 $C-1$개의 범주에 대한 지시변수로 다음과 같이 나타낼 수 있다.
+
+$$
+y_i^{(c)} =
+\begin{cases}1, & \text{if}\quad Y_i = c,\\
+0, & \text{otherwise,}\end{cases}\qquad c=1,\ldots,C-1.
+$$
+
+여기서 지시변수의 개수가 $C$개가 아니라 $C-1$개인 이유는 $y_i^{(1)},\ldots,y_i^{(C-1)}$이 모두 0이면 $Y_i=C$가 되어 $C-1$개의 정보만으로도 전체 범주를 모두 표현할 수 있기 때문이다. 범주형 종속변수를 벡터 형태로 간단히 나타내면 $\mathbf y_i = (y_i^{(1)},\ldots,y_i^{(C-1)})^{\top}$로 표기할 수 있다. 다음으로 범주 $c$가 선택될 확률을 $\pi_i^{(c)}$라고 하자. 즉,
+
+$$
+\pi_i^{(c)}=P(Y_i=c)=P(y_i^{(c)}=1), \quad c=1,\ldots,C-1
+$$
+
+이다. 마찬가지로 각 범주가 선택될 확률을 벡터로 표기하면 $\boldsymbol\pi_i=(\pi_i^{(1)},\ldots,\pi_i^{(C-1)})^{\top}$로 쓸 수 있다. 이를 달리 표현하면 벡터 $\mathbf y_i$는 다음과 같은 범주분포(categorical distribution)를 따르는 것으로 이해할 수 있다.
+
+$$
+\mathbf y_i \sim \text{Cat}(\boldsymbol\pi_i)
+$$
+
+이제 범주형 종속변수를 설명변수와 연결하기 위하여, 범주분포의 파라미터 $\boldsymbol\pi_i$가 벡터값을 받아 벡터값을 내는 반응함수 $h$를 통하여 결정되도록 구성해 보자. 그러면 함수 $h:\mathbb{R}^{C-1}\to \mathbb{R}^{C-1}$는 각 범주에 대한 비모수 함수의 값 $\boldsymbol\eta_i=(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})^{\top}$에 대하여
+
+$$
+\boldsymbol\pi_i= h(\boldsymbol\eta_i)
+$$ {#eq-cat-response}
+
+를 만족한다. 이러한 구성은 비모수 회귀분석을 다변수 일반화선형모형의 틀에서 분석할 수 있도록 해준다.
+
+## 일반 범주형 모형: 다항로짓모형
+
+범주형 관측값 모형 중에서 가장 잘 알려진 모형은 (이항)로짓모형을 다변수로 확장한 다항로짓모형(multinomial logit model)이다. 이항로짓모형과 유사하게 확률 파라미터 $\boldsymbol\pi_i$를 다음과 같은 로짓 반응함수를 이용하여 구한다.
+
+$$
+\pi_i^{(c)}=h^{(c)}(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})=\begin{cases}\dfrac{\exp(\eta_i^{(c)})}{1+\sum_{j=1}^{C-1} \exp(\eta_i^{(j)})}, & c=1,\ldots,C-1,\\[2ex]
+\dfrac{1}{1+\sum_{j=1}^{C-1} \exp(\eta_i^{(j)})}, & c=C.
+\end{cases}
+$$ {#eq-mnl}
+
+### 은닉효용 표현
+
+다항로짓모형에서 설명변수의 효과에 대한 해석을 돕고 MCMC 추론을 용이하게 하기 위하여 별도의 은닉변수(latent variable)를 도입하기도 한다. 은닉변수 $l_i^{(c)}$를 다음과 같이 정의하자.
+
+$$
+l_i^{(c)}=\eta_i^{(c)}+\varepsilon_i^{(c)},\quad c=1,\ldots,C
+$$
+
+여기서 $\varepsilon_i^{(c)}$는 어떤 연속확률분포를 따르는 i.i.d. 확률변수를 의미한다. 은닉변수 $l_i^{(c)}$는 설명변수의 직접적인 효과와 오차항으로 표현되는 변동성으로 구성된 효용함수(utility)로 볼 수 있다. 이 경우 최대 효용을 제공하는 범주가 선택될 것이므로, 범주 $c$가 선택된다는 것은 해당 범주의 효용이 가장 크다는 것을 의미한다.
+
+$$
+Y_i=c \quad \Longleftrightarrow\quad l_i^{(c)}=\max_{j=1,\ldots,C} l_i^{(j)}
+$$
+
+마지막으로 모형의 식별을 위하여 마지막 범주의 효용을 기준범주로 빼주는 제약조건을 부가하면 통상적인 다항회귀모형이 된다.
+
+$$
+\tilde{\eta}_i^{(c)}= \eta_i^{(c)}-\eta_i^{(C)},\quad c=1,\ldots,C-1.
+$$
+
+오차항에 어떠한 연속확률분포를 사용하는가에 따라 최종적으로 귀결되는 종속변수의 확률분포가 달라질 수 있다. 오차항에 극값분포(extreme value distribution)인 Gumbel 분포
+
+$$
+F(\varepsilon)=\exp(-\exp(-\varepsilon)),\quad f(\varepsilon) =\exp(-\exp(-\varepsilon))\exp(-\varepsilon)
+$$
+
+를 이용하면, 위 모형은 식별 제약조건을 만족하는 다항로짓모형
+
+$$
+P(Y_i=c)=\frac{\exp(\tilde{\eta}_i^{(c)})}{\sum_{j=1}^{C} \exp(\tilde{\eta}_i^{(j)})}
+$$
+
+이 된다. 은닉변수의 오차항이 서로 독립인 정규분포를 따르면 독립 다항프로빗모형(multinomial independent probit model)이, 오차항이 서로 독립이 아니고 상관관계가 있는 정규분포를 따르면 다변수 프로빗모형(multivariate probit model)이 된다.
+
+### 범주 공통 설명변수와 범주별 설명변수
+
+비모수 다항로짓모형을 구성할 때에는 두 가지 형태의 설명변수를 구별하여야 한다. 설명변수는 모든 범주에서 동일한 값을 가질 수도 있고, 범주에 따라 다른 값을 가질 수도 있다. 모든 범주에서 동일한 값을 갖는 경우 은닉변수는
+
+$$
+l_i^{(c)} = f^{(c)}(x_i) + \varepsilon_i^{(c)},
+$$
+
+범주에 따라 다른 값을 갖는 경우 은닉변수는
+
+$$
+l_i^{(c)}=f(x_i^{(c)})+\varepsilon_i^{(c)}
+$$
+
+가 된다.
+
+모든 범주에서 동일한 값을 갖는 경우, 범주형 회귀모형은 비모수 함수 $f^{(c)}(x_i)=\eta_i^{(c)}=\mathbf x_i^{\top}\boldsymbol\gamma^{(c)}$로 표현할 수 있으며, $\boldsymbol\gamma^{(c)}$는 범주별로 서로 다른 값을 갖게 된다. 이를 행렬로 간단히 표현하면
+
+$$
+\boldsymbol\eta_i =\mathbf X_i \boldsymbol\gamma
+$$
+
+와 같다. 디자인 벡터 $\mathbf x_i=(B_1(x_i),\ldots,B_K(x_i))^{\top}$에 대하여, 식별조건에 따라 행렬 $\mathbf X_i$는 $C-1$개의 행을 가지며 $\mathbf X_i$와 $\boldsymbol\gamma$는 다음과 같다.
+
+$$
+\mathbf X_i=\begin{pmatrix}\mathbf x_i^{\top} &&\\ &\ddots&\\&&\mathbf x_i^{\top} \end{pmatrix},\qquad \boldsymbol\gamma =(\boldsymbol\gamma^{(1)\top},\ldots,\boldsymbol\gamma^{(C-1)\top})^{\top}
+$$
+
+범주별로 설명변수가 다른 값을 갖는 경우에는 비모수 함수를 $f(x_i^{(c)})=\mathbf x_i^{(c)\top}\boldsymbol\gamma$로 표현할 수 있으며, $\boldsymbol\gamma$는 모든 범주에서 동일한 값을 갖는다. 이때 디자인 벡터는 $\mathbf x_i^{(c)}=(B_1(x_i^{(c)}),\ldots,B_K(x_i^{(c)}))^{\top}$가 되고, 식별조건
+
+$$
+\eta_i^{(c)}=f(x_i^{(c)})-f(x_i^{(C)}),\quad c=1,\ldots,C-1
+$$
+
+에 따라 행렬 $\mathbf X_i$는
+
+$$
+\mathbf X_i=\begin{pmatrix}(\mathbf x_i^{(1)} -\mathbf x_i^{(C)} )^{\top} \\ \vdots\\(\mathbf x_i^{(C-1)}-\mathbf x_i^{(C)})^{\top} \end{pmatrix}
+$$
+
+가 된다.
+
+## 순서형 범주에 대한 누적분포함수 모형
+
+순서 범주형 모형은 종속변수의 범주 순서에 의미가 있는 경우를 다루기 위한 모형이다. 종속변수 $Y_i$가 $C$개의 범주 중 범주 $c$에 속한다고 하자. 다음과 같은 은닉변수
+
+$$
+l_i = \eta_i + \varepsilon_i,\quad -\infty<l_i<\infty
+$$
+
+를 이용하여 은닉변수와 종속변수의 관계를 표현하면
+
+$$
+Y_i =c \quad \Longleftrightarrow\quad \theta^{(c-1)}< l_i\le \theta^{(c)}
+$$
+
+이다. 여기서 $-\infty=\theta^{(0)}<\theta^{(1)}<\cdots<\theta^{(C-1)}<\theta^{(C)}=\infty$는 기준점(threshold)이다. 은닉변수는 비모수 설명함수 $\eta_i$와 오차항 $\varepsilon_i$로 이루어져 있고, 오차항은 연속확률분포 $F$를 따른다. 설명함수는 전체 분포의 위치를 정하는 반면, 기준점 $\theta$는 오차항 분포에서 각 범주의 위치를 결정한다. 따라서 설명함수 $\eta_i$가 증가한다는 것은 종속변수가 더 높은 범주에 속할 확률이 높아진다는 것을 의미한다. 위 식으로부터 범주형 종속변수의 누적확률
+
+$$
+P(Y_i\le c)=F(\theta^{(c)}-\eta_i)
+$$ {#eq-cumulative}
+
+이 결정되기 때문에 이 모형을 순서형 범주에 대한 누적분포함수 모형이라고 부르며, 오차항의 분포를 어떤 분포로 선택하느냐에 따라 누적로짓모형(cumulative logit model), 누적프로빗모형(cumulative probit model) 등으로 구분할 수 있다.
+
+위 식에서 알 수 있듯이 설명함수 $\eta_i$에 상수항이 포함되는 경우, 상수항과 기준점이 함께 변동할 수 있어 모형이 식별되지 않는다. 따라서 모형의 식별을 위해서 설명함수에 상수항을 포함하지 않거나, 기준점 중 하나를 특정 값, 예를 들어 $\theta^{(1)}=0$으로 고정한다.
+
+### 범주 확률과 디자인 행렬
+
+통계적 추론을 위하여 $\eta_i^{(c)}=\theta^{(c)} - \eta_i$라 하고 각 범주의 확률을 구해 보면
+
+$$
+\begin{aligned}
+P(Y_i=1)&=\pi_i^{(1)}=h^{(1)}(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})=F(\eta_i^{(1)}),\\
+P(Y_i=c)&=\pi_i^{(c)}=h^{(c)}(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})=F(\eta_i^{(c)}) - F(\eta_i^{(c-1)}),\quad c=2,\ldots,C-1
+\end{aligned}
+$$
+
+이며, $P(Y_i=C)=1-F(\eta_i^{(C-1)})$이다. 비모수 함수가 하나의 설명함수 $\eta_i =f(x_i)=\mathbf x_i^{\top}\tilde{\boldsymbol\gamma}$로 주어지는 경우 디자인 행렬과 회귀계수는 각각
+
+$$
+\mathbf X_i=\begin{pmatrix}1 &&& -\mathbf x_i^{\top}\\ &\ddots& &\vdots\\&&1 &- \mathbf x_i^{\top} \end{pmatrix},\qquad \boldsymbol\gamma =(\theta^{(1)},\ldots,\theta^{(C-1)},\tilde{\boldsymbol\gamma}^{\top})^{\top}
+$$
+
+이다. 설명함수가 범주별로 다른 확장된 형태의 비모수 함수인 경우에는 $\eta_i^{(c)}=\theta^{(c)}-f^{(c)}(x_i)$, $f^{(c)}(x_i)=\mathbf x_i^{\top}\tilde{\boldsymbol\gamma}^{(c)}$이고, 이 경우 디자인 행렬 $\mathbf X_i$와 회귀계수 $\boldsymbol\gamma$는 각각
+
+$$
+\mathbf X_i=\begin{pmatrix}1 \;\; -\mathbf x_i^{\top}&& \\ &\ddots& \\&&1 \;\; - \mathbf x_i^{\top} \end{pmatrix},\qquad \boldsymbol\gamma =(\theta^{(1)},\tilde{\boldsymbol\gamma}^{(1)\top},\ldots,\theta^{(C-1)},\tilde{\boldsymbol\gamma}^{(C-1)\top})^{\top}
+$$
+
+가 된다. 하지만 설명함수를 범주별로 별도의 함수로 추정하는 경우, 함수 $f^{(c)}(x_i)$가 다음의 순서조건
+
+$$
+\theta^{(1)}-f^{(1)}(x_i)<\cdots<\theta^{(C-1)}-f^{(C-1)}(x_i)
+$$
+
+을 모두 만족시켜야 하므로 주의가 요구된다.
+
+## 순서형 범주에 대한 순차 모형
+
+순서형 범주에 속하는 종속변수를 모형화하는 또 다른 예는 범주가 단계적으로 진행되는 경우이다. 질병의 심각 정도(단계)가 시간에 따라 진행하는 것과 같이 종속변수가 낮은 단계에서 높은 단계로 순차적으로 이동하는 경우에 적합한 모형이다.
+
+이 모형에서 은닉변수는 설명함수 $\eta_i$와 i.i.d. 오차항 $\varepsilon_i^{(c)}$로 구성된다.
+
+$$
+l_i^{(c)}=\eta_i +\varepsilon_i^{(c)}
+$$
+
+종속변수의 단계를 결정하는 일련의 기준점 $\theta^{(1)},\ldots,\theta^{(C-1)}$이 주어졌을 때, 단계 $c$에 도달한 종속변수가 단계 $c$에서 멈출 조건부 확률을 은닉변수로 표현하면 다음과 같다.
+
+$$
+P(Y_i = c \mid Y_i \ge c )= P( l_i^{(c)}\le \theta^{(c)})=F(\theta^{(c)}-\eta_i)
+$$ {#eq-sequential}
+
+여기서 각 단계의 확률에는 기준점 $\theta^{(c)}$만 관련되어 있기 때문에, 누적분포함수 모형에서와 같이 $\theta^{(1)},\ldots,\theta^{(C-1)}$이 순서대로 정렬되어야 한다는 조건을 만족할 필요는 없다. 선형함수를 $\tilde{\eta}_i^{(c)}=\theta^{(c)}-\eta_i$로 표기하고 위 조건부 확률로부터 단계 $c$에 대한 주변확률을 구하면
+
+$$
+P(Y_i=c)=\pi_i^{(c)}=h^{(c)}(\tilde\eta_i^{(1)},\ldots,\tilde\eta_i^{(C-1)})=F(\tilde\eta_i^{(c)})\prod_{s=1}^{c-1}\big[1-F(\tilde\eta_i^{(s)})\big]
+$$
+
+이다. 누적분포함수 모형과 마찬가지로 분포함수 $F$로 로지스틱 분포를 쓰느냐 표준정규분포를 쓰느냐에 따라 순차 로짓모형, 순차 프로빗모형으로 불리며, 설명함수를 범주별로 다르게 두는 경우에도 누적분포함수 모형과 동일하게 확장할 수 있다.
+
+## 범주형 모형에 대한 추론
+
+### 벌점우도와 IWLS
+
+비모수 범주형 관측값 모형의 추론은 일변수 비정규분포 관측값 모형과 동일하게 벌점우도함수를 이용한다. 벌점로그우도함수의 일반적인 구조는
+
+$$
+l_{\text{pen}}(\boldsymbol\gamma) = l(\boldsymbol\gamma) - \frac{1}{2}\boldsymbol\gamma^{\top} \mathbf K \boldsymbol\gamma
+$$ {#eq-cat-penlik}
+
+이다. 여기서 $l$과 $l_{\text{pen}}$은 각각 로그우도함수와 벌점로그우도함수를 의미한다. 우도함수는 종속변수가 범주분포를 따른다는 가정에 의해 쉽게 구할 수 있다.
+
+일반 범주형 모형에서 설명함수 $\eta^{(c)}=f^{(c)}(x) =\mathbf x^{\top}\boldsymbol\gamma^{(c)}$에 대응하는 개별 벌점행렬을 $\mathbf K^{(c)}$라고 하면 전체 벌점행렬은
+
+$$
+\mathbf K =\text{blockdiag}\left(\frac{1}{\tau_1^2}\mathbf K^{(1)},\ldots,\frac{1}{\tau_{C-1}^2}\mathbf K^{(C-1)}\right)
+$$
+
+이다. 순서형 모형의 경우 설명함수 $\eta^{(c)}=\theta^{(c)}-f(x)= \theta^{(c)}-\mathbf x^{\top}\tilde{\boldsymbol\gamma}$에 대응하는 개별 벌점행렬 $\tilde{\mathbf K}$에 대하여 전체 벌점행렬은
+
+$$
+\mathbf K =\text{blockdiag}\left(\mathbf 0_{C-1}, \frac{1}{\tau^2}\tilde{\mathbf K}\right)
+$$
+
+이다. 여기서 $\mathbf 0_{C-1}$은 $(C-1) \times (C-1)$ 차원의 영행렬로, 기준점에는 벌점을 적용하지 않기 위해 부가된 것이다.
+
+비선형함수의 계수 $\boldsymbol\gamma$는 IWLS 알고리즘에 따라 다음과 같이 반복적으로 업데이트하여 벌점우도함수 $l_{\text{pen}}(\boldsymbol\gamma)$를 극대화한다.
+
+$$
+\boldsymbol\gamma ^{(k+1)}= (\mathbf X^{\top}\mathbf W^{(k)} \mathbf X +\mathbf K)^{-1} \mathbf X^{\top}\mathbf W^{(k)} \hat{\mathbf y}^{(k)}
+$$ {#eq-cat-iwls}
+
+여기서 행렬 $\mathbf X$는 개별 디자인 행렬 $\mathbf X_i$를 쌓아 올려 만들고, 가중치 행렬 $\mathbf W$는 다음과 같이 정의한다.
+
+$$
+\mathbf W =\mathbf D\mathbf V^{-1} \mathbf D^{\top}
+$$
+
+여기서 $\mathbf D=\text{blockdiag}(\mathbf D_1, \ldots, \mathbf D_n)$, $\mathbf V=\text{blockdiag}(\mathbf V_1, \ldots, \mathbf V_n)$이고, 개별 행렬 $\mathbf D_i$와 $\mathbf V_i$는 각각
+
+$$
+\mathbf D_i =\frac{\partial h(\boldsymbol\eta_i)}{\partial\boldsymbol\eta}=\begin{pmatrix}\dfrac{\partial h^{(1)}(\boldsymbol\eta_i)}{\partial\eta^{(1)}}&\cdots&\dfrac{\partial h^{(C-1)}(\boldsymbol\eta_i)}{\partial\eta^{(1)}}\\
+\vdots&\ddots&\vdots\\
+\dfrac{\partial h^{(1)}(\boldsymbol\eta_i)}{\partial\eta^{(C-1)}}&\cdots&\dfrac{\partial h^{(C-1)}(\boldsymbol\eta_i)}{\partial\eta^{(C-1)}}\end{pmatrix},\quad \mathbf V_i=\text{Cov}(\mathbf y_i)=\begin{pmatrix} \pi_i^{(1)}(1-\pi_i^{(1)})&\cdots&-\pi_i^{(1)}\pi_i^{(C-1)}\\
+\vdots&\ddots&\vdots\\
+-\pi_i^{(1)}\pi_i^{(C-1)}&\cdots&\pi_i^{(C-1)}(1-\pi_i^{(C-1)})\end{pmatrix}
+$$
+
+이다. 마지막으로 업데이트 과정의 작업 관측값 $\hat{\mathbf y}$는 다음과 같다.
+
+$$
+\hat{\mathbf y} = \boldsymbol\eta + (\mathbf D^{-1})^{\top}(\mathbf y -\boldsymbol\pi)
+$$
+
+### 반응함수의 도함수
+
+반응함수의 설명함수에 대한 도함수는 반응함수를 어떻게 선택하느냐에 따라 달라진다. 다항로짓모형의 미분계수는
+
+$$
+\frac{\partial h^{(c)}(\boldsymbol\eta)}{\partial\eta^{(k)}}=\begin{cases}
+\dfrac{\exp(\eta^{(c)})\big(1+\sum_{j=1,j\neq c}^{C-1} \exp(\eta^{(j)})\big)}{\big(1+\sum_{j=1}^{C-1} \exp(\eta^{(j)})\big)^2}=\pi^{(c)}(1-\pi^{(c)}), & c=k,\\[3ex]
+-\dfrac{\exp(\eta^{(c)})\exp(\eta^{(k)})}{\big(1+\sum_{j=1}^{C-1} \exp(\eta^{(j)})\big)^2}=-\pi^{(c)}\pi^{(k)}, & c\neq k
+\end{cases}
+$$
+
+이고, 따라서 $\mathbf D_i=\mathbf V_i$이므로 $\mathbf W_i=\mathbf D_i=\mathbf V_i$가 성립한다.
+
+누적분포함수 모형이나 순차 모형에서는 미분계수가 은닉변수 오차항의 분포함수 $F$에 의존한다. $F$의 확률밀도함수를 $f$라고 하면, 누적분포함수 모형의 미분계수는
+
+$$
+\frac{\partial h^{(c)}(\boldsymbol\eta)}{\partial\eta^{(k)}}=\begin{cases}
+f(\eta^{(k)}), & k=c,\\
+-f(\eta^{(k)}), & k=c-1,\\
+0, & \text{otherwise}
+\end{cases}
+$$
+
+이고, 순차 모형의 미분계수는
+
+$$
+\frac{\partial h^{(c)}(\tilde{\boldsymbol\eta})}{\partial\tilde\eta^{(k)}}=\begin{cases}
+f(\tilde\eta^{(c)})\prod_{j=1}^{c-1}\big(1-F(\tilde\eta^{(j)})\big), & k=c,\\
+-F(\tilde\eta^{(c)})f(\tilde\eta^{(k)})\prod_{j=1,j\neq k}^{c-1}\big(1-F(\tilde\eta^{(j)})\big), & k<c,\\
+0, & k>c
+\end{cases}
+$$
+
+이다.
+
+### 베이지안 추론
+
+베이지안 추론은 앞에서 도입한 은닉효용 변수를 이용한 Gibbs sampler로 수행할 수 있다. 기준범주 $C$의 효용을 0으로 두면 알고리즘은 다음과 같다.
+
+> **알고리즘 2 (다항모형의 Gibbs sampler)**
+>
+> 1. 은닉변수 $l_i^{(c)},\; c=1,\ldots,C-1$의 업데이트
+>     a. $Y_i=c,\; c\neq C$이면, 제약조건 $l_i^{(c)}>l_i^{(h)},\; h\neq c$와 $l_i^{(c)}>0$을 만족하도록 $l_i^{(c)} \sim N(\mathbf x_i^{\top}\boldsymbol\gamma^{(c)},1)$을 추출한 후, 제약조건에 맞게 $l_i^{(h)} \sim N(\mathbf x_i^{\top}\boldsymbol\gamma^{(h)},1)$을 추출한다.
+>     b. $Y_i=C$이면, $l_i^{(h)}<0$을 만족하도록 $l_i^{(h)} \sim N(\mathbf x_i^{\top}\boldsymbol\gamma^{(h)},1),\; h=1,\ldots,C-1$을 추출한다.
+> 2. $\boldsymbol\gamma^{(c)}$와 $\tau_c^2$의 업데이트: $c=1,\ldots,C-1$에 대하여, 정규분포 모형에서 $\boldsymbol\gamma$와 $\tau^2$를 추출하듯이 $y_i$를 $l_i^{(c)}$로 바꾸어 $\boldsymbol\gamma^{(c)}$와 $\tau_c^2$를 추출한다.
+
+## 기타 평활화 접근법
+
+일반적으로 많이 활용되는 또 다른 벌점 접근법은 미분계수의 제곱에 근거한 벌점을 정의하는 것이다. B-스플라인의 경우 미분계수의 제곱에 근거한 벌점은 차분 벌점과 대응된다. 가장 보편적으로 이용되는 방법은 다음과 같이 이차 미분계수의 제곱을 적분하는 것이다.
+
+$$
+\text{pen}(f)=\int (f''(x))^2dx
+$$ {#eq-integrated-penalty}
+
+이 방법은 두 번 미분가능한 함수들의 공간에서 시각적으로 매끄러운 평활화 함수를 도출할 수 있도록 해준다. 벌점항을 기저함수 계수의 이차형식으로 표현하면
+
+$$
+\int(f''(x))^2dx=\sum_{k_1=1}^K \sum_{k_2 =1}^K \gamma_{k_1}\gamma_{k_2 }\int B_{k_1}'' (x)B_{k_2}''(x)dx = \boldsymbol\gamma^{\top}\mathbf K \boldsymbol \gamma
+$$
+
+이며, 이러한 적분 벌점은 재생커널 힐버트 공간(Reproducing Kernel Hilbert Space: RKHS)의 틀에서 이해할 수 있다. 행렬 $\mathbf K$의 원소들은 기저함수의 형태에 의존하는데, 직교 기저함수인 경우에는 항등행렬(identity matrix)이 된다. 기저함수 접근법을 RKHS와 결합하면 벌점행렬이 단순히 기저함수의 함수값으로 바뀌어 구성하기가 쉬워진다. 벌점의 이차형식은 정밀도 행렬 $\mathbf K$를 갖는 정규 사전분포를 $\boldsymbol\gamma$에 부여하는 베이지안 접근법과 동등하다. 이 분포는 부분적으로 비정칙(improper)이며, 선형함수들은 이차 미분계수의 적분 벌점에 의해 영향을 받지 않으므로 벌점행렬은 2차원 영공간을 갖는다.
+
+## 평활화 스플라인
+
+평활화 스플라인(smoothing splines)은 적분 벌점을 갖는 가장 잘 알려진 평활화 접근법이다. 이 방법은 최적성을 만족하지만, P-스플라인과 비교할 때 복잡한 모형에 적용하기 어렵다는 단점이 있다. 다음 최적화 문제를 생각해 보자.
+
+$$
+\min_f\sum_{i=1}^n(y_i-f(x_i))^2+\lambda\int(f''(x))^2dx
+$$ {#eq-smoothing-spline}
+
+여기서 $f(x)$는 두 번 미분가능한 함수이다. 이 최적화 문제의 해는 서로 다른 관측값마다 결합점을 갖는 유한 차원의 자연 3차 스플라인(natural cubic splines) 함수공간의 한 곡선이 된다. 즉,
+
+$$
+f(x)=\sum_{k=1}^K \gamma_k B_k(x)
+$$
+
+이다. 여기서 $K$는 서로 다른 관측값의 개수이고, $B_k$는 이 결합점들을 갖는 3차 스플라인 기저를 나타내는데, 경계점 바깥에서는 스플라인이 선형으로 제한된다. 재생커널 힐버트 공간(RKHS)의 틀로 해석하면 평활화 스플라인을 다른 기저함수를 이용하여 나타내는 것도 가능하다.
+
+평활화 스플라인은 벌점최소자승 기준(penalized least-squares criterion)을 이용하여 추정할 수 있다. 즉,
+
+$$
+\text{PLS}(\boldsymbol\gamma)= (\mathbf y-\mathbf X \boldsymbol \gamma)^{\top}(\mathbf y-\mathbf X \boldsymbol \gamma)+\lambda\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma
+$$
+
+이며, 여기서 $\mathbf X$는 기저함수의 함수값들로 구성된 행렬이고, $\mathbf K$는 벌점행렬이다. 계수와 함수의 추정값은 각각 다음과 같다.
+
+$$
+\hat{\boldsymbol\gamma}=(\mathbf X^{\top} \mathbf X+\lambda\mathbf K)^{-1}\mathbf X^{\top} \mathbf y,\qquad \hat{\mathbf f}=\mathbf X\hat{\boldsymbol\gamma}
+$$
+
+평활화 스플라인은 관측값의 수에 해당하는 차원의 연립방정식을 풀어야 하므로 상당한 수의 기저함수를 필요로 하고, 따라서 함수 추정 시 계산량이 많다. 그래서 수치적으로 계산이 어려운 경우 최적성을 일부 포기하고 차원을 줄이는 방법을 사용하기도 한다. Hastie(1996)는 평활화 스플라인의 차원을 줄이는 방법으로 스펙트럼 분해(spectral decomposition) 후 큰 고유값에 해당하는 고유벡터만을 이용하는 방법을 제시하였다. 이 방법은 사후적으로 결합점을 줄이는 작업을 피할 수 있고, 적정한 개수의 기저함수를 갖는 이른바 저차원 평활화 함수(low-rank smoother)이다. 벌점 스플라인 또한 저차원 평활화 함수이지만, 기저함수를 더 직관적이고 쉽게 구성할 수 있다는 점에서 더 선호된다고 할 수 있다.
+
+### 평활화 스플라인의 베이지안 해석
+
+이차형식의 벌점항에 대응하는 사전분포는 다음과 같다.
+
+$$
+p(\boldsymbol\gamma)\propto\exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top}\mathbf K \boldsymbol \gamma\right)
+$$
+
+보다 일반적인 베이지안 해석을 도출하기 위하여 다음과 같은 최적화 문제를 고려해 보자.
+
+$$
+\min_{f} \sum_{i=1}^n(y_i-f(x_i))^2+\lambda\int(f^{(m)}(x))^2dx
+$$
+
+여기서 $f^{(m)}(x)$는 $f$의 $m$계 도함수를 나타낸다.
+
+## 다음 글
+
+다음 글 [다변수 가법모형과 백피팅](smoothing8.qmd)에서는 여러 개의 설명변수를 갖는 가법모형과 백피팅 알고리즘을 살펴본다.

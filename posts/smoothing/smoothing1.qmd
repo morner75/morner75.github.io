@@ -1,37 +1,33 @@
 ---
 title: '평활화 기법 소개'
 date: '2022-10-03'
-categories: ['Bayesian smoothing',"Time series"]
-description: '평활화 기법을 연재하며 '
-execute: 
+categories: ['Bayesian smoothing', 'Time series']
+description: '벌점최소제곱 기준을 이용한 전통적인 시계열 평활기법'
+lang: ko
+execute:
   message: false
   warning: false
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
+{{< include _series.qmd >}}
 
-베이즈 평활화(Bayesian Smoothing)는 비모수 회귀분석(nonparametric regression)의 한 방법으로 여러 방면에서 응용되고 있는 기법이다. 앞으로 지속적인 포스팅을 통하여 베이즈 평활기법의 이론적 부분과 다양한 응용사례를 실제 데이터와 예제 코드를 통하여 소개하고자 한다. 
+베이즈 평활화(Bayesian smoothing)는 비모수 회귀분석(nonparametric regression)의 한 방법으로 여러 분야에서 응용되고 있는 기법이다. 이 연재에서는 평활화 기법과 비모수 회귀분석의 기본 개념을 전통적 빈도주의(frequentist) 입장과 베이즈주의(Bayesian) 입장으로 나누어 살펴본다. 특히 빈도주의에서 편차에 벌점을 부과하는 벌점우도 접근법과, 사전분포를 바탕으로 한 베이지안 추론 사이의 관계에 초점을 맞출 것이다.
 
-평활화 기법의 접근방법도 전통적 빈도주의(frequentist) 입장과 베이즈주의(Bayesian) 입장으로 나누어 볼 수 있다. 이번 포스트에서는 전통적인 빈도주의 입장에서 벌점우도(penalized likelihood)의 측면에서 평활화의 개념을 설명하고, 시계열 데이터에 대한 응용 사례를 살펴보고자 한다.
+첫 글에서는 전통적인 시계열 평활화 문제를 살펴본다. 전통적인 시계열 평활화는 관측값(종속변수)이 정규분포를 따르는 시계열 자료에 대하여, 연속하는 추세값의 차이에 벌점을 부여하여 매끄러운 추세를 추정하는 방법을 말한다. 다음 글에서는 이 전통적 평활기법이, 추세에 확률보행 사전분포를 부여하여 얻은 베이지안 평활기법의 사후평균과 밀접하게 관련되어 있음을 보일 것이다.
 
+## 평활화 문제의 설정
 
-### 1. 평활화 문제의 설정 (Settings)
+벡터 $\mathbf y=(y_1,\ldots, y_T)^{\top}$가 동일한 간격으로 관측된 시계열 자료라고 하자. 즉,
 
-전통적인 평활화 기법은 주로 시계열 관측값(종속변수)이 정규 분포를 따르는 시계열 자료라고 가정하고, 연속하는 추세값의 차이가 크게 벌어지는 경우 이에 대한 벌점을 부여하여 매끄러운 추세선을 만드는 것을 의미한다. 
-
-우리가 $T$ 기간동안 동일한 간격으로 관측한 시계열 자료를 가지고 있다고 생각해 보자. 
-우리의 관심은 이 시계열 자료에 내재된 추세를 구하는 것이다. 
-이 시계열에 대한 관측값을 $y_1,\ldots, y_T$라고 하고, 추세를 $\mu_1,\ldots, \mu_T$라고 하면 다음과 같이 모형을 설정할 수 있다.
 $$
 y_t=\mu_t+\varepsilon_t,\quad t=1,\ldots, T
-$$
+$$ {#eq-ts-model}
 
-여기서 $\varepsilon_1,\ldots,\varepsilon_T$ 를 $E(\varepsilon_t)=0,\;\forall t$ 를 만족하는 독립인 오차항을 나타낸다.
+여기서 $\boldsymbol\mu=(\mu_1,\ldots, \mu_T)^{\top}$는 시계열에 내재된 추세를, $\boldsymbol\varepsilon=(\varepsilon_1,\ldots,\varepsilon_T)^{\top}$는 $E(\varepsilon_t)=0,\;\forall t$를 만족하는 서로 독립인 오차항을 나타낸다. 우리의 관심은 관측값으로부터 추세 $\boldsymbol\mu$를 추정하는 것이다.
 
-
-평활화 문제를 실제 데이터에 적용해 보자. 
-아래 코드는 1990년 이후 월평균 원달러 환율 데이터를 line 그래프로 나타낸 것이다. 
+평활화 문제를 실제 데이터에 적용해 보자. 아래 코드는 1990년 이후 월평균 원/달러 환율 데이터를 선 그래프로 나타낸 것이다.
 
 ::: panel-tabset
 ### R ggplot2
@@ -69,70 +65,99 @@ plot_ly(data=usdkrw,x=~yearmon,y=~usdkrw) %>%
 :::
 
 
-### 2. 벌점최소제곱기준 (PLS)
+## 벌점최소제곱 기준
 
-Whittaker는 다음과 같이 벌점최소제곱 (penalised least square; PLS) 기준을 최소화하는 방법으로 $\boldsymbol\mu$ 를 추정하였다. 
+Whittaker는 다음의 벌점최소제곱(penalized least squares; PLS) 기준을 최소화하는 방법으로 $\boldsymbol\mu$를 추정하였다.
+
 $$
 \text{PLS}(\boldsymbol \mu)=\sum_{t=1}^T (y_t-\mu_t)^2+\lambda\sum_{t=3}^T (\mu_t-2\mu_{t-1}+\mu_{t-2})^2
-$$
-PLS를 최소화하기 위해서는 두 가지 요건을 동시에 만족해야 한다. 우선 추세 $\mu_t$ 가 해당 시점의 관측치 $y_t$와 가까워야 하고, 둘째 $t$ 시점의 추세가 $t-1$ 시점의 추세에서 크게 벗어나지 않고 매끄러워야 한다.
-추세의 매끄러움은 시계열과 추세간 차이에 대한 최소제곱에 다음과 같이 벌점항을 추가하여 고려할 수 있다. 
-$$
-\text{pen}(\boldsymbol\mu)=\sum_{t=3}^T(\mu_t-2\mu_{t-1}+\mu_{t-2})^2=\sum_{t=3}^T(\triangle^2\mu_t)^2
-$$
- 파라미터 $\lambda$ 는 두 가지 요건의 상충관계에서 어느쪽에 가중치를 둘 것인지를 결정한다. 여기서 오차항 $\varepsilon_t$ 가 독립이고, 모든 $t$ 에 대하여 동일한 분산, $Var(\varepsilon_t)=\sigma^2$ 이라고 가정한다. 일반적으로 $\mu_t$ 의 편차에 대한 $d$ 차 벌점은 다음과 같이 정의한다. 
-$$
-\text{pen}(\boldsymbol\mu) = \sum_{t=d+1}^T (\triangle^d\mu_t)^2,\quad \triangle^d \mu_t=\triangle^{d-1}\mu_t-\triangle^{d-1}\mu_{t-1}
-$$
-$d=1$ 인 경우 수평선 $\mu_t=a$ 로부터 편차에 대하여 벌점을 부과하고, $d=2$ 인 경우 직선 $\mu_t=a+bt$ 로부터의 편차에 벌점을 부과한다. 일반적으로 $d$ 차 벌점은 차수 $d-1$ 차 다항식으로부터 편차에 대하여 벌점을 부과한다.
+$$ {#eq-pls}
 
+PLS를 최소화하려면 두 가지 요건을 동시에 만족해야 한다. 첫째, 추세 $\mu_t$가 해당 시점의 관측값 $y_t$와 가까워야 하고, 둘째, $t$ 시점의 추세가 이전 시점의 추세에서 크게 벗어나지 않고 매끄러워야 한다. 추세의 매끄러움은 관측값과 추세의 차이에 대한 제곱합에 다음과 같은 벌점항을 추가하여 반영한다.
 
-### 3. 행렬표현 (Matrix notation)
+$$
+\text{pen}(\boldsymbol\mu)=\sum_{t=3}^T(\mu_t-2\mu_{t-1}+\mu_{t-2})^2=\sum_{t=3}^T(\Delta^2\mu_t)^2
+$$
 
-이제 벌점항을 행렬로 간단히 표기하는 법을 알아보자. $\mu_1,\ldots,\mu_T$ 에 대한 1차 차분 행렬은 다음과 같이 주어진다. 
+평활화 파라미터 $\lambda$는 두 요건의 상충관계에서 어느 쪽에 가중치를 둘 것인지를 결정한다. 여기서 오차항 $\varepsilon_t$는 서로 독립이고 모든 $t$에 대하여 분산이 $\text{Var}(\varepsilon_t)=\sigma^2$으로 동일하다고 가정한다.
+
+일반적으로 $\mu_t$의 편차에 대한 $d$차 벌점은 다음과 같이 정의한다.
+
 $$
-\mathbf D_1^{(T-1)\times T}=\begin{pmatrix}-1& 1 &0& \cdots& 0\\ \vdots&-1&1&&\vdots\\0&\cdots&&-1&1\\\end{pmatrix},\qquad \mathbf D_1^{(T-1)\times T}\boldsymbol\mu=\begin{pmatrix}\mu_2-\mu_1 \\ \cdots\\ \mu_T-\mu_{T-1}\\\end{pmatrix}
+\text{pen}(\boldsymbol\mu) = \sum_{t=d+1}^T (\Delta^d\mu_t)^2,\quad \Delta^d \mu_t=\Delta^{d-1}\mu_t-\Delta^{d-1}\mu_{t-1}
+$$ {#eq-pen-d}
+
+$d=1$인 경우에는 수평선 $\mu_t=a$로부터의 편차에, $d=2$인 경우에는 직선 $\mu_t=a+bt$로부터의 편차에 벌점을 부과한다. 일반적으로 $d$차 벌점은 $d-1$차 다항식으로부터의 편차에 벌점을 부과한다.
+
+## 행렬 표현
+
+이제 벌점항을 행렬로 간단히 표기하는 방법을 알아보자. $\mu_1,\ldots,\mu_T$에 대한 1차 차분행렬은 다음과 같다.
+
 $$
- 일반적인 고차 차분행렬은 다음 식을 이용하여 순차적으로 구할 수 있다.
+\mathbf D_1^{(T-1)\times T}=\begin{pmatrix}-1& 1 &0& \cdots& 0\\ \vdots&-1&1&&\vdots\\0&\cdots&&-1&1\end{pmatrix},\qquad \mathbf D_1^{(T-1)\times T}\boldsymbol\mu=\begin{pmatrix}\mu_2-\mu_1 \\ \vdots\\ \mu_T-\mu_{T-1}\end{pmatrix}
+$$
+
+고차 차분행렬은 다음 식을 이용하여 순차적으로 구할 수 있다.
+
 $$
 \mathbf D_d^{(T-d)\times T}=\mathbf D_1^{(T-d)\times (T-d+1)}\mathbf D_{d-1}^{(T-d+1)\times T}
 $$
-예를 들어 2차 차분행렬은 $\mathbf D_1^{(T-2)\times (T-1)}\times \mathbf D_1^{(T-1)\times T}$ 로부터 
+
+예를 들어 2차 차분행렬은 $\mathbf D_1^{(T-2)\times (T-1)}\mathbf D_1^{(T-1)\times T}$로부터
+
 $$
-\mathbf D_2^{(T-2)\times T}=\begin{pmatrix}1& -2 &1& &\cdots& 0\\ &1&-2&1&\\\vdots&&\ddots&\ddots&\ddots&\vdots\\0 &&&1&-2&1\\\end{pmatrix}
+\mathbf D_2^{(T-2)\times T}=\begin{pmatrix}1& -2 &1& &\cdots& 0\\ &1&-2&1&&\\\vdots&&\ddots&\ddots&\ddots&\vdots\\0 &&&1&-2&1\end{pmatrix}
 $$
- 이다. 이제 차분행렬 $D$로 부터 벌점행렬 $K$ 를 구해보자. 벌점항을 다시 정리하면 
+
+이다. 이제 차분행렬 $\mathbf D_d$로부터 벌점행렬 $\mathbf K_d$를 구해 보자. 벌점항을 다시 정리하면
+
 $$
-\text{pen}(\boldsymbol\mu)=\sum_{t=d+1}^T (\triangle^d\mu_t)^2=\boldsymbol\mu' \mathbf D_d'\mathbf D_d\boldsymbol\mu=\boldsymbol\mu' \mathbf K_d \boldsymbol\mu
-$$
-여기서 $\mathbf K_d=\mathbf D_d'\mathbf D_d$ 로 $T\times T$ 차원의 벌점행렬을 만든다. 1차 벌점행렬과 2차 벌점행렬을 구하면 다음과 같다.
+\text{pen}(\boldsymbol\mu)=\sum_{t=d+1}^T (\Delta^d\mu_t)^2=\boldsymbol\mu^{\top} \mathbf D_d^{\top}\mathbf D_d\boldsymbol\mu=\boldsymbol\mu^{\top} \mathbf K_d \boldsymbol\mu
+$$ {#eq-pen-matrix}
+
+이고, 여기서 $\mathbf K_d=\mathbf D_d^{\top}\mathbf D_d$는 $T\times T$ 벌점행렬이다. 1차 벌점행렬과 2차 벌점행렬은 각각 다음과 같다.
+
 $$
 \small
 \mathbf K_1 = \begin{pmatrix}1&-1&&&\cdots&0\\-1&2&-1&&\cdots&0\\0&-1&2&-1&\cdots&0\\\vdots&&&\ddots&\ddots&\vdots\\0&0&\cdots&-1&2&-1\\ 0&0&\cdots&0&-1&1\end{pmatrix},\qquad \mathbf K_2=\begin{pmatrix}1&-2&1&&&\cdots&0\\-2&5&-4&1&&\cdots&0\\1&-4&6&-4&1&\cdots&0\\\vdots&&&\ddots&\ddots&&\vdots\\0&0&\cdots&1&-4&5&-2\\ 0&0&\cdots&&1&-2&1\end{pmatrix}
 $$
 
+벌점행렬의 랭크는 $\text{rank}(\mathbf K_d)=T-d$로, 완전 랭크(full rank)가 아니다. 벌점을 받지 않는 $d-1$차 이하의 다항식이 $\mathbf K_d$의 영공간(null space)을 이룬다.
 
-여기서 벌점행렬의 랭크는 $\text{rank}(\mathbf K_d)=T-d$ 로 완전한 랭크를 갖지 않는다. 따라서, 벌점을 적용받지 않는 $d-1$차까지의 다항식은 $\mathbf K_d$ 의 널공간(null space)을 형성한다. 이제 모형을 행렬과 벡터를 이용하여 다시 정의하자. 
-$$
-\text{PLS}(\boldsymbol\mu)=(\mathbf y-\boldsymbol\mu)'(\mathbf y-\boldsymbol\mu)+\lambda\boldsymbol\mu'\mathbf K\boldsymbol\mu = \mathbf y '\mathbf y -2\boldsymbol\mu'\mathbf y+\boldsymbol\mu'(\mathbf I +\lambda\mathbf K)\boldsymbol\mu
-$$
+이제 @eq-pls 를 행렬과 벡터로 다시 표현하면 다음과 같다(이하 $\mathbf K=\mathbf K_d$).
 
-### 4. 추론 (Inference)
-
-이제는 PLS 기준을 최소화하는 $\boldsymbol\mu$를 구해보자.
-최소값을 구하기 위하여 PLS 기준을 미분하면
 $$
-\frac{\partial \text{PLS}(\boldsymbol\mu)}{\partial\boldsymbol\mu}=-2\mathbf y + 2(\mathbf I +\lambda \mathbf K )\boldsymbol\mu=0\quad \Rightarrow\quad \hat{\boldsymbol\mu}=(\mathbf I+\lambda \mathbf K)^{-1}\mathbf y
-$$
-PLS 추정량(estimator)은 능형회귀 (ridge shrinkage) 추정량과 동일하게 관측치 $y$ 를 부드러운 추세 $\mu$의 값으로 끌어 당기는 현상이 나타난다. PLS 추정량의 기대값과 분산은 다음과 같다.
+\text{PLS}(\boldsymbol\mu)=(\mathbf y-\boldsymbol\mu)^{\top}(\mathbf y-\boldsymbol\mu)+\lambda\boldsymbol\mu^{\top}\mathbf K\boldsymbol\mu = \mathbf y^{\top}\mathbf y -2\boldsymbol\mu^{\top}\mathbf y+\boldsymbol\mu^{\top}(\mathbf I +\lambda\mathbf K)\boldsymbol\mu
+$$ {#eq-pls-matrix}
 
->1. PLS 추정량은 편의 추정량(biased)이다. 즉, 
-$$E(\hat{\boldsymbol\mu})=E[(\mathbf I +\lambda \mathbf K)^{-1}\mathbf y]=(\mathbf I+\lambda\mathbf K)^{-1}\boldsymbol\mu.$$
->2.  오차항을 i.i.d.라 가정하면 분산은 
-$$Cov(\hat{\boldsymbol\mu})=(\mathbf I+\lambda\mathbf K)^{-1}Cov(\mathbf y)(\mathbf I+\lambda\mathbf K)^{-1}=\sigma^2(\mathbf I+\lambda\mathbf K)^{-2}$$
+## PLS 추정량과 그 성질
 
-PLS 추정치는 분산을 줄임으로써 평균제곱오차(mean squared error; MSE)를 감소시킨다. $\lambda$의 값이 작으면 편차가 작아지지만 변동성이 크고, $\lambda$의 값이 크면 변동성은 적지만 편차가 커진다. 마지막으로 오차가 iid인 가우스 분포를 따른다고 하면, 즉 $\varepsilon_t\sim N(0,\sigma^2)$ 이면 PLS 추정량의 분포는 다음과 같다.
-$$
-\hat{\boldsymbol\mu}\sim N((\mathbf I+\lambda\mathbf K)^{-1}\boldsymbol\mu,\sigma^2(\mathbf I+\lambda\mathbf K)^{-2})
-$$
+PLS 기준을 최소화하는 $\boldsymbol\mu$를 구하기 위해 @eq-pls-matrix 를 $\boldsymbol\mu$에 대해 미분하여 0으로 놓으면
 
+$$
+\frac{\partial \text{PLS}(\boldsymbol\mu)}{\partial\boldsymbol\mu}=-2\mathbf y + 2(\mathbf I +\lambda \mathbf K )\boldsymbol\mu=\mathbf 0\quad \Rightarrow\quad \hat{\boldsymbol\mu}=(\mathbf I+\lambda \mathbf K)^{-1}\mathbf y
+$$ {#eq-pls-est}
+
+을 얻는다. PLS 추정량은 능형회귀(ridge regression) 추정량과 같은 구조를 가지며, 관측값 $\mathbf y$를 매끄러운 추세 쪽으로 끌어당기는 수축(shrinkage) 효과를 보인다. PLS 추정량의 기대값과 공분산은 다음과 같다.
+
+1. PLS 추정량은 편의(biased) 추정량이다. 즉,
+
+    $$
+    E(\hat{\boldsymbol\mu})=E\left[(\mathbf I +\lambda\mathbf K)^{-1}\mathbf y\right]=(\mathbf I+\lambda\mathbf K)^{-1}\boldsymbol\mu.
+    $$
+
+2. 오차항이 i.i.d.라고 가정하면 공분산은 다음과 같다.
+
+    $$
+    \text{Cov}(\hat{\boldsymbol\mu})=(\mathbf I+\lambda\mathbf K)^{-1}\text{Cov}(\mathbf y)(\mathbf I+\lambda\mathbf K)^{-1}=\sigma^2(\mathbf I+\lambda\mathbf K)^{-2}
+    $$
+
+PLS 추정량은 분산을 줄임으로써 평균제곱오차(mean squared error; MSE)를 감소시킨다. $\lambda$의 값이 작으면 편의는 작지만 변동성이 크고, $\lambda$의 값이 크면 변동성은 작지만 편의가 커진다. 마지막으로 오차가 i.i.d. 가우스 분포, 즉 $\varepsilon_t\sim N(0,\sigma^2)$를 따른다고 하면 PLS 추정량의 분포는 다음과 같다.
+
+$$
+\hat{\boldsymbol\mu}\sim N\left((\mathbf I+\lambda\mathbf K)^{-1}\boldsymbol\mu,\;\sigma^2(\mathbf I+\lambda\mathbf K)^{-2}\right)
+$$ {#eq-pls-dist}
+
+## 다음 글
+
+[베이지안 평활기법](smoothing2.qmd)에서는 같은 문제를 베이지안 관점에서 다루고, PLS 추정량이 확률보행 사전분포 아래의 사후평균과 일치함을 보인다.

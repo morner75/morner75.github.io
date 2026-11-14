@@ -1,0 +1,374 @@
+---
+title: '텐서곱 벌점 스플라인'
+date: '2022-10-18'
+categories: ['Bayesian smoothing', 'Spatial statistics']
+description: '텐서곱 기저와 크로네커곱 벌점을 이용한 연속 공간 평활화'
+lang: ko
+---
+
+{{< include _series.qmd >}}
+
+[앞 글](smoothing15.qmd)에서는 이산 공간에서 공간효과의 사전분포로 쓰이는 가우스 마코프 확률필드를 살펴보았다. 이번 글부터는 연속인 좌표로 주어진 공간정보에 대한 평활화와 상호작용을 다루며, 그 첫 번째로 텐서곱 벌점 스플라인을 살펴본다.
+
+## 공간 평활화 접근법과 상호작용
+
+이번에는 위도(latitude)와 경도(longitude)처럼 연속인 좌표로 구성된 공간정보를 가진 경우를 고려해 보자. 단일변수 평활화와 유사하게, 잡음이 있는 데이터로부터 부드러운 곡면을 도출하는 과정은 연속인 공간정보 $\mathbf s_i$ 에 대하여 다음과 같이 묘사할 수 있다.
+
+$$
+y_i=f(\mathbf s_i)+\epsilon_i,\quad i=1,\ldots, n, \quad \mathbf s_i=(s_{i1},\ldots, s_{id})\in \mathbb{R}^d
+$$ {#eq-surface}
+
+여기서는 크게 두 가지 평활화 방법을 고려할 것인데, 먼저 텐서곱(tensor product)에 기반한 벌점 스플라인(penalised splines)을 둘러보고, 그 다음으로 방사 기저함수(radial basis)에 기반한 또 다른 공간 평활화 기법을 살펴보고자 한다.
+
+일반적으로 상호작용을 고려하는 모형은 설명변수(predictor)의 곱을 포함시켜 상호작용을 표현하는데, 텐서곱 모형은 이러한 상호작용 모형의 확장판으로 기저함수의 곱을 모형에 포함시켜 보다 유연하게 상호작용을 구현할 수 있다. 방사 기저함수는 $d$-차원 기저함수가 아닌 단일변수 기저함수인데, 일반적으로 설명변수 벡터의 유클리드 노름(norm)을 이용하여 원형 등고선(circular contour)을 갖는 기저함수를 이용한다.
+
+## 텐서곱 벌점 스플라인
+
+우선 단순하게 다음과 같이 상호작용이 없는 이변수 가법모형을 생각해 보자.
+
+$$
+f(s_1,s_2)=f_1(s_1)+f_2(s_2)
+$$ {#eq-additive}
+
+이 모형은 각 변수에 대하여 동일한 기저함수를 이용하여 전체 표면을 근사할 수 있지만, 표면 평활화를 위해서는 가법성보다 유연한 방법을 이용할 필요가 있다. 기저함수 접근법은 비모수 평활화의 문제를 사전분포와 벌점이 부가된 대규모 선형모형으로 바꾸어 주므로, 표면 평활에서도 유사한 아이디어를 적용할 수 있다.
+
+### 텐서곱 기저
+
+@eq-additive 에서 두 함수 $f_1$ 과 $f_2$ 를 스플라인 기저함수로 근사한다고 하면, 차수 $D_i$ 와 $M_i$ 개의 구간을 만드는 결합점(knot)을 갖는 기저함수는 각각 $(i=1,2)$
+
+$$
+\begin{aligned}
+&B_{1,1}(s_1),\ldots,B_{K_1,1}(s_1),\quad \kappa_{0,1}<\kappa_{1,1}<\cdots<\kappa_{M_1-1,1}<\kappa_{M_1,1}, \quad K_1=M_1+D_1,\\
+&B_{1,2}(s_2),\ldots,B_{K_2,2}(s_2),\quad \kappa_{0,2}<\kappa_{1,2}<\cdots<\kappa_{M_2-1,2}<\kappa_{M_2,2},\quad K_2=M_2+D_2
+\end{aligned}
+$$
+
+로 주어진다. 텐서곱 다항 스플라인 기저는 다음과 같이 두 단일변수 기저함수의 모든 쌍의 곱을 취하여 이변수 기저함수로 정의한다.
+
+$$
+B_{k_1,k_2}(s_1,s_2)=B_{k_1,1}(s_1)B_{k_2,2}(s_2),\quad k_i=1,\ldots,K_i,\;i=1,2
+$$ {#eq-tensor-basis}
+
+텐서곱의 차수 $D$ 를 지칭하는 경우, 단일 변수의 차수가 같은 경우$(D=D_1=D_2)$ 를 의미한다.
+
+텐서곱 기저함수는 절단 거듭제곱 함수(truncated power series)와 B-스플라인 모두 이용할 수 있지만, B-스플라인이 수치적으로 안정적이다. 텐서곱 B-스플라인은 고차로 갈수록 가우스 밀도함수의 모양을 닮아가지만 등고선은 원형이 아니며, 이러한 비원형성은 차수가 증가하면서 감소한다.
+
+공간표면 $f(s_1,s_2)$ 는 모든 이변수 기저함수를 결합하여 다음과 같이 표현된다.
+
+$$
+f(s_1,s_2)=\sum_{k_1=1}^{K_1}\sum_{k_2=1}^{K_2}\gamma_{k_1k_2}B_{k_1k_2}(s_1,s_2)
+$$
+
+이때 하나의 인덱스 $k=1,\ldots,K$, $K=K_1\cdot K_2$ 를 이용하면 보다 단순하게
+
+$$
+f(s_1,s_2)=\sum_{k=1}^{K}\gamma_{k}B_{k}(s_1,s_2)
+$$
+
+로 나타낼 수 있는데, 이 표현식은 격자를 따라 정렬되지 않는 기저함수에도 유용하게 사용할 수 있다. 텐서곱 기저함수 표현식은 디자인 행렬이 기저함수의 함수값으로 구성된 선형모형 $\boldsymbol\eta=\mathbf X \boldsymbol\gamma$ 를 만들어내는데, 디자인 행렬의 $i$ 번째 행은
+
+$$
+\begin{aligned}
+\mathbf x_i&=\big(B_{11}(s_{i1},s_{i2}),\ldots,B_{K_11}(s_{i1},s_{i2}),\ldots,B_{1K_2}(s_{i1},s_{i2}),\ldots, B_{K_1K_2}(s_{i1},s_{i2})\big)\\
+&=\big(B_{1}(s_{i1},s_{i2}),\ldots, B_{K}(s_{i1},s_{i2})\big)
+\end{aligned}
+$$
+
+로 주어지고, 전체 디자인 행렬 $\mathbf X$ 는 각 행들을 쌓아 올려 만든다. 회귀계수 벡터는
+
+$$
+\boldsymbol\gamma=(\gamma_{11},\ldots,\gamma_{K_1 1},\ldots, \gamma_{1 K_2},\ldots, \gamma_{K_1 K_2})^{\top}=(\gamma_1,\ldots, \gamma_K)^{\top}
+$$
+
+가 된다.
+
+이론적으로도 텐서곱 스플라인은 단일변수 다항 스플라인을 확장하여 이변수 다항 스플라인을 형성한다. 함수 $f:[a_1,b_1]\times[a_2,b_2]\to \mathbb{R}$ 가 차수 $D$ 와 결합점 $\kappa_{0,1}<\kappa_{1,1}<\cdots<\kappa_{M_1,1}$ 및 $\kappa_{0,2}<\kappa_{1,2}<\cdots<\kappa_{M_2,2}$ 를 가지며 다음 조건을 만족하는 경우 이변수 다항 스플라인이라 한다.
+
+1. 다음 편미분계수가 존재하고 연속이다.
+
+   $$
+   \frac{\partial^{i+j}f(s_1,s_2)}{\partial s_1^i\,\partial s_2^j},\quad  0\le i,j < D
+   $$
+
+2. $f(s_1,s_2)$ 가 각 구간 $(s_1,s_2)\in[\kappa_{m_1,1},\kappa_{m_1+1,1})\times[\kappa_{m_2,2},\kappa_{m_2+1,2})$, $m_1=0,\ldots, M_1-1$, $m_2=0,\ldots, M_2-1$ 에서 $D$ 차 다항식이다.
+
+이 경우 이변수 다항 스플라인은 $K_1 K_2 =(M_1+D)(M_2+D)$ 차원 벡터공간을 구성하며, @eq-tensor-basis 의 텐서곱 기저함수는 이 함수공간의 기저를 이룬다.
+
+### 텐서곱 기저에 대한 크로네커곱 벌점
+
+이제 벌점의 개념을 이변수의 경우로 확장해 보자. 공간상에는 원래 순서가 존재하지 않기 때문에, 인접한 모수 값의 차에 벌점을 부과하는 개념을 확장하는 것이 쉽지 않다. 대안으로 이산 공간정보에서 개발된 GMRF 등의 개념을 적용하면, 벌점이나 공간 사전분포 등으로 매끄러운 공간 특성을 계수 벡터에 부과할 수 있다. 따라서 지금부터는 회귀계수 벡터 $\boldsymbol\gamma$ 를 다루기보다는, 그 원소들이 공간 격자상에 나열된 필드(field)를 대상으로 모형을 구성한다.
+
+$$
+\begin{matrix}
+\gamma_{11}  & \gamma_{21}  & \cdots &\gamma_{K_11} \\
+\gamma_{12}  & \gamma_{22}  & \cdots &\gamma_{K_12} \\
+\vdots       & \vdots       & \ddots &\vdots \\
+\gamma_{1K_2}& \gamma_{2K_2}& \cdots &\gamma_{K_1K_2}
+\end{matrix}
+$$
+
+여기서 $k_1=1,\ldots,K_1$ 이고, $k_2=1,\ldots, K_2$ 이다. 따라서 [이산 격자상의 공간 평활화 사전분포](smoothing14.qmd)를 벡터 $\boldsymbol\gamma$ 에 부여할 수 있으며, 동일하게 다변수 가우스 분포를 따르는 $\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma$ 형태의 벌점항/결합사전분포를 정의할 수 있다. IGMRF를 만족하는 사전분포로 아래와 같이 4개의 최근접 이웃값들의 평균을 모수로 하는 조건부 가우스 분포를 고려할 수 있다(경계 근처에서는 존재하는 이웃값들의 평균으로 유사하게 정의한다).
+
+$$
+\gamma_{k_1k_2}\mid \boldsymbol\gamma_{-k_1k_2}\sim N\left( \frac{1}{4}(\gamma_{k_1-1,k_2}+\gamma_{k_1+1,k_2}+\gamma_{k_1,k_2-1}+\gamma_{k_1,k_2+1}),\;\frac{\tau^2}{4}\right)
+$$ {#eq-four-nn}
+
+이제 계수 필드의 행과 열을 따라 계수 간의 차이를 고려해 보자. $\mathbf D_1$ 을 $s_1$ 방향의 계수에 대한 1차 차분행렬이라고 하면, 계수 필드가 총 $K_2$ 개의 열로 구성되어 있으므로 열별 차분은 $K_2$ 차원 항등행렬과 차분행렬의 크로네커곱 $\mathbf I_{K_2}\otimes \mathbf D_1=\text{blockdiag}(\mathbf D_1,\ldots,\mathbf D_1)$ 으로 나타낼 수 있다. 모든 열별 차분 벡터는
+
+$$
+(\mathbf I_{K_2}\otimes\mathbf D_1)\boldsymbol\gamma=
+\begin{bmatrix}
+\gamma_{21}-\gamma_{11}\\
+\vdots\\
+\gamma_{K_1 1}-\gamma_{K_1-1,1}\\
+\vdots\\
+\gamma_{2K_2}-\gamma_{1K_2}\\
+\vdots\\
+\gamma_{K_1 K_2}-\gamma_{K_1-1,K_2}
+\end{bmatrix}
+$$
+
+이고, 이차형식으로는
+
+$$
+\begin{aligned}
+\boldsymbol\gamma^{\top}(\mathbf I_{K_2}\otimes\mathbf D_1)^{\top} (\mathbf I_{K_2}\otimes\mathbf D_1)\boldsymbol\gamma&=\sum_{k_2=1}^{K_2}\sum_{k_1=2}^{K_1}(\gamma_{k_1k_2}-\gamma_{k_1-1,k_2})^2,\\
+\boldsymbol\gamma^{\top}(\mathbf D_2\otimes\mathbf I_{K_1})^{\top} (\mathbf D_2\otimes\mathbf I_{K_1})\boldsymbol\gamma&=\sum_{k_1=1}^{K_1}\sum_{k_2=2}^{K_2}(\gamma_{k_1k_2}-\gamma_{k_1,k_2-1})^2
+\end{aligned}
+$$
+
+와 같이 나타낼 수 있다. 행과 열 방향의 차분 제곱합을 모두 결합하면 전체 벌점항 $\lambda\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma$ 를 도출할 수 있다.
+
+$$
+\lambda\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma=  \lambda\boldsymbol\gamma^{\top}\left[(\mathbf I_{K_2}\otimes\mathbf D_1)^{\top} (\mathbf I_{K_2}\otimes\mathbf D_1)+(\mathbf D_2\otimes\mathbf I_{K_1})^{\top} (\mathbf D_2\otimes\mathbf I_{K_1})\right]\boldsymbol\gamma
+$$ {#eq-kronecker-penalty}
+
+벌점 행렬 $\mathbf K$ 는 단일변수 벌점 행렬을 이용하여 보다 단순하게 표현할 수 있다.
+
+$$
+\mathbf K =  \mathbf I_{K_2}\otimes\mathbf K_1+\mathbf K_2\otimes\mathbf I_{K_1}
+$$ {#eq-kronecker-K}
+
+여기서 $\mathbf K_1 = \mathbf D_1^{\top}\mathbf D_1$, $\mathbf K_2 = \mathbf D_2^{\top}\mathbf D_2$ 이다. 벌점 행렬 $\mathbf K$ 를 가우스 분포의 정밀도(precision) 행렬로 간주하고 결합 가우스분포로부터 완전 조건부분포를 도출하면, @eq-four-nn 과 동일한 조건부 종속구조를 얻게 된다.
+
+크로네커곱 벌점의 장점은 다양한 MRF 구조의 벌점항을 도출할 수 있다는 점이다. 예를 들어 이차 차분의 경우 다음과 같은 조건부 사전 평균과 사전 분산을 갖는 정밀도 행렬을 얻을 수 있다.
+
+$$
+\begin{aligned}
+E(\gamma_{k_1k_2}\mid \cdot)&=\frac{1}{12}\big(4\gamma_{k_1-1,k_2}+4\gamma_{k_1+1,k_2}+4\gamma_{k_1,k_2-1}+4\gamma_{k_1,k_2+1}\\
+&\qquad\;\;-\gamma_{k_1-2,k_2}-\gamma_{k_1+2,k_2}-\gamma_{k_1,k_2-2}-\gamma_{k_1,k_2+2}\big),\\
+Var(\gamma_{k_1k_2}\mid \cdot)&=\frac{\tau^2}{12}
+\end{aligned}
+$$
+
+고차 MRF의 종속구조 또한 그래프 표현으로 요약할 수 있다. 크로네커곱 벌점에서 얻는 고차 MRF의 큰 특징 중 하나는 조건부 종속성이 행과 열을 따라서만 존재하고 대각선 방향의 이웃에는 의존하지 않는다는 점이다.
+
+### 벌점 개념의 일반화
+
+지금까지 이변수 벌점을 정의하면서 행과 열에 동일한 가중치를 부여하는 하나의 평활화 모수 $\lambda$ 를 가정하였다. 행과 열에 각기 다른 가중치를 부여하는 보다 유연한 모형
+
+$$
+\lambda_1\boldsymbol\gamma^{\top}(\mathbf I_{K_2}\otimes\mathbf K_1)\boldsymbol\gamma+ \lambda_2\boldsymbol\gamma^{\top}(\mathbf K_2\otimes\mathbf I_{K_1})\boldsymbol\gamma
+$$
+
+이나, 회전 모수를 도입하여 대각선이나 다른 각도를 따라 가중치를 부여하는 모형도 설정할 수 있다.
+
+일변수 벌점 스플라인의 차분 벌점은 미분계수 제곱의 적분 벌점에 대한 근사로 사용하고자 고안된 것이다. 이변수 벌점에 있어서도 차분 근사를 원래의 적분 벌점항으로 대체하면 밀접하게 연관된 또 다른 벌점항을 도출할 수 있다. 다음과 같은 이변수 2차 미분연산자(biharmonic differential operator)
+
+$$
+\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}
+$$ {#eq-biharmonic}
+
+를 고려해 보자. 두 번 미분가능한 모든 이변수 함수의 공간에서 벌점 로그우도
+
+$$
+\max_{f}\; l(f)-\frac{1}{2}\lambda\int\!\!\int\left[\left(\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}\right)f(s_1,s_2)\right]^2ds_1\,ds_2
+$$
+
+의 해를 구하면, 자연 삼차 스플라인(natural cubic splines)의 2차원 버전인 박판 스플라인(thin plate splines)으로 귀결된다. 이 경우 경계 조건은 결합점에서의 함수값으로 고정된 얇은 금속판의 움직임과 유사하다.
+
+이 이변수 미분연산자를 기저함수를 이용한 벌점 개념에 적용하면, 함수 $f(s_1,s_2)$ 는
+
+$$
+f(s_1,s_2)=\sum_{k=1}^K\gamma_k B_k(s_1,s_2)
+$$
+
+이고, 이차형식 $\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma$ 에서 $\mathbf K$ 의 각 원소의 값은
+
+$$
+\mathbf K[j,k]=\int\!\!\int B_j''(s_1,s_2)B_k''(s_1,s_2)\,ds_1\,ds_2
+$$
+
+이다. 여기서
+
+$$
+B_k''(s_1,s_2)=\left(\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}\right)B_k(s_1,s_2)
+$$
+
+이다.
+
+일변수 평활화와 마찬가지로 미분계수를 직접 구하는 것보다 차분에 기반한 근사치를 이용하는 것이 편리한데, 근사값은 12개의 주변 격자점을 대상으로 하는 차분연산자를 이용하여 구할 수 있다. 차분연산자
+
+$$
+(\Delta_{(1,0)}^2+\Delta_{(0,1)}^2)^2=\Delta_{(1,0)}^4+2\Delta_{(1,0)}^2\Delta_{(0,1)}^2+\Delta_{(0,1)}^4
+$$ {#eq-biharmonic-diff}
+
+에서 도출되는 정밀도 행렬은 이 12개의 주변 격자점에 대하여 0이 아닌 원소 값을 가지며, 이를 벌점 행렬로 나타내면
+
+$$
+\mathbf K =  \mathbf I_{K_2}\otimes\mathbf K_1^{(2)}+\mathbf K_2^{(2)}\otimes\mathbf I_{K_1}+2\,\mathbf K_2^{(1)}\otimes\mathbf K_1^{(1)}
+$$
+
+이다. 여기서 $\Delta_{(1,0)}^2$ 와 $\Delta_{(0,1)}^2$ 는 각각 $s_1$ 과 $s_2$ 방향의 이차 차분 연산자를, $\mathbf K_1^{(d)}$ 와 $\mathbf K_2^{(d)}$ 는 각각 열과 행을 따라 구성한 $d$ 차 차분 벌점 행렬을 나타낸다.
+
+이변수 미분연산자 벌점항이 크로네커곱 벌점항과 다른 점은 대각선 방향의 이웃에도 의존한다는 점이다. 이것은 이변수 미분연산자 벌점은 $s_1$-$s_2$ 상호작용에도 벌점을 부과하는 반면, 이차 크로네커곱 벌점은 상호작용이 널공간에 포함되어 벌점을 부과하지 않는다는 것을 의미한다. 일변수 이차 확률보행에서 정의된 증분 $\gamma_{k+1}-2\gamma_k+\gamma_{k-1}$ 의 표현식과 마찬가지로, 이변수 미분연산자의 근사는 증분
+
+$$
+(\gamma_{k_1+1,k_2}+\gamma_{k_1-1,k_2}+\gamma_{k_1,k_2+1}+\gamma_{k_1,k_2-1})-4\gamma_{k_1k_2}
+$$
+
+의 제곱으로 표현된다.
+
+이변수 벌점항을 도출하는 마지막 방법은 확률보행 사전분포를 국소다항식적합(local polynomial fit)으로 해석하는 방법이다. 일차 확률보행의 조건부 기대값은 이전 시점과 이후 시점에 대한 국소선형적합(local linear fit)과 동일하다. 이변량의 경우에도 유사하게 네 개의 최근접 이웃 $\gamma_{k_1+1,k_2},\gamma_{k_1-1,k_2},\gamma_{k_1,k_2+1},\gamma_{k_1,k_2-1}$ 을 이용하여 $\gamma_{k_1k_2}$ 의 조건부 기대값을 구할 수 있다. 결합 가우스분포의 정밀도 행렬에서 조건부 기대값을 구하는 방법을 거꾸로 이용하면, 주변지역의 선형결합의 가중치로부터 그에 상응하는 벌점항을 얻을 수 있다. 국소선형적합의 가중치는 다음과 같은 회귀모형으로부터 $\gamma_{k_1k_2}$ 에 대한 추정값을 계산하여 구한다.
+
+$$
+\begin{bmatrix}
+\gamma_{k_1-1,k_2}\\
+\gamma_{k_1,k_2-1}\\
+\gamma_{k_1+1,k_2}\\
+\gamma_{k_1,k_2+1}
+\end{bmatrix} =
+\begin{bmatrix}
+1&k_1-1&k_2\\
+1&k_1&k_2-1\\
+1&k_1+1&k_2\\
+1&k_1&k_2+1
+\end{bmatrix}
+\begin{bmatrix}
+\beta_1\\
+\beta_2\\
+\beta_3
+\end{bmatrix}+\boldsymbol\epsilon
+$$
+
+비슷한 방법으로 국소이차적합을 이용하면 12개의 주변지역에 대한 이차 확률보행 벌점항을 구할 수 있다. $\gamma_{k_1k_2}$ 의 조건부 기대값과 연결된 계수들은 다음과 같은 회귀모형으로부터 $\gamma_{k_1k_2}$ 를 추정하여 얻는다.
+
+$$
+\begin{bmatrix}
+\gamma_{k_1-2,k_2}\\
+\gamma_{k_1-1,k_2-1}\\
+\gamma_{k_1-1,k_2}\\
+\gamma_{k_1-1,k_2+1}\\
+\gamma_{k_1,k_2-2}\\
+\gamma_{k_1,k_2-1}\\
+\gamma_{k_1,k_2+1}\\
+\gamma_{k_1,k_2+2}\\
+\gamma_{k_1+1,k_2-1}\\
+\gamma_{k_1+1,k_2}\\
+\gamma_{k_1+1,k_2+1}\\
+\gamma_{k_1+2,k_2}
+\end{bmatrix} =
+\begin{bmatrix}
+1&k_1-2&k_2  &(k_1-2)^2&k_2^2\\
+1&k_1-1&k_2-1&(k_1-1)^2&(k_2-1)^2\\
+1&k_1-1&k_2  &(k_1-1)^2&k_2^2\\
+1&k_1-1&k_2+1&(k_1-1)^2&(k_2+1)^2\\
+1&k_1  &k_2-2&k_1^2    &(k_2-2)^2\\
+1&k_1  &k_2-1&k_1^2    &(k_2-1)^2\\
+1&k_1  &k_2+1&k_1^2    &(k_2+1)^2\\
+1&k_1  &k_2+2&k_1^2    &(k_2+2)^2\\
+1&k_1+1&k_2-1&(k_1+1)^2&(k_2-1)^2\\
+1&k_1+1&k_2  &(k_1+1)^2&k_2^2\\
+1&k_1+1&k_2+1&(k_1+1)^2&(k_2+1)^2\\
+1&k_1+2&k_2  &(k_1+2)^2&k_2^2
+\end{bmatrix}
+\begin{bmatrix}
+\beta_1\\
+\beta_2\\
+\beta_3\\
+\beta_4\\
+\beta_5
+\end{bmatrix}+\boldsymbol\epsilon
+$$
+
+이 종속구조는 이변수 미분연산자와 유사하게 12개의 주변지역을 취하고 대각선 방향의 이웃에 의존한다.
+
+국소다항식 근사법은 격자의 내부점에서만 유효하기 때문에 경계점에서는 수정이 필요하다는 단점이 있다. 이를 해결하기 위하여 몇 가지 방법이 제시되었지만, 국소다항식적합 사전분포보다는 크로네커곱과 이변수 미분연산자 사전분포가 직관적이고 해석이 쉬워 더 많이 이용된다.
+
+### 이변수 벌점의 널공간
+
+사전분포 또는 벌점항을 비교하는 것 외에도 벌점 행렬의 널공간을 이해하는 것이 필요하다. 무엇보다 널공간은 어떤 종류의 함수들이 벌점을 받지 않는지 알려주며, 혼합모형에 기반한 추론을 할 때도 중요하게 고려된다. 따라서 여기서 널공간에 대한 기본 설명과 함께, 이후 [공간가법 회귀분석](smoothing20.qmd)에서의 추론에 필요한 기초지식을 제공하고자 한다.
+
+@eq-kronecker-K 의 벌점항을 가진 텐서곱 벌점 스플라인의 경우, 벌점의 널공간이 일변수 널공간의 텐서곱과 같다는 것을 보일 수 있다. 행과 열에 각각 차수 $d_1$ 과 $d_2$ 의 차분 벌점을 고려한다면, 각 널공간의 일변수 다항식은
+
+$$
+\beta_{0,1}+\beta_{1,1}s_1+\beta_{2,1}s_1^2+\cdots+\beta_{d_1-1,1}s_1^{d_1-1},\quad \beta_{0,2}+\beta_{1,2}s_2+\beta_{2,2}s_2^2+\cdots+\beta_{d_2-1,2}s_2^{d_2-1}
+$$
+
+로 나타낼 수 있으며, 이들 기저함수의 텐서곱은 두 다항식의 모든 항들의 조합을 고려해야 한다. 예를 들어 행과 열에 각각 1차 차분을 적용하는 경우 널공간은 상수항이고, 이에 해당하는 텐서곱 또한 상수항이다. 2차 차분의 경우 행과 열의 널공간은 선형함수이고, 텐서곱은 $s_1$ 과 $s_2$ 방향의 선형효과와 이들의 상호작용 효과로 생성된 4차원 널공간, 즉
+
+$$
+\beta_0+\beta_1s_1+\beta_2s_2+\beta_3s_1s_2
+$$
+
+이다. 이 널공간의 기저는 $s_1$ 과 $s_2$ 공간상에서 등간격 값들의 조합으로 구성할 수 있다. 단순한 예로 결합점을 이용하여 기저를 구하면
+
+$$
+\begin{pmatrix}
+1&\kappa_{1,1} &\kappa_{1,2}&\kappa_{1,1}\cdot\kappa_{1,2}\\
+1&\kappa_{2,1} &\kappa_{1,2}&\kappa_{2,1}\cdot\kappa_{1,2}\\
+\vdots&\vdots&\vdots&\vdots\\
+1&\kappa_{K_1,1} &\kappa_{1,2}&\kappa_{K_1,1}\cdot\kappa_{1,2}\\
+1&\kappa_{1,1} &\kappa_{2,2}&\kappa_{1,1}\cdot\kappa_{2,2}\\
+\vdots&\vdots&\vdots&\vdots\\
+1&\kappa_{K_1,1} &\kappa_{2,2}&\kappa_{K_1,1}\cdot\kappa_{2,2}\\
+\vdots&\vdots&\vdots&\vdots\\
+1&\kappa_{1,1} &\kappa_{K_2,2}&\kappa_{1,1}\cdot\kappa_{K_2,2}\\
+\vdots&\vdots&\vdots&\vdots\\
+1&\kappa_{K_1,1} &\kappa_{K_2,2}&\kappa_{K_1,1}\cdot\kappa_{K_2,2}
+\end{pmatrix}
+$$ {#eq-nullspace-basis}
+
+이고, 여기서 $\kappa_{1,1},\ldots, \kappa_{K_1,1}$ 과 $\kappa_{1,2},\ldots, \kappa_{K_2,2}$ 는 각각 $s_1$ 과 $s_2$ 방향의 결합점들이다.
+
+@eq-biharmonic-diff 의 이변수 미분연산자 근사의 경우, 대각선 방향으로 추가적인 벌점을 부여하기 때문에 널공간은 다음과 같은 3차원 공간이며,
+
+$$
+\beta_0+\beta_1s_1+\beta_2s_2
+$$
+
+그에 따른 기저는 @eq-nullspace-basis 에서 마지막 열을 제외하여 구한다.
+
+### 격자 그리드상의 고차 확률필드
+
+지리 데이터의 비정형 격자를 다루어야 했기 때문에 지금까지는 바로 이웃한 주변지역에 대해서만 논의를 진행했지만, 공간상에서 고차의 벌점을 적용하는 경우 정규 격자상의 고차 가우스 마코프 확률필드(GMRF)를 생각해 볼 수 있다. 고차 사전분포는 기저함수 접근법에서 벌점으로 기능할 뿐 아니라, 공간함수를 직접 모형화하는 데에도 사용될 수 있다. 일변수의 경우 확률보행 평활화는, 서로 다른 모든 관측점을 결합점으로 갖는 0차 벌점 스플라인의 극단적인 경우로 볼 수 있다.
+
+유사하게 정규 격자상에 정렬되어 있거나 관측지역을 사각형 모양으로 이산화한 공간데이터를 생각해 보자. 각 관측위치마다 결합점을 하나씩 부여하고, 각 지역에 0차 텐서곱에 해당하는 상수 계수를 할당한다면 공간함수는 $f(k_1,k_2)=\gamma_{k_1k_2}$ 로 단순화된다. 여기에 앞에서 살펴본 사전분포를 공간표면에 부여한다면, 함수값 $\gamma_{k_1k_2}$ 의 정규 격자에 대한 고차 GMRF에 이르게 된다.
+
+### 고차 상호작용
+
+개념적으로 텐서곱 벌점 스플라인은 두 개 이상의 변수 간 상호작용으로 쉽게 확장할 수 있다. 세 변수 간 상호작용 $f(s_1,s_2,s_3)$ 는 세 방향을 따라 기저함수를 배치하고, 삼변수 텐서곱 기저함수를
+
+$$
+B_{k_1,k_2,k_3}(s_1,s_2,s_3)=B_{k_1}(s_1)B_{k_2}(s_2)B_{k_3}(s_3)
+$$
+
+로 정의하면 다음과 같은 표현식을 얻는다.
+
+$$
+f(s_1,s_2,s_3)=\sum_{k_1=1}^{K_1}\sum_{k_2=1}^{K_2}\sum_{k_3=1}^{K_3}\gamma_{k_1,k_2,k_3}B_{k_1,k_2,k_3}(s_1,s_2,s_3)
+$$
+
+유사하게 벌점 행렬은
+
+$$
+\mathbf K=\mathbf I_{K_3}\otimes\mathbf I_{K_2}\otimes\mathbf K_1+\mathbf I_{K_3}\otimes\mathbf K_2\otimes\mathbf I_{K_1}+\mathbf K_3\otimes\mathbf I_{K_2}\otimes\mathbf I_{K_1}
+$$
+
+로 구성되는데, 여기서 $\mathbf K_1,\mathbf K_2, \mathbf K_3$ 는 각각 $s_1,s_2,s_3$ 방향의 일변수 벌점 행렬이다.
+
+고차의 상호작용을 추정하는 데에는 두 가지 문제점이 있다. 우선 텐서곱 스플라인을 설정할 때 회귀계수의 수가 기하급수적으로 증가한다는 점이다. 일변수 적합을 위하여 20개의 기저함수를 이용하는 경우, 차원 $d$ 에 따라 $20^d$ 개의 회귀계수를 추정해야 한다. 둘째는 차원의 저주로 알려진 문제로, 차원이 증가할수록 동일한 길이의 부분공간에 관측치가 더 희소해져서 기저함수의 추정을 충분히 뒷받침하지 못한다는 점이다. 이러한 이유로 3차 이상의 상호작용을 이용하는 경우는 거의 없다.
+
+## 다음 글
+
+[다음 글](smoothing17.qmd)에서는 또 다른 연속 공간 평활화 기법인 방사 기저 평활을 살펴보고, 텐서곱 기저와 비교한다.
