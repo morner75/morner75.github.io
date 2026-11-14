@@ -1,0 +1,10 @@
+::: {.callout-note appearance="simple" collapse="true"}
+## 연재: 워시 트레이딩 논문의 검정법
+
+이 연재는 [가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향](../../research/wash-trading/index.qmd)(이준호·최범전, 2026, working paper)에서 쓰인 통계적 방법을 모의실험과 함께 자세히 설명한다. 예시는 모두 모의 자료이다. 첫 번째 지표인 벤포드 적합도는 별도의 글 [벤포드 적합도 검정](../benford-test/index.qmd)에서 다룬다.
+
+2. [Hill 추정량과 꼬리지수](2-tail-index.qmd)
+3. [PELT 변화점 탐지와 벌점 보정](3-pelt.qmd)
+4. [부호순위 검정, 순위합 검정, Holm 보정](4-rank-tests.qmd)
+5. [이중차분과 와일드 군집 부트스트랩](5-did.qmd)
+:::

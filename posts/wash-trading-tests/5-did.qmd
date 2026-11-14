@@ -1,0 +1,117 @@
+---
+title: '워시 트레이딩 검정법 (5): 이중차분과 와일드 군집 부트스트랩'
+date: '2026-11-09'
+categories: ["가상자산", "Econometrics", "Bootstrap"]
+description: '고정효과 이중차분 모형의 군집 표준오차와, 군집이 적을 때의 와일드 군집 부트스트랩, 평행추세 점검을 살펴본다.'
+lang: ko
+execute:
+  message: false
+  warning: false
+---
+
+{{< include _series.qmd >}}
+
+[가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향](../../research/wash-trading/index.qmd)(이준호·최범전, 2026, working paper)은 대형 그룹을 대조군, 중소형 그룹을 처치군으로 하는 이중차분 모형으로 법 시행의 효과를 추정한다. 그런데 종목이 34개뿐이고 대조군은 8개에 불과하다. 이 글에서는 이런 **소수 군집** 상황에서 군집 표준오차가 왜 귀무가설을 과대 기각할 수 있는지, 그리고 이를 보완하는 와일드 군집 부트스트랩이 어떻게 작동하는지를 모의실험으로 살펴본다. 끝으로 평행추세 가정을 점검하는 방법도 정리한다. 예시는 모두 모의 자료이다.
+
+```{r}
+#| label: setup
+library(ggplot2)
+set.seed(20240719)
+theme_set(theme_minimal(base_size = 12))
+col_main <- "#325d88"; col_alt <- "#d9822b"
+```
+
+## 모형과 군집 표준오차
+
+그룹 간 비교는 대형 그룹(8개)을 대조군, 중소형 그룹(26개)을 처치군으로 하는 이중차분 모형
+
+$$
+Y_{i,t}=\beta\,(Post_t\times Small_i)+\mu_i+\tau_t+\epsilon_{i,t}
+$$ {#eq-did}
+
+을 34개 종목 × 42개월 패널에 최소자승법으로 추정한다. 같은 종목의 오차 $\epsilon_{i,t}$ 는 달마다 상관되어 있으므로 일반 OLS 표준오차는 너무 작다. 그래서 종목 단위로 군집화한 표준오차(CR1)
+
+$$
+\widehat{\operatorname{Var}}(\hat{\boldsymbol\beta})=c\,(\mathbf X^{\top}\mathbf X)^{-1}\left(\sum_{g=1}^G\mathbf X_g^{\top}\hat{\boldsymbol\epsilon}_g\hat{\boldsymbol\epsilon}_g^{\top}\mathbf X_g\right)(\mathbf X^{\top}\mathbf X)^{-1},\qquad c=\frac{G}{G-1}\cdot\frac{N-1}{N-K}
+$$ {#eq-cr1}
+
+를 쓰고, $t$ 통계량을 자유도 $G-1=33$ 의 $t$ 분포와 비교한다. 여기서 $\mathbf X_g$, $\hat{\boldsymbol\epsilon}_g$ 는 종목 $g$ 의 설계행렬과 잔차이다.
+
+## 군집이 적을 때의 문제
+
+@eq-cr1 은 군집 수 $G$ 가 클 때의 근사이다. 군집이 34개뿐이고 그중 대조군이 8개에 불과하면, 처치 변수의 변동이 소수 군집에 몰려 군집 표준오차가 실제보다 작게 추정되고 귀무가설을 과대 기각할 수 있다(Cameron, Gelbach and Miller, 2008; MacKinnon and Webb, 2017). 이를 보완하는 방법이 **귀무가설을 부과한 와일드 군집 부트스트랩**(wild cluster restricted bootstrap, WCR)이다.
+
+1. 귀무가설 $\beta=0$ 을 부과한 모형(처치 항을 뺀 모형)을 추정하여 적합값 $\tilde{\mathbf y}$ 와 잔차 $\tilde{\boldsymbol\epsilon}$ 를 구한다.
+2. 군집마다 하나의 가중치 $w_g^{*}$ 를 뽑아 같은 군집의 잔차 전체에 곱한다. $y^{*}_{g,t}=\tilde y_{g,t}+w_g^{*}\,\tilde\epsilon_{g,t}$
+3. $\mathbf y^{*}$ 로 원래 모형을 다시 추정하고 CR1 $t$ 통계량 $t^{*}$ 를 계산한다.
+4. 이를 $B$ 번 반복하여 $p=\frac1B\sum_b\mathbf 1(|t^{*}_b|\ge|t|)$ 를 구한다.
+
+가중치는 Webb (2023)의 6점 분포 $\{\pm\sqrt{3/2},\pm1,\pm\sqrt{1/2}\}$ (각 확률 1/6)를 쓴다. 평균 0, 분산 1이며, 군집이 적을 때 2점(Rademacher) 가중치보다 부트스트랩 분포가 촘촘해진다. 군집 단위로 같은 가중치를 곱하므로 군집 안의 상관 구조가 그대로 보존되고, 귀무가설을 부과하므로 부트스트랩 자료가 귀무가설 아래의 세계를 흉내 낸다. 논문은 9,999회 반복하였다.
+
+```{r}
+#| label: wcr-functions
+G <- 34; Tm <- 42; small <- rep(c(0, 1), c(8, 26))
+panel <- expand.grid(month = 1:Tm, id = 1:G)
+panel$D <- small[panel$id] * as.numeric(panel$month > 25)   # 시행 후 × 중소형
+webb <- c(-sqrt(3/2), -1, -sqrt(1/2), sqrt(1/2), 1, sqrt(3/2))
+
+# 종목 효과, 월 효과, 종목 안 AR(1) 오차를 갖는 모의 패널
+gen_y <- function(beta = 0, phi = 0.6) {
+  u <- unlist(lapply(1:G, function(i) as.numeric(arima.sim(list(ar = phi), Tm)))) * 0.002
+  0.008 + rnorm(G, 0, 0.003)[panel$id] + rnorm(Tm, 0, 0.001)[panel$month] + beta * panel$D + u
+}
+
+X  <- model.matrix(~ D + factor(id) + factor(month), panel)
+k  <- which(colnames(X) == "D"); g <- panel$id
+A  <- solve(crossprod(X), t(X)); a <- A[k, ]             # beta_hat = sum(a * y)
+Xr <- X[, -k]; Ar <- solve(crossprod(Xr), t(Xr))           # 귀무 제약 모형
+adj <- G / (G - 1) * (nrow(X) - 1) / (nrow(X) - ncol(X))
+
+did_test <- function(y, B = 999) {
+  b  <- sum(a * y); e <- y - X %*% (A %*% y)
+  se <- sqrt(sum(rowsum(a * e, g)^2) * adj); t0 <- b / se
+  fr <- Xr %*% (Ar %*% y); er <- as.vector(y - fr)
+  W  <- matrix(sample(webb, G * B, TRUE), G, B)
+  Ys <- as.vector(fr) + er * W[g, ]                        # 군집마다 같은 가중치
+  bs <- colSums(a * Ys); Es <- Ys - X %*% (A %*% Ys)
+  ts <- bs / sqrt(colSums(rowsum(a * Es, g)^2) * adj)
+  c(beta = b, se = se, p_CR1 = 2 * pt(-abs(t0), G - 1), p_WCR = mean(abs(ts) >= abs(t0)))
+}
+round(did_test(gen_y(beta = 0.002)), 5)
+```
+
+효과가 실제로 있는 자료에서는 두 방법 모두 귀무가설을 기각한다. 차이는 효과가 **없을 때** 드러난다. 아래는 $\beta=0$ 인 자료를 200번 만들어 5% 수준에서 기각된 비율을 비교한 것이다.
+
+```{r}
+#| label: wcr-size
+size <- replicate(200, did_test(gen_y(beta = 0), B = 199)[c("p_CR1", "p_WCR")])
+knitr::kable(data.frame(방법 = c("CR1 t 검정 (자유도 33)", "와일드 군집 부트스트랩(WCR)"),
+                        `5% 검정의 실제 기각률` = unname(rowMeans(size < 0.05)), check.names = FALSE),
+             digits = 3, row.names = FALSE)
+```
+
+이 설정에서 CR1 $t$ 검정은 명목 수준 5%보다 자주 기각하는 반면, 와일드 군집 부트스트랩은 5%에 가깝다. 모의실험 횟수가 200번이어서 기각률에도 ±3%p 정도의 오차가 있지만, 군집 표준오차만으로는 귀무가설을 과대 기각할 수 있다는 방향은 분명하다. 논문에서는 두 방법의 결론이 모든 지표에서 같았다.
+
+## 평행추세 가정의 점검
+
+군집 추론이 올바르더라도 $\hat\beta$ 가 법 시행의 효과라는 해석은 **평행추세 가정**에 달려 있다. 논문은 이를 세 가지로 점검한다.
+
+- **그룹별 추세 허용 모형**: @eq-did 에 $\gamma\,(Small_i\times t)$ 를 더한다. $\gamma$ 가 유의하고 추세를 통제한 $\beta$ 가 사라지면, 기본 모형의 효과는 시행 전부터 이어진 그룹 간 추세 차이로 설명된다. 다만 이 모형은 추세가 분석기간 내내 선형이라고 가정한다.
+- **시행 전 기간만의 추세 검정**: 시행 후 자료가 추세 추정에 섞이지 않도록 시행 전 25개월만으로 $\gamma$ 를 따로 추정한다.
+- **반기별 이벤트 스터디**: 시행 직전 반기(2024년 상반기)를 기준으로 각 반기의 그룹 간 차이 $\delta_h$ 를 추정하여, 시행 전 반기의 $\delta_h$ 가 0 근처인지 본다.
+
+마지막으로 해외 거래소 비교에서는 같은 종목의 빗썸과 바이낸스 지표를 쌓은 패널에 종목×거래소 고정효과와 종목×월 고정효과를 넣는다. 종목×월 고정효과가 각 종목에서 두 거래소에 공통된 변화를 흡수하므로, 남는 계수는 "같은 종목, 같은 달에 빗썸에서만 나타난 변화"가 된다. 여기에 중소형 그룹 상호작용을 더한 삼중차분 계수는 빗썸의 그룹 간 격차 변화가 바이낸스의 그것과 다른지를 검정한다.
+
+## 정리
+
+- 같은 종목의 월별 오차는 상관되어 있으므로 표준오차는 종목 단위로 군집화한다.
+- 군집이 적고 대조군이 작으면 군집 표준오차의 $t$ 검정이 과대 기각할 수 있으므로, 귀무가설을 부과한 와일드 군집 부트스트랩으로 다시 확인한다.
+- 추론이 올바르더라도 효과의 해석은 평행추세 가정에 달려 있으므로, 그룹별 추세, 시행 전 기간, 이벤트 스터디, 해외 거래소 비교로 점검한다.
+
+이 연재의 앞 글들은 위의 목차에서, 연구 결과 자체는 [연구 해설 페이지](../../research/wash-trading/index.qmd)에서 확인할 수 있다.
+
+## 참고문헌
+
+- Cameron, A. C., Gelbach, J. B. and Miller, D. L. (2008). Bootstrap-based improvements for inference with clustered errors. *Review of Economics and Statistics*, 90, 414–427.
+- MacKinnon, J. G. and Webb, M. D. (2017). Wild bootstrap inference for wildly different cluster sizes. *Journal of Applied Econometrics*, 32, 233–254.
+- Webb, M. D. (2023). Reworking wild bootstrap-based inference for clustered errors. *Canadian Journal of Economics*, 56, 839–858.
