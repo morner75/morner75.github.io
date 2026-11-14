@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="텐서곱 기저와 크로네커곱 벌점을 이용한 연속 공간 평활화">
+
+<title>텐서곱 벌점 스플라인 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">텐서곱 벌점 스플라인</h1>
+                  <div>
+        <div class="description">
+          텐서곱 기저와 크로네커곱 벌점을 이용한 연속 공간 평활화
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Bayesian smoothing</div>
+                <div class="quarto-category">Spatial statistics</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2022년 10월 18일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#공간-평활화-접근법과-상호작용" id="toc-공간-평활화-접근법과-상호작용" class="nav-link active" data-scroll-target="#공간-평활화-접근법과-상호작용">공간 평활화 접근법과 상호작용</a></li>
+  <li><a href="#텐서곱-벌점-스플라인" id="toc-텐서곱-벌점-스플라인" class="nav-link" data-scroll-target="#텐서곱-벌점-스플라인">텐서곱 벌점 스플라인</a>
+  <ul class="collapse">
+  <li><a href="#텐서곱-기저" id="toc-텐서곱-기저" class="nav-link" data-scroll-target="#텐서곱-기저">텐서곱 기저</a></li>
+  <li><a href="#텐서곱-기저에-대한-크로네커곱-벌점" id="toc-텐서곱-기저에-대한-크로네커곱-벌점" class="nav-link" data-scroll-target="#텐서곱-기저에-대한-크로네커곱-벌점">텐서곱 기저에 대한 크로네커곱 벌점</a></li>
+  <li><a href="#벌점-개념의-일반화" id="toc-벌점-개념의-일반화" class="nav-link" data-scroll-target="#벌점-개념의-일반화">벌점 개념의 일반화</a></li>
+  <li><a href="#이변수-벌점의-널공간" id="toc-이변수-벌점의-널공간" class="nav-link" data-scroll-target="#이변수-벌점의-널공간">이변수 벌점의 널공간</a></li>
+  <li><a href="#격자-그리드상의-고차-확률필드" id="toc-격자-그리드상의-고차-확률필드" class="nav-link" data-scroll-target="#격자-그리드상의-고차-확률필드">격자 그리드상의 고차 확률필드</a></li>
+  <li><a href="#고차-상호작용" id="toc-고차-상호작용" class="nav-link" data-scroll-target="#고차-상호작용">고차 상호작용</a></li>
+  </ul></li>
+  <li><a href="#다음-글" id="toc-다음-글" class="nav-link" data-scroll-target="#다음-글">다음 글</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 베이지안 평활기법 — 전체 목차
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>제1장 평활기법과 비모수 회귀분석의 기본 개념</strong></p>
+<ol type="1">
+<li><a href="../../posts/smoothing/smoothing1.html">평활화 기법 소개</a></li>
+<li><a href="../../posts/smoothing/smoothing2.html">베이지안 평활기법</a></li>
+<li><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a></li>
+<li><a href="../../posts/smoothing/smoothing4.html">벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing5.html">베이지안 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing6.html">비정규분포 관측값의 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing7.html">범주형 관측값 모형과 평활화 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a></li>
+</ol>
+<p><strong>제2장 선형혼합모형</strong></p>
+<ol start="9" type="1">
+<li><a href="../../posts/smoothing/smoothing9.html">선형혼합모형</a></li>
+<li><a href="../../posts/smoothing/smoothing10.html">선형혼합모형의 우도 기반 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing11.html">선형혼합모형의 베이지안 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing12.html">유한 혼합모형</a></li>
+</ol>
+<p><strong>제3장 종단 데이터를 위한 비모수 혼합모형</strong></p>
+<ol start="13" type="1">
+<li><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a></li>
+</ol>
+<p><strong>제4장 공간 평활화와 공간가법 회귀모형</strong></p>
+<ol start="14" type="1">
+<li><a href="../../posts/smoothing/smoothing14.html">공간 평활과 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing15.html">가우스 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing16.html">텐서곱 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing17.html">방사 기저 평활</a></li>
+<li><a href="../../posts/smoothing/smoothing18.html">정상 가우스 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing19.html">베리오그램과 공분산 모수의 추정</a></li>
+<li><a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p><a href="../../posts/smoothing/smoothing15.html">앞 글</a>에서는 이산 공간에서 공간효과의 사전분포로 쓰이는 가우스 마코프 확률필드를 살펴보았다. 이번 글부터는 연속인 좌표로 주어진 공간정보에 대한 평활화와 상호작용을 다루며, 그 첫 번째로 텐서곱 벌점 스플라인을 살펴본다.</p>
+<section id="공간-평활화-접근법과-상호작용" class="level2">
+<h2 class="anchored" data-anchor-id="공간-평활화-접근법과-상호작용">공간 평활화 접근법과 상호작용</h2>
+<p>이번에는 위도(latitude)와 경도(longitude)처럼 연속인 좌표로 구성된 공간정보를 가진 경우를 고려해 보자. 단일변수 평활화와 유사하게, 잡음이 있는 데이터로부터 부드러운 곡면을 도출하는 과정은 연속인 공간정보 <span class="math inline">\(\mathbf s_i\)</span> 에 대하여 다음과 같이 묘사할 수 있다.</p>
+<p><span id="eq-surface"><span class="math display">\[
+y_i=f(\mathbf s_i)+\epsilon_i,\quad i=1,\ldots, n, \quad \mathbf s_i=(s_{i1},\ldots, s_{id})\in \mathbb{R}^d
+\tag{1}\]</span></span></p>
+<p>여기서는 크게 두 가지 평활화 방법을 고려할 것인데, 먼저 텐서곱(tensor product)에 기반한 벌점 스플라인(penalised splines)을 둘러보고, 그 다음으로 방사 기저함수(radial basis)에 기반한 또 다른 공간 평활화 기법을 살펴보고자 한다.</p>
+<p>일반적으로 상호작용을 고려하는 모형은 설명변수(predictor)의 곱을 포함시켜 상호작용을 표현하는데, 텐서곱 모형은 이러한 상호작용 모형의 확장판으로 기저함수의 곱을 모형에 포함시켜 보다 유연하게 상호작용을 구현할 수 있다. 방사 기저함수는 <span class="math inline">\(d\)</span>-차원 기저함수가 아닌 단일변수 기저함수인데, 일반적으로 설명변수 벡터의 유클리드 노름(norm)을 이용하여 원형 등고선(circular contour)을 갖는 기저함수를 이용한다.</p>
+</section>
+<section id="텐서곱-벌점-스플라인" class="level2">
+<h2 class="anchored" data-anchor-id="텐서곱-벌점-스플라인">텐서곱 벌점 스플라인</h2>
+<p>우선 단순하게 다음과 같이 상호작용이 없는 이변수 가법모형을 생각해 보자.</p>
+<p><span id="eq-additive"><span class="math display">\[
+f(s_1,s_2)=f_1(s_1)+f_2(s_2)
+\tag{2}\]</span></span></p>
+<p>이 모형은 각 변수에 대하여 동일한 기저함수를 이용하여 전체 표면을 근사할 수 있지만, 표면 평활화를 위해서는 가법성보다 유연한 방법을 이용할 필요가 있다. 기저함수 접근법은 비모수 평활화의 문제를 사전분포와 벌점이 부가된 대규모 선형모형으로 바꾸어 주므로, 표면 평활에서도 유사한 아이디어를 적용할 수 있다.</p>
+<section id="텐서곱-기저" class="level3">
+<h3 class="anchored" data-anchor-id="텐서곱-기저">텐서곱 기저</h3>
+<p><a href="#eq-additive" class="quarto-xref">방정식&nbsp;2</a> 에서 두 함수 <span class="math inline">\(f_1\)</span> 과 <span class="math inline">\(f_2\)</span> 를 스플라인 기저함수로 근사한다고 하면, 차수 <span class="math inline">\(D_i\)</span> 와 <span class="math inline">\(M_i\)</span> 개의 구간을 만드는 결합점(knot)을 갖는 기저함수는 각각 <span class="math inline">\((i=1,2)\)</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;B_{1,1}(s_1),\ldots,B_{K_1,1}(s_1),\quad \kappa_{0,1}&lt;\kappa_{1,1}&lt;\cdots&lt;\kappa_{M_1-1,1}&lt;\kappa_{M_1,1}, \quad K_1=M_1+D_1,\\
+&amp;B_{1,2}(s_2),\ldots,B_{K_2,2}(s_2),\quad \kappa_{0,2}&lt;\kappa_{1,2}&lt;\cdots&lt;\kappa_{M_2-1,2}&lt;\kappa_{M_2,2},\quad K_2=M_2+D_2
+\end{aligned}
+\]</span></p>
+<p>로 주어진다. 텐서곱 다항 스플라인 기저는 다음과 같이 두 단일변수 기저함수의 모든 쌍의 곱을 취하여 이변수 기저함수로 정의한다.</p>
+<p><span id="eq-tensor-basis"><span class="math display">\[
+B_{k_1,k_2}(s_1,s_2)=B_{k_1,1}(s_1)B_{k_2,2}(s_2),\quad k_i=1,\ldots,K_i,\;i=1,2
+\tag{3}\]</span></span></p>
+<p>텐서곱의 차수 <span class="math inline">\(D\)</span> 를 지칭하는 경우, 단일 변수의 차수가 같은 경우<span class="math inline">\((D=D_1=D_2)\)</span> 를 의미한다.</p>
+<p>텐서곱 기저함수는 절단 거듭제곱 함수(truncated power series)와 B-스플라인 모두 이용할 수 있지만, B-스플라인이 수치적으로 안정적이다. 텐서곱 B-스플라인은 고차로 갈수록 가우스 밀도함수의 모양을 닮아가지만 등고선은 원형이 아니며, 이러한 비원형성은 차수가 증가하면서 감소한다.</p>
+<p>공간표면 <span class="math inline">\(f(s_1,s_2)\)</span> 는 모든 이변수 기저함수를 결합하여 다음과 같이 표현된다.</p>
+<p><span class="math display">\[
+f(s_1,s_2)=\sum_{k_1=1}^{K_1}\sum_{k_2=1}^{K_2}\gamma_{k_1k_2}B_{k_1k_2}(s_1,s_2)
+\]</span></p>
+<p>이때 하나의 인덱스 <span class="math inline">\(k=1,\ldots,K\)</span>, <span class="math inline">\(K=K_1\cdot K_2\)</span> 를 이용하면 보다 단순하게</p>
+<p><span class="math display">\[
+f(s_1,s_2)=\sum_{k=1}^{K}\gamma_{k}B_{k}(s_1,s_2)
+\]</span></p>
+<p>로 나타낼 수 있는데, 이 표현식은 격자를 따라 정렬되지 않는 기저함수에도 유용하게 사용할 수 있다. 텐서곱 기저함수 표현식은 디자인 행렬이 기저함수의 함수값으로 구성된 선형모형 <span class="math inline">\(\boldsymbol\eta=\mathbf X \boldsymbol\gamma\)</span> 를 만들어내는데, 디자인 행렬의 <span class="math inline">\(i\)</span> 번째 행은</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mathbf x_i&amp;=\big(B_{11}(s_{i1},s_{i2}),\ldots,B_{K_11}(s_{i1},s_{i2}),\ldots,B_{1K_2}(s_{i1},s_{i2}),\ldots, B_{K_1K_2}(s_{i1},s_{i2})\big)\\
+&amp;=\big(B_{1}(s_{i1},s_{i2}),\ldots, B_{K}(s_{i1},s_{i2})\big)
+\end{aligned}
+\]</span></p>
+<p>로 주어지고, 전체 디자인 행렬 <span class="math inline">\(\mathbf X\)</span> 는 각 행들을 쌓아 올려 만든다. 회귀계수 벡터는</p>
+<p><span class="math display">\[
+\boldsymbol\gamma=(\gamma_{11},\ldots,\gamma_{K_1 1},\ldots, \gamma_{1 K_2},\ldots, \gamma_{K_1 K_2})^{\top}=(\gamma_1,\ldots, \gamma_K)^{\top}
+\]</span></p>
+<p>가 된다.</p>
+<p>이론적으로도 텐서곱 스플라인은 단일변수 다항 스플라인을 확장하여 이변수 다항 스플라인을 형성한다. 함수 <span class="math inline">\(f:[a_1,b_1]\times[a_2,b_2]\to \mathbb{R}\)</span> 가 차수 <span class="math inline">\(D\)</span> 와 결합점 <span class="math inline">\(\kappa_{0,1}&lt;\kappa_{1,1}&lt;\cdots&lt;\kappa_{M_1,1}\)</span> 및 <span class="math inline">\(\kappa_{0,2}&lt;\kappa_{1,2}&lt;\cdots&lt;\kappa_{M_2,2}\)</span> 를 가지며 다음 조건을 만족하는 경우 이변수 다항 스플라인이라 한다.</p>
+<ol type="1">
+<li><p>다음 편미분계수가 존재하고 연속이다.</p>
+<p><span class="math display">\[
+\frac{\partial^{i+j}f(s_1,s_2)}{\partial s_1^i\,\partial s_2^j},\quad  0\le i,j &lt; D
+\]</span></p></li>
+<li><p><span class="math inline">\(f(s_1,s_2)\)</span> 가 각 구간 <span class="math inline">\((s_1,s_2)\in[\kappa_{m_1,1},\kappa_{m_1+1,1})\times[\kappa_{m_2,2},\kappa_{m_2+1,2})\)</span>, <span class="math inline">\(m_1=0,\ldots, M_1-1\)</span>, <span class="math inline">\(m_2=0,\ldots, M_2-1\)</span> 에서 <span class="math inline">\(D\)</span> 차 다항식이다.</p></li>
+</ol>
+<p>이 경우 이변수 다항 스플라인은 <span class="math inline">\(K_1 K_2 =(M_1+D)(M_2+D)\)</span> 차원 벡터공간을 구성하며, <a href="#eq-tensor-basis" class="quarto-xref">방정식&nbsp;3</a> 의 텐서곱 기저함수는 이 함수공간의 기저를 이룬다.</p>
+</section>
+<section id="텐서곱-기저에-대한-크로네커곱-벌점" class="level3">
+<h3 class="anchored" data-anchor-id="텐서곱-기저에-대한-크로네커곱-벌점">텐서곱 기저에 대한 크로네커곱 벌점</h3>
+<p>이제 벌점의 개념을 이변수의 경우로 확장해 보자. 공간상에는 원래 순서가 존재하지 않기 때문에, 인접한 모수 값의 차에 벌점을 부과하는 개념을 확장하는 것이 쉽지 않다. 대안으로 이산 공간정보에서 개발된 GMRF 등의 개념을 적용하면, 벌점이나 공간 사전분포 등으로 매끄러운 공간 특성을 계수 벡터에 부과할 수 있다. 따라서 지금부터는 회귀계수 벡터 <span class="math inline">\(\boldsymbol\gamma\)</span> 를 다루기보다는, 그 원소들이 공간 격자상에 나열된 필드(field)를 대상으로 모형을 구성한다.</p>
+<p><span class="math display">\[
+\begin{matrix}
+\gamma_{11}  &amp; \gamma_{21}  &amp; \cdots &amp;\gamma_{K_11} \\
+\gamma_{12}  &amp; \gamma_{22}  &amp; \cdots &amp;\gamma_{K_12} \\
+\vdots       &amp; \vdots       &amp; \ddots &amp;\vdots \\
+\gamma_{1K_2}&amp; \gamma_{2K_2}&amp; \cdots &amp;\gamma_{K_1K_2}
+\end{matrix}
+\]</span></p>
+<p>여기서 <span class="math inline">\(k_1=1,\ldots,K_1\)</span> 이고, <span class="math inline">\(k_2=1,\ldots, K_2\)</span> 이다. 따라서 <a href="../../posts/smoothing/smoothing14.html">이산 격자상의 공간 평활화 사전분포</a>를 벡터 <span class="math inline">\(\boldsymbol\gamma\)</span> 에 부여할 수 있으며, 동일하게 다변수 가우스 분포를 따르는 <span class="math inline">\(\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma\)</span> 형태의 벌점항/결합사전분포를 정의할 수 있다. IGMRF를 만족하는 사전분포로 아래와 같이 4개의 최근접 이웃값들의 평균을 모수로 하는 조건부 가우스 분포를 고려할 수 있다(경계 근처에서는 존재하는 이웃값들의 평균으로 유사하게 정의한다).</p>
+<p><span id="eq-four-nn"><span class="math display">\[
+\gamma_{k_1k_2}\mid \boldsymbol\gamma_{-k_1k_2}\sim N\left( \frac{1}{4}(\gamma_{k_1-1,k_2}+\gamma_{k_1+1,k_2}+\gamma_{k_1,k_2-1}+\gamma_{k_1,k_2+1}),\;\frac{\tau^2}{4}\right)
+\tag{4}\]</span></span></p>
+<p>이제 계수 필드의 행과 열을 따라 계수 간의 차이를 고려해 보자. <span class="math inline">\(\mathbf D_1\)</span> 을 <span class="math inline">\(s_1\)</span> 방향의 계수에 대한 1차 차분행렬이라고 하면, 계수 필드가 총 <span class="math inline">\(K_2\)</span> 개의 열로 구성되어 있으므로 열별 차분은 <span class="math inline">\(K_2\)</span> 차원 항등행렬과 차분행렬의 크로네커곱 <span class="math inline">\(\mathbf I_{K_2}\otimes \mathbf D_1=\text{blockdiag}(\mathbf D_1,\ldots,\mathbf D_1)\)</span> 으로 나타낼 수 있다. 모든 열별 차분 벡터는</p>
+<p><span class="math display">\[
+(\mathbf I_{K_2}\otimes\mathbf D_1)\boldsymbol\gamma=
+\begin{bmatrix}
+\gamma_{21}-\gamma_{11}\\
+\vdots\\
+\gamma_{K_1 1}-\gamma_{K_1-1,1}\\
+\vdots\\
+\gamma_{2K_2}-\gamma_{1K_2}\\
+\vdots\\
+\gamma_{K_1 K_2}-\gamma_{K_1-1,K_2}
+\end{bmatrix}
+\]</span></p>
+<p>이고, 이차형식으로는</p>
+<p><span class="math display">\[
+\begin{aligned}
+\boldsymbol\gamma^{\top}(\mathbf I_{K_2}\otimes\mathbf D_1)^{\top} (\mathbf I_{K_2}\otimes\mathbf D_1)\boldsymbol\gamma&amp;=\sum_{k_2=1}^{K_2}\sum_{k_1=2}^{K_1}(\gamma_{k_1k_2}-\gamma_{k_1-1,k_2})^2,\\
+\boldsymbol\gamma^{\top}(\mathbf D_2\otimes\mathbf I_{K_1})^{\top} (\mathbf D_2\otimes\mathbf I_{K_1})\boldsymbol\gamma&amp;=\sum_{k_1=1}^{K_1}\sum_{k_2=2}^{K_2}(\gamma_{k_1k_2}-\gamma_{k_1,k_2-1})^2
+\end{aligned}
+\]</span></p>
+<p>와 같이 나타낼 수 있다. 행과 열 방향의 차분 제곱합을 모두 결합하면 전체 벌점항 <span class="math inline">\(\lambda\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma\)</span> 를 도출할 수 있다.</p>
+<p><span id="eq-kronecker-penalty"><span class="math display">\[
+\lambda\boldsymbol\gamma^{\top}\mathbf K\boldsymbol\gamma=  \lambda\boldsymbol\gamma^{\top}\left[(\mathbf I_{K_2}\otimes\mathbf D_1)^{\top} (\mathbf I_{K_2}\otimes\mathbf D_1)+(\mathbf D_2\otimes\mathbf I_{K_1})^{\top} (\mathbf D_2\otimes\mathbf I_{K_1})\right]\boldsymbol\gamma
+\tag{5}\]</span></span></p>
+<p>벌점 행렬 <span class="math inline">\(\mathbf K\)</span> 는 단일변수 벌점 행렬을 이용하여 보다 단순하게 표현할 수 있다.</p>
+<p><span id="eq-kronecker-K"><span class="math display">\[
+\mathbf K =  \mathbf I_{K_2}\otimes\mathbf K_1+\mathbf K_2\otimes\mathbf I_{K_1}
+\tag{6}\]</span></span></p>
+<p>여기서 <span class="math inline">\(\mathbf K_1 = \mathbf D_1^{\top}\mathbf D_1\)</span>, <span class="math inline">\(\mathbf K_2 = \mathbf D_2^{\top}\mathbf D_2\)</span> 이다. 벌점 행렬 <span class="math inline">\(\mathbf K\)</span> 를 가우스 분포의 정밀도(precision) 행렬로 간주하고 결합 가우스분포로부터 완전 조건부분포를 도출하면, <a href="#eq-four-nn" class="quarto-xref">방정식&nbsp;4</a> 과 동일한 조건부 종속구조를 얻게 된다.</p>
+<p>크로네커곱 벌점의 장점은 다양한 MRF 구조의 벌점항을 도출할 수 있다는 점이다. 예를 들어 이차 차분의 경우 다음과 같은 조건부 사전 평균과 사전 분산을 갖는 정밀도 행렬을 얻을 수 있다.</p>
+<p><span class="math display">\[
+\begin{aligned}
+E(\gamma_{k_1k_2}\mid \cdot)&amp;=\frac{1}{12}\big(4\gamma_{k_1-1,k_2}+4\gamma_{k_1+1,k_2}+4\gamma_{k_1,k_2-1}+4\gamma_{k_1,k_2+1}\\
+&amp;\qquad\;\;-\gamma_{k_1-2,k_2}-\gamma_{k_1+2,k_2}-\gamma_{k_1,k_2-2}-\gamma_{k_1,k_2+2}\big),\\
+Var(\gamma_{k_1k_2}\mid \cdot)&amp;=\frac{\tau^2}{12}
+\end{aligned}
+\]</span></p>
+<p>고차 MRF의 종속구조 또한 그래프 표현으로 요약할 수 있다. 크로네커곱 벌점에서 얻는 고차 MRF의 큰 특징 중 하나는 조건부 종속성이 행과 열을 따라서만 존재하고 대각선 방향의 이웃에는 의존하지 않는다는 점이다.</p>
+</section>
+<section id="벌점-개념의-일반화" class="level3">
+<h3 class="anchored" data-anchor-id="벌점-개념의-일반화">벌점 개념의 일반화</h3>
+<p>지금까지 이변수 벌점을 정의하면서 행과 열에 동일한 가중치를 부여하는 하나의 평활화 모수 <span class="math inline">\(\lambda\)</span> 를 가정하였다. 행과 열에 각기 다른 가중치를 부여하는 보다 유연한 모형</p>
+<p><span class="math display">\[
+\lambda_1\boldsymbol\gamma^{\top}(\mathbf I_{K_2}\otimes\mathbf K_1)\boldsymbol\gamma+ \lambda_2\boldsymbol\gamma^{\top}(\mathbf K_2\otimes\mathbf I_{K_1})\boldsymbol\gamma
+\]</span></p>
+<p>이나, 회전 모수를 도입하여 대각선이나 다른 각도를 따라 가중치를 부여하는 모형도 설정할 수 있다.</p>
+<p>일변수 벌점 스플라인의 차분 벌점은 미분계수 제곱의 적분 벌점에 대한 근사로 사용하고자 고안된 것이다. 이변수 벌점에 있어서도 차분 근사를 원래의 적분 벌점항으로 대체하면 밀접하게 연관된 또 다른 벌점항을 도출할 수 있다. 다음과 같은 이변수 2차 미분연산자(biharmonic differential operator)</p>
+<p><span id="eq-biharmonic"><span class="math display">\[
+\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}
+\tag{7}\]</span></span></p>
+<p>를 고려해 보자. 두 번 미분가능한 모든 이변수 함수의 공간에서 벌점 로그우도</p>
+<p><span class="math display">\[
+\max_{f}\; l(f)-\frac{1}{2}\lambda\int\!\!\int\left[\left(\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}\right)f(s_1,s_2)\right]^2ds_1\,ds_2
+\]</span></p>
+<p>의 해를 구하면, 자연 삼차 스플라인(natural cubic splines)의 2차원 버전인 박판 스플라인(thin plate splines)으로 귀결된다. 이 경우 경계 조건은 결합점에서의 함수값으로 고정된 얇은 금속판의 움직임과 유사하다.</p>
+<p>이 이변수 미분연산자를 기저함수를 이용한 벌점 개념에 적용하면, 함수 <span class="math inline">\(f(s_1,s_2)\)</span> 는</p>
+<p><span class="math display">\[
+f(s_1,s_2)=\sum_{k=1}^K\gamma_k B_k(s_1,s_2)
+\]</span></p>
+<p>이고, 이차형식 <span class="math inline">\(\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma\)</span> 에서 <span class="math inline">\(\mathbf K\)</span> 의 각 원소의 값은</p>
+<p><span class="math display">\[
+\mathbf K[j,k]=\int\!\!\int B_j''(s_1,s_2)B_k''(s_1,s_2)\,ds_1\,ds_2
+\]</span></p>
+<p>이다. 여기서</p>
+<p><span class="math display">\[
+B_k''(s_1,s_2)=\left(\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}\right)B_k(s_1,s_2)
+\]</span></p>
+<p>이다.</p>
+<p>일변수 평활화와 마찬가지로 미분계수를 직접 구하는 것보다 차분에 기반한 근사치를 이용하는 것이 편리한데, 근사값은 12개의 주변 격자점을 대상으로 하는 차분연산자를 이용하여 구할 수 있다. 차분연산자</p>
+<p><span id="eq-biharmonic-diff"><span class="math display">\[
+(\Delta_{(1,0)}^2+\Delta_{(0,1)}^2)^2=\Delta_{(1,0)}^4+2\Delta_{(1,0)}^2\Delta_{(0,1)}^2+\Delta_{(0,1)}^4
+\tag{8}\]</span></span></p>
+<p>에서 도출되는 정밀도 행렬은 이 12개의 주변 격자점에 대하여 0이 아닌 원소 값을 가지며, 이를 벌점 행렬로 나타내면</p>
+<p><span class="math display">\[
+\mathbf K =  \mathbf I_{K_2}\otimes\mathbf K_1^{(2)}+\mathbf K_2^{(2)}\otimes\mathbf I_{K_1}+2\,\mathbf K_2^{(1)}\otimes\mathbf K_1^{(1)}
+\]</span></p>
+<p>이다. 여기서 <span class="math inline">\(\Delta_{(1,0)}^2\)</span> 와 <span class="math inline">\(\Delta_{(0,1)}^2\)</span> 는 각각 <span class="math inline">\(s_1\)</span> 과 <span class="math inline">\(s_2\)</span> 방향의 이차 차분 연산자를, <span class="math inline">\(\mathbf K_1^{(d)}\)</span> 와 <span class="math inline">\(\mathbf K_2^{(d)}\)</span> 는 각각 열과 행을 따라 구성한 <span class="math inline">\(d\)</span> 차 차분 벌점 행렬을 나타낸다.</p>
+<p>이변수 미분연산자 벌점항이 크로네커곱 벌점항과 다른 점은 대각선 방향의 이웃에도 의존한다는 점이다. 이것은 이변수 미분연산자 벌점은 <span class="math inline">\(s_1\)</span>-<span class="math inline">\(s_2\)</span> 상호작용에도 벌점을 부과하는 반면, 이차 크로네커곱 벌점은 상호작용이 널공간에 포함되어 벌점을 부과하지 않는다는 것을 의미한다. 일변수 이차 확률보행에서 정의된 증분 <span class="math inline">\(\gamma_{k+1}-2\gamma_k+\gamma_{k-1}\)</span> 의 표현식과 마찬가지로, 이변수 미분연산자의 근사는 증분</p>
+<p><span class="math display">\[
+(\gamma_{k_1+1,k_2}+\gamma_{k_1-1,k_2}+\gamma_{k_1,k_2+1}+\gamma_{k_1,k_2-1})-4\gamma_{k_1k_2}
+\]</span></p>
+<p>의 제곱으로 표현된다.</p>
+<p>이변수 벌점항을 도출하는 마지막 방법은 확률보행 사전분포를 국소다항식적합(local polynomial fit)으로 해석하는 방법이다. 일차 확률보행의 조건부 기대값은 이전 시점과 이후 시점에 대한 국소선형적합(local linear fit)과 동일하다. 이변량의 경우에도 유사하게 네 개의 최근접 이웃 <span class="math inline">\(\gamma_{k_1+1,k_2},\gamma_{k_1-1,k_2},\gamma_{k_1,k_2+1},\gamma_{k_1,k_2-1}\)</span> 을 이용하여 <span class="math inline">\(\gamma_{k_1k_2}\)</span> 의 조건부 기대값을 구할 수 있다. 결합 가우스분포의 정밀도 행렬에서 조건부 기대값을 구하는 방법을 거꾸로 이용하면, 주변지역의 선형결합의 가중치로부터 그에 상응하는 벌점항을 얻을 수 있다. 국소선형적합의 가중치는 다음과 같은 회귀모형으로부터 <span class="math inline">\(\gamma_{k_1k_2}\)</span> 에 대한 추정값을 계산하여 구한다.</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+\gamma_{k_1-1,k_2}\\
+\gamma_{k_1,k_2-1}\\
+\gamma_{k_1+1,k_2}\\
+\gamma_{k_1,k_2+1}
+\end{bmatrix} =
+\begin{bmatrix}
+1&amp;k_1-1&amp;k_2\\
+1&amp;k_1&amp;k_2-1\\
+1&amp;k_1+1&amp;k_2\\
+1&amp;k_1&amp;k_2+1
+\end{bmatrix}
+\begin{bmatrix}
+\beta_1\\
+\beta_2\\
+\beta_3
+\end{bmatrix}+\boldsymbol\epsilon
+\]</span></p>
+<p>비슷한 방법으로 국소이차적합을 이용하면 12개의 주변지역에 대한 이차 확률보행 벌점항을 구할 수 있다. <span class="math inline">\(\gamma_{k_1k_2}\)</span> 의 조건부 기대값과 연결된 계수들은 다음과 같은 회귀모형으로부터 <span class="math inline">\(\gamma_{k_1k_2}\)</span> 를 추정하여 얻는다.</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+\gamma_{k_1-2,k_2}\\
+\gamma_{k_1-1,k_2-1}\\
+\gamma_{k_1-1,k_2}\\
+\gamma_{k_1-1,k_2+1}\\
+\gamma_{k_1,k_2-2}\\
+\gamma_{k_1,k_2-1}\\
+\gamma_{k_1,k_2+1}\\
+\gamma_{k_1,k_2+2}\\
+\gamma_{k_1+1,k_2-1}\\
+\gamma_{k_1+1,k_2}\\
+\gamma_{k_1+1,k_2+1}\\
+\gamma_{k_1+2,k_2}
+\end{bmatrix} =
+\begin{bmatrix}
+1&amp;k_1-2&amp;k_2  &amp;(k_1-2)^2&amp;k_2^2\\
+1&amp;k_1-1&amp;k_2-1&amp;(k_1-1)^2&amp;(k_2-1)^2\\
+1&amp;k_1-1&amp;k_2  &amp;(k_1-1)^2&amp;k_2^2\\
+1&amp;k_1-1&amp;k_2+1&amp;(k_1-1)^2&amp;(k_2+1)^2\\
+1&amp;k_1  &amp;k_2-2&amp;k_1^2    &amp;(k_2-2)^2\\
+1&amp;k_1  &amp;k_2-1&amp;k_1^2    &amp;(k_2-1)^2\\
+1&amp;k_1  &amp;k_2+1&amp;k_1^2    &amp;(k_2+1)^2\\
+1&amp;k_1  &amp;k_2+2&amp;k_1^2    &amp;(k_2+2)^2\\
+1&amp;k_1+1&amp;k_2-1&amp;(k_1+1)^2&amp;(k_2-1)^2\\
+1&amp;k_1+1&amp;k_2  &amp;(k_1+1)^2&amp;k_2^2\\
+1&amp;k_1+1&amp;k_2+1&amp;(k_1+1)^2&amp;(k_2+1)^2\\
+1&amp;k_1+2&amp;k_2  &amp;(k_1+2)^2&amp;k_2^2
+\end{bmatrix}
+\begin{bmatrix}
+\beta_1\\
+\beta_2\\
+\beta_3\\
+\beta_4\\
+\beta_5
+\end{bmatrix}+\boldsymbol\epsilon
+\]</span></p>
+<p>이 종속구조는 이변수 미분연산자와 유사하게 12개의 주변지역을 취하고 대각선 방향의 이웃에 의존한다.</p>
+<p>국소다항식 근사법은 격자의 내부점에서만 유효하기 때문에 경계점에서는 수정이 필요하다는 단점이 있다. 이를 해결하기 위하여 몇 가지 방법이 제시되었지만, 국소다항식적합 사전분포보다는 크로네커곱과 이변수 미분연산자 사전분포가 직관적이고 해석이 쉬워 더 많이 이용된다.</p>
+</section>
+<section id="이변수-벌점의-널공간" class="level3">
+<h3 class="anchored" data-anchor-id="이변수-벌점의-널공간">이변수 벌점의 널공간</h3>
+<p>사전분포 또는 벌점항을 비교하는 것 외에도 벌점 행렬의 널공간을 이해하는 것이 필요하다. 무엇보다 널공간은 어떤 종류의 함수들이 벌점을 받지 않는지 알려주며, 혼합모형에 기반한 추론을 할 때도 중요하게 고려된다. 따라서 여기서 널공간에 대한 기본 설명과 함께, 이후 <a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a>에서의 추론에 필요한 기초지식을 제공하고자 한다.</p>
+<p><a href="#eq-kronecker-K" class="quarto-xref">방정식&nbsp;6</a> 의 벌점항을 가진 텐서곱 벌점 스플라인의 경우, 벌점의 널공간이 일변수 널공간의 텐서곱과 같다는 것을 보일 수 있다. 행과 열에 각각 차수 <span class="math inline">\(d_1\)</span> 과 <span class="math inline">\(d_2\)</span> 의 차분 벌점을 고려한다면, 각 널공간의 일변수 다항식은</p>
+<p><span class="math display">\[
+\beta_{0,1}+\beta_{1,1}s_1+\beta_{2,1}s_1^2+\cdots+\beta_{d_1-1,1}s_1^{d_1-1},\quad \beta_{0,2}+\beta_{1,2}s_2+\beta_{2,2}s_2^2+\cdots+\beta_{d_2-1,2}s_2^{d_2-1}
+\]</span></p>
+<p>로 나타낼 수 있으며, 이들 기저함수의 텐서곱은 두 다항식의 모든 항들의 조합을 고려해야 한다. 예를 들어 행과 열에 각각 1차 차분을 적용하는 경우 널공간은 상수항이고, 이에 해당하는 텐서곱 또한 상수항이다. 2차 차분의 경우 행과 열의 널공간은 선형함수이고, 텐서곱은 <span class="math inline">\(s_1\)</span> 과 <span class="math inline">\(s_2\)</span> 방향의 선형효과와 이들의 상호작용 효과로 생성된 4차원 널공간, 즉</p>
+<p><span class="math display">\[
+\beta_0+\beta_1s_1+\beta_2s_2+\beta_3s_1s_2
+\]</span></p>
+<p>이다. 이 널공간의 기저는 <span class="math inline">\(s_1\)</span> 과 <span class="math inline">\(s_2\)</span> 공간상에서 등간격 값들의 조합으로 구성할 수 있다. 단순한 예로 결합점을 이용하여 기저를 구하면</p>
+<p><span id="eq-nullspace-basis"><span class="math display">\[
+\begin{pmatrix}
+1&amp;\kappa_{1,1} &amp;\kappa_{1,2}&amp;\kappa_{1,1}\cdot\kappa_{1,2}\\
+1&amp;\kappa_{2,1} &amp;\kappa_{1,2}&amp;\kappa_{2,1}\cdot\kappa_{1,2}\\
+\vdots&amp;\vdots&amp;\vdots&amp;\vdots\\
+1&amp;\kappa_{K_1,1} &amp;\kappa_{1,2}&amp;\kappa_{K_1,1}\cdot\kappa_{1,2}\\
+1&amp;\kappa_{1,1} &amp;\kappa_{2,2}&amp;\kappa_{1,1}\cdot\kappa_{2,2}\\
+\vdots&amp;\vdots&amp;\vdots&amp;\vdots\\
+1&amp;\kappa_{K_1,1} &amp;\kappa_{2,2}&amp;\kappa_{K_1,1}\cdot\kappa_{2,2}\\
+\vdots&amp;\vdots&amp;\vdots&amp;\vdots\\
+1&amp;\kappa_{1,1} &amp;\kappa_{K_2,2}&amp;\kappa_{1,1}\cdot\kappa_{K_2,2}\\
+\vdots&amp;\vdots&amp;\vdots&amp;\vdots\\
+1&amp;\kappa_{K_1,1} &amp;\kappa_{K_2,2}&amp;\kappa_{K_1,1}\cdot\kappa_{K_2,2}
+\end{pmatrix}
+\tag{9}\]</span></span></p>
+<p>이고, 여기서 <span class="math inline">\(\kappa_{1,1},\ldots, \kappa_{K_1,1}\)</span> 과 <span class="math inline">\(\kappa_{1,2},\ldots, \kappa_{K_2,2}\)</span> 는 각각 <span class="math inline">\(s_1\)</span> 과 <span class="math inline">\(s_2\)</span> 방향의 결합점들이다.</p>
+<p><a href="#eq-biharmonic-diff" class="quarto-xref">방정식&nbsp;8</a> 의 이변수 미분연산자 근사의 경우, 대각선 방향으로 추가적인 벌점을 부여하기 때문에 널공간은 다음과 같은 3차원 공간이며,</p>
+<p><span class="math display">\[
+\beta_0+\beta_1s_1+\beta_2s_2
+\]</span></p>
+<p>그에 따른 기저는 <a href="#eq-nullspace-basis" class="quarto-xref">방정식&nbsp;9</a> 에서 마지막 열을 제외하여 구한다.</p>
+</section>
+<section id="격자-그리드상의-고차-확률필드" class="level3">
+<h3 class="anchored" data-anchor-id="격자-그리드상의-고차-확률필드">격자 그리드상의 고차 확률필드</h3>
+<p>지리 데이터의 비정형 격자를 다루어야 했기 때문에 지금까지는 바로 이웃한 주변지역에 대해서만 논의를 진행했지만, 공간상에서 고차의 벌점을 적용하는 경우 정규 격자상의 고차 가우스 마코프 확률필드(GMRF)를 생각해 볼 수 있다. 고차 사전분포는 기저함수 접근법에서 벌점으로 기능할 뿐 아니라, 공간함수를 직접 모형화하는 데에도 사용될 수 있다. 일변수의 경우 확률보행 평활화는, 서로 다른 모든 관측점을 결합점으로 갖는 0차 벌점 스플라인의 극단적인 경우로 볼 수 있다.</p>
+<p>유사하게 정규 격자상에 정렬되어 있거나 관측지역을 사각형 모양으로 이산화한 공간데이터를 생각해 보자. 각 관측위치마다 결합점을 하나씩 부여하고, 각 지역에 0차 텐서곱에 해당하는 상수 계수를 할당한다면 공간함수는 <span class="math inline">\(f(k_1,k_2)=\gamma_{k_1k_2}\)</span> 로 단순화된다. 여기에 앞에서 살펴본 사전분포를 공간표면에 부여한다면, 함수값 <span class="math inline">\(\gamma_{k_1k_2}\)</span> 의 정규 격자에 대한 고차 GMRF에 이르게 된다.</p>
+</section>
+<section id="고차-상호작용" class="level3">
+<h3 class="anchored" data-anchor-id="고차-상호작용">고차 상호작용</h3>
+<p>개념적으로 텐서곱 벌점 스플라인은 두 개 이상의 변수 간 상호작용으로 쉽게 확장할 수 있다. 세 변수 간 상호작용 <span class="math inline">\(f(s_1,s_2,s_3)\)</span> 는 세 방향을 따라 기저함수를 배치하고, 삼변수 텐서곱 기저함수를</p>
+<p><span class="math display">\[
+B_{k_1,k_2,k_3}(s_1,s_2,s_3)=B_{k_1}(s_1)B_{k_2}(s_2)B_{k_3}(s_3)
+\]</span></p>
+<p>로 정의하면 다음과 같은 표현식을 얻는다.</p>
+<p><span class="math display">\[
+f(s_1,s_2,s_3)=\sum_{k_1=1}^{K_1}\sum_{k_2=1}^{K_2}\sum_{k_3=1}^{K_3}\gamma_{k_1,k_2,k_3}B_{k_1,k_2,k_3}(s_1,s_2,s_3)
+\]</span></p>
+<p>유사하게 벌점 행렬은</p>
+<p><span class="math display">\[
+\mathbf K=\mathbf I_{K_3}\otimes\mathbf I_{K_2}\otimes\mathbf K_1+\mathbf I_{K_3}\otimes\mathbf K_2\otimes\mathbf I_{K_1}+\mathbf K_3\otimes\mathbf I_{K_2}\otimes\mathbf I_{K_1}
+\]</span></p>
+<p>로 구성되는데, 여기서 <span class="math inline">\(\mathbf K_1,\mathbf K_2, \mathbf K_3\)</span> 는 각각 <span class="math inline">\(s_1,s_2,s_3\)</span> 방향의 일변수 벌점 행렬이다.</p>
+<p>고차의 상호작용을 추정하는 데에는 두 가지 문제점이 있다. 우선 텐서곱 스플라인을 설정할 때 회귀계수의 수가 기하급수적으로 증가한다는 점이다. 일변수 적합을 위하여 20개의 기저함수를 이용하는 경우, 차원 <span class="math inline">\(d\)</span> 에 따라 <span class="math inline">\(20^d\)</span> 개의 회귀계수를 추정해야 한다. 둘째는 차원의 저주로 알려진 문제로, 차원이 증가할수록 동일한 길이의 부분공간에 관측치가 더 희소해져서 기저함수의 추정을 충분히 뒷받침하지 못한다는 점이다. 이러한 이유로 3차 이상의 상호작용을 이용하는 경우는 거의 없다.</p>
+</section>
+</section>
+<section id="다음-글" class="level2">
+<h2 class="anchored" data-anchor-id="다음-글">다음 글</h2>
+<p><a href="../../posts/smoothing/smoothing17.html">다음 글</a>에서는 또 다른 연속 공간 평활화 기법인 방사 기저 평활을 살펴보고, 텐서곱 기저와 비교한다.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

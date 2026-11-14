@@ -81,7 +81,8 @@ ul.task-list li input[type="checkbox"] {
 
     const options = {
       valueNames: ['listing-title','listing-date','listing-reading-time','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
+      page: 25,
+    pagination: { item: "<li class='page-item'><a class='page page-link' href='#'></a></li>" },
       searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
     };
 
@@ -191,7 +192,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(8)</span></div><div class="category" data-category="QmF5ZXNpYW4lMjBub25wYXJhbWV0cmljcw==">Bayesian nonparametrics <span class="quarto-category-count">(2)</span></div><div class="category" data-category="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=">Bayesian smoothing <span class="quarto-category-count">(4)</span></div><div class="category" data-category="RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5">Extreme value theory <span class="quarto-category-count">(2)</span></div><div class="category" data-category="VGltZSUyMHNlcmllcw==">Time series <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(31)</span></div><div class="category" data-category="QWRkaXRpdmUlMjBtb2RlbHM=">Additive models <span class="quarto-category-count">(1)</span></div><div class="category" data-category="QmF5ZXNpYW4lMjBub25wYXJhbWV0cmljcw==">Bayesian nonparametrics <span class="quarto-category-count">(2)</span></div><div class="category" data-category="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=">Bayesian smoothing <span class="quarto-category-count">(22)</span></div><div class="category" data-category="QmVuZm9yZCdzJTIwbGF3">Benford's law <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Qm9vdHN0cmFw">Bootstrap <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Q2hhbmdlJTIwcG9pbnQlMjBkZXRlY3Rpb24=">Change point detection <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RWNvbm9tZXRyaWNz">Econometrics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5">Extreme value theory <span class="quarto-category-count">(3)</span></div><div class="category" data-category="SHlwb3RoZXNpcyUyMHRlc3Rpbmc=">Hypothesis testing <span class="quarto-category-count">(2)</span></div><div class="category" data-category="TWl4ZWQlMjBtb2RlbHM=">Mixed models <span class="quarto-category-count">(5)</span></div><div class="category" data-category="Tm9ucGFyYW1ldHJpYyUyMHN0YXRpc3RpY3M=">Nonparametric statistics <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U3BhdGlhbCUyMHN0YXRpc3RpY3M=">Spatial statistics <span class="quarto-category-count">(7)</span></div><div class="category" data-category="U3BsaW5lcw==">Splines <span class="quarto-category-count">(4)</span></div><div class="category" data-category="VGltZSUyMHNlcmllcw==">Time series <span class="quarto-category-count">(2)</span></div><div class="category" data-category="JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIw">가상자산 <span class="quarto-category-count">(4)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
@@ -210,7 +211,586 @@ window.Quarto = {
     </div>
 </div>
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=" data-listing-date-sort="1664809200000" data-listing-file-modified-sort="1793783069705" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="493">
+<div class="quarto-post image-right" data-index="0" data-categories="JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIwJTJDRWNvbm9tZXRyaWNzJTJDQm9vdHN0cmFw" data-listing-date-sort="1794150000000" data-listing-file-modified-sort="1794228592343" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1013">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/wash-trading-tests/5-did.html" class="no-external">워시 트레이딩 검정법 (5): 이중차분과 와일드 군집 부트스트랩</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIw'); return false;">가상자산</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('RWNvbm9tZXRyaWNz'); return false;">Econometrics</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Qm9vdHN0cmFw'); return false;">Bootstrap</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/wash-trading-tests/5-did.html" class="no-external">
+<p>고정효과 이중차분 모형의 군집 표준오차와, 군집이 적을 때의 와일드 군집 부트스트랩, 평행추세 점검을 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/wash-trading-tests/5-did.html" class="no-external">
+<div class="listing-date">
+Nov 9, 2026
+</div>
+<div class="listing-reading-time">6 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIwJTJDTm9ucGFyYW1ldHJpYyUyMHN0YXRpc3RpY3MlMkNIeXBvdGhlc2lzJTIwdGVzdGluZw==" data-listing-date-sort="1794150000000" data-listing-file-modified-sort="1794229161164" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="13" data-listing-word-count-sort="2481">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/wash-trading-tests/4-rank-tests.html" class="no-external">워시 트레이딩 검정법 (4): 부호순위 검정, 순위합 검정, Holm 보정</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIw'); return false;">가상자산</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Tm9ucGFyYW1ldHJpYyUyMHN0YXRpc3RpY3M='); return false;">Nonparametric statistics</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('SHlwb3RoZXNpcyUyMHRlc3Rpbmc='); return false;">Hypothesis testing</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/wash-trading-tests/4-rank-tests.html" class="no-external">
+<p>Wilcoxon 부호순위 검정과 순위합 검정, Holm 보정의 원리를 정리하고, 34개 종목의 모의 패널로 법 시행 전후 비교와 사건 분석을 처음부터 끝까지 따라가 본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/wash-trading-tests/4-rank-tests.html" class="no-external">
+<div class="listing-date">
+Nov 9, 2026
+</div>
+<div class="listing-reading-time">13 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="2" data-categories="JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIwJTJDQ2hhbmdlJTIwcG9pbnQlMjBkZXRlY3Rpb24=" data-listing-date-sort="1794150000000" data-listing-file-modified-sort="1794228592343" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="776">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/wash-trading-tests/3-pelt.html" class="no-external">워시 트레이딩 검정법 (3): PELT 변화점 탐지와 벌점 보정</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIw'); return false;">가상자산</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('Q2hhbmdlJTIwcG9pbnQlMjBkZXRlY3Rpb24='); return false;">Change point detection</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/wash-trading-tests/3-pelt.html" class="no-external">
+<p>비모수 비용의 PELT로 변화점을 찾고, 시간 순서를 섞은 시계열로 벌점을 검정의 크기처럼 보정하는 방법을 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/wash-trading-tests/3-pelt.html" class="no-external">
+<div class="listing-date">
+Nov 9, 2026
+</div>
+<div class="listing-reading-time">4 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="3" data-categories="JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIwJTJDRXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5" data-listing-date-sort="1794150000000" data-listing-file-modified-sort="1794229161169" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="667">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/wash-trading-tests/2-tail-index.html" class="no-external">워시 트레이딩 검정법 (2): Hill 추정량과 꼬리지수</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('JUVBJUIwJTgwJUVDJTgzJTgxJUVDJTlFJTkwJUVDJTgyJUIw'); return false;">가상자산</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5'); return false;">Extreme value theory</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/wash-trading-tests/2-tail-index.html" class="no-external">
+<p>파레토 꼬리지수의 Hill 최우추정량과 KS 거리에 의한 꼬리 시작점 선택을 모의실험으로 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/wash-trading-tests/2-tail-index.html" class="no-external">
+<div class="listing-date">
+Nov 9, 2026
+</div>
+<div class="listing-reading-time">4 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="4" data-categories="QmVuZm9yZCdzJTIwbGF3JTJDSHlwb3RoZXNpcyUyMHRlc3Rpbmc=" data-listing-date-sort="1794150000000" data-listing-file-modified-sort="1794232259618" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3267">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/benford-test/index.html" class="no-external">벤포드 적합도 검정</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmVuZm9yZCdzJTIwbGF3'); return false;">Benford's law</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('SHlwb3RoZXNpcyUyMHRlc3Rpbmc='); return false;">Hypothesis testing</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/benford-test/index.html" class="no-external">
+<p>벤포드 법칙과 그 성립 조건, 카이제곱 검정·숫자별 Z 검정·MAD로 적합도를 판단하는 방법, 그리고 표본 크기와 종속성이 적합도 판단에 주는 영향을 모의실험으로 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/benford-test/index.html" class="no-external">
+<div class="listing-date">
+Nov 9, 2026
+</div>
+<div class="listing-reading-time">17 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="5" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1666364400000" data-listing-file-modified-sort="1794201445264" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="756">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing20.html" class="no-external">공간가법 회귀분석</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing20.html" class="no-external">
+<p>공간효과를 포함한 가법 회귀모형과 완전 베이즈·경험 베이즈 추론</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing20.html" class="no-external">
+<div class="listing-date">
+Oct 22, 2022
+</div>
+<div class="listing-reading-time">4 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="6" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1666278000000" data-listing-file-modified-sort="1794201412497" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1576">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing19.html" class="no-external">베리오그램과 공분산 모수의 추정</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing19.html" class="no-external">
+<p>베리오그램, 공분산 모수의 추정과 방사 기저 평활로서의 가우스 확률필드</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing19.html" class="no-external">
+<div class="listing-date">
+Oct 21, 2022
+</div>
+<div class="listing-reading-time">8 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="7" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1666191600000" data-listing-file-modified-sort="1794201344718" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2200">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing18.html" class="no-external">정상 가우스 확률필드</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing18.html" class="no-external">
+<p>정상 가우스 확률필드와 상관계수 함수, Bochner 정리와 이방형 상관계수</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing18.html" class="no-external">
+<div class="listing-date">
+Oct 20, 2022
+</div>
+<div class="listing-reading-time">11 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="8" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1666105200000" data-listing-file-modified-sort="1794201254209" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="814">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing17.html" class="no-external">방사 기저 평활</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing17.html" class="no-external">
+<p>방사 기저함수와 공간채우기 알고리즘, 텐서곱 기저와의 비교</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing17.html" class="no-external">
+<div class="listing-date">
+Oct 19, 2022
+</div>
+<div class="listing-reading-time">5 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="9" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1666018800000" data-listing-file-modified-sort="1794201153748" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1708">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing16.html" class="no-external">텐서곱 벌점 스플라인</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing16.html" class="no-external">
+<p>텐서곱 기저와 크로네커곱 벌점을 이용한 연속 공간 평활화</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing16.html" class="no-external">
+<div class="listing-date">
+Oct 18, 2022
+</div>
+<div class="listing-reading-time">9 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="10" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1665932400000" data-listing-file-modified-sort="1794201051871" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="602">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing15.html" class="no-external">가우스 마코프 확률필드</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing15.html" class="no-external">
+<p>자기회귀 가우시안 모형과 가우스 마코프 확률필드(GMRF)</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing15.html" class="no-external">
+<div class="listing-date">
+Oct 17, 2022
+</div>
+<div class="listing-reading-time">4 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="11" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGF0aWFsJTIwc3RhdGlzdGljcw==" data-listing-date-sort="1665846000000" data-listing-file-modified-sort="1794201005195" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1428">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing14.html" class="no-external">공간 평활과 마코프 확률필드</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BhdGlhbCUyMHN0YXRpc3RpY3M='); return false;">Spatial statistics</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing14.html" class="no-external">
+<p>공간 평활화 문제의 설정과 이산 공간에서의 마코프 확률필드</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing14.html" class="no-external">
+<div class="listing-date">
+Oct 16, 2022
+</div>
+<div class="listing-reading-time">8 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="12" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNNaXhlZCUyMG1vZGVscw==" data-listing-date-sort="1665759600000" data-listing-file-modified-sort="1794201154120" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="307">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing13.html" class="no-external">가법혼합모형과 일반가법혼합모형</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('TWl4ZWQlMjBtb2RlbHM='); return false;">Mixed models</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing13.html" class="no-external">
+<p>종단 데이터를 위한 비모수 혼합모형의 기본 형태를 소개한다</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing13.html" class="no-external">
+<div class="listing-date">
+Oct 15, 2022
+</div>
+<div class="listing-reading-time">2 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="13" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNNaXhlZCUyMG1vZGVscw==" data-listing-date-sort="1665673200000" data-listing-file-modified-sort="1794201137432" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="916">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing12.html" class="no-external">유한 혼합모형</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('TWl4ZWQlMjBtb2RlbHM='); return false;">Mixed models</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing12.html" class="no-external">
+<p>비정규 확률효과 사전분포와 유한 혼합모형의 MCMC 추론</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing12.html" class="no-external">
+<div class="listing-date">
+Oct 14, 2022
+</div>
+<div class="listing-reading-time">5 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="14" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNNaXhlZCUyMG1vZGVscw==" data-listing-date-sort="1665586800000" data-listing-file-modified-sort="1794201575336" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="543">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing11.html" class="no-external">선형혼합모형의 베이지안 추론</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('TWl4ZWQlMjBtb2RlbHM='); return false;">Mixed models</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing11.html" class="no-external">
+<p>경험 베이즈와 완전 베이즈 추론, 종단 선형혼합모형의 깁스 샘플링</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing11.html" class="no-external">
+<div class="listing-date">
+Oct 13, 2022
+</div>
+<div class="listing-reading-time">3 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="15" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNNaXhlZCUyMG1vZGVscw==" data-listing-date-sort="1665500400000" data-listing-file-modified-sort="1794201046077" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1066">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing10.html" class="no-external">선형혼합모형의 우도 기반 추론</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('TWl4ZWQlMjBtb2RlbHM='); return false;">Mixed models</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing10.html" class="no-external">
+<p>선형혼합모형의 ML·REML 추정과 가설검정을 정리한다</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing10.html" class="no-external">
+<div class="listing-date">
+Oct 12, 2022
+</div>
+<div class="listing-reading-time">6 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="16" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNNaXhlZCUyMG1vZGVscw==" data-listing-date-sort="1665414000000" data-listing-file-modified-sort="1794200976146" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1434">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing9.html" class="no-external">선형혼합모형</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('TWl4ZWQlMjBtb2RlbHM='); return false;">Mixed models</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing9.html" class="no-external">
+<p>종단 자료의 선형혼합모형과 그 베이지안 표현을 소개한다</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing9.html" class="no-external">
+<div class="listing-date">
+Oct 11, 2022
+</div>
+<div class="listing-reading-time">8 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="17" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNBZGRpdGl2ZSUyMG1vZGVscw==" data-listing-date-sort="1665327600000" data-listing-file-modified-sort="1794201575325" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1459">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing8.html" class="no-external">다변수 가법모형과 백피팅</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('QWRkaXRpdmUlMjBtb2RlbHM='); return false;">Additive models</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing8.html" class="no-external">
+<p>여러 설명변수의 가법모형을 동시 벌점최소자승, 백피팅, 베이지안 백피팅(Gibbs sampler)으로 추정한다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing8.html" class="no-external">
+<div class="listing-date">
+Oct 10, 2022
+</div>
+<div class="listing-reading-time">8 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="18" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGxpbmVz" data-listing-date-sort="1665241200000" data-listing-file-modified-sort="1794201575308" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1650">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing7.html" class="no-external">범주형 관측값 모형과 평활화 스플라인</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BsaW5lcw=='); return false;">Splines</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing7.html" class="no-external">
+<p>범주형 종속변수에 대한 비모수 회귀모형과 적분 벌점을 이용한 평활화 스플라인을 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing7.html" class="no-external">
+<div class="listing-date">
+Oct 9, 2022
+</div>
+<div class="listing-reading-time">9 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="19" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGxpbmVz" data-listing-date-sort="1665154800000" data-listing-file-modified-sort="1794201097750" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="545">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing6.html" class="no-external">비정규분포 관측값의 벌점 스플라인</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BsaW5lcw=='); return false;">Splines</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing6.html" class="no-external">
+<p>지수족 종속변수에 대한 벌점 Fisher scoring과 IWLS 후보분포를 이용한 MH 알고리즘을 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing6.html" class="no-external">
+<div class="listing-date">
+Oct 8, 2022
+</div>
+<div class="listing-reading-time">3 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="20" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGxpbmVz" data-listing-date-sort="1665068400000" data-listing-file-modified-sort="1794201062203" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="663">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing5.html" class="no-external">베이지안 벌점 스플라인</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BsaW5lcw=='); return false;">Splines</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing5.html" class="no-external">
+<p>벌점 스플라인의 벌점을 사전분포로 해석하고 Gibbs sampler와 유효 자유도를 살펴본다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing5.html" class="no-external">
+<div class="listing-date">
+Oct 7, 2022
+</div>
+<div class="listing-reading-time">4 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="21" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNTcGxpbmVz" data-listing-date-sort="1664982000000" data-listing-file-modified-sort="1794201019896" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1414">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing4.html" class="no-external">벌점 스플라인</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('U3BsaW5lcw=='); return false;">Splines</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing4.html" class="no-external">
+<p>다항 스플라인 기저함수와 벌점최소자승 추정으로 비모수 회귀함수를 추정한다.</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing4.html" class="no-external">
+<div class="listing-date">
+Oct 6, 2022
+</div>
+<div class="listing-reading-time">8 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="22" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNUaW1lJTIwc2VyaWVz" data-listing-date-sort="1664895600000" data-listing-file-modified-sort="1794200990662" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="904">
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="./posts/smoothing/smoothing3.html" class="no-external">시계열 평활 모형의 확장과 비정규 관측값</a>
+</h3>
+<div class="listing-categories">
+
+<div class="listing-category" onclick="window.quartoListingCategory('QmF5ZXNpYW4lMjBzbW9vdGhpbmc='); return false;">Bayesian smoothing</div>
+
+<div class="listing-category" onclick="window.quartoListingCategory('VGltZSUyMHNlcmllcw=='); return false;">Time series</div>
+
+</div>
+<div class="delink listing-description"><a href="./posts/smoothing/smoothing3.html" class="no-external">
+<p>시계열 평활 모형의 여러 확장과 이항·포아송 관측값에 대한 평활</p>
+</a></div>
+</div>
+<div class="metadata">
+<a href="./posts/smoothing/smoothing3.html" class="no-external">
+<div class="listing-date">
+Oct 5, 2022
+</div>
+<div class="listing-reading-time">5 min</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="23" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=" data-listing-date-sort="1664809200000" data-listing-file-modified-sort="1794200945289" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="495">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/smoothing/smoothing2.html" class="no-external">베이지안 평활기법</a>
@@ -221,7 +801,7 @@ window.Quarto = {
 
 </div>
 <div class="delink listing-description"><a href="./posts/smoothing/smoothing2.html" class="no-external">
-<p>Bayesian smoothing 기법에 대한 소개</p>
+<p>확률보행 사전분포를 이용한 베이지안 시계열 평활과 PLS 추정량의 관계</p>
 </a></div>
 </div>
 <div class="metadata">
@@ -233,7 +813,7 @@ Oct 4, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNUaW1lJTIwc2VyaWVz" data-listing-date-sort="1664722800000" data-listing-file-modified-sort="1793783069705" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="603">
+<div class="quarto-post image-right" data-index="24" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmclMkNUaW1lJTIwc2VyaWVz" data-listing-date-sort="1664722800000" data-listing-file-modified-sort="1794200917865" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="598">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/smoothing/smoothing1.html" class="no-external">평활화 기법 소개</a>
@@ -246,7 +826,7 @@ Oct 4, 2022
 
 </div>
 <div class="delink listing-description"><a href="./posts/smoothing/smoothing1.html" class="no-external">
-<p>평활화 기법을 연재하며</p>
+<p>벌점최소제곱 기준을 이용한 전통적인 시계열 평활기법</p>
 </a></div>
 </div>
 <div class="metadata">
@@ -254,11 +834,11 @@ Oct 4, 2022
 <div class="listing-date">
 Oct 3, 2022
 </div>
-<div class="listing-reading-time">4 min</div>
+<div class="listing-reading-time">3 min</div>
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="QmF5ZXNpYW4lMjBub25wYXJhbWV0cmljcw==" data-listing-date-sort="1641567600000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="435">
+<div class="quarto-post image-right" data-index="25" data-categories="QmF5ZXNpYW4lMjBub25wYXJhbWV0cmljcw==" data-listing-date-sort="1641567600000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="435">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/thesis-background/6-bernstein-polynomials.html" class="no-external">비모수 베이즈 (2): 랜덤 번스타인 다항식</a>
@@ -281,7 +861,7 @@ Jan 8, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="QmF5ZXNpYW4lMjBub25wYXJhbWV0cmljcw==" data-listing-date-sort="1641481200000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1372">
+<div class="quarto-post image-right" data-index="26" data-categories="QmF5ZXNpYW4lMjBub25wYXJhbWV0cmljcw==" data-listing-date-sort="1641481200000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1372">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/thesis-background/5-dirichlet-process-mixtures.html" class="no-external">비모수 베이즈 (1): 디리클레 과정 혼합</a>
@@ -304,7 +884,7 @@ Jan 7, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=" data-listing-date-sort="1641394800000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="596">
+<div class="quarto-post image-right" data-index="27" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=" data-listing-date-sort="1641394800000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="596">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/thesis-background/4-bayesian-gam.html" class="no-external">베이지안 평활 (2): 일반화 가법모형으로의 확장</a>
@@ -327,7 +907,7 @@ Jan 6, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=" data-listing-date-sort="1641135600000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="918">
+<div class="quarto-post image-right" data-index="28" data-categories="QmF5ZXNpYW4lMjBzbW9vdGhpbmc=" data-listing-date-sort="1641135600000" data-listing-file-modified-sort="1794149491936" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="918">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/thesis-background/3-bayesian-psplines.html" class="no-external">베이지안 평활 (1): 베이지안 P-스플라인</a>
@@ -350,7 +930,7 @@ Jan 3, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5" data-listing-date-sort="1640962800000" data-listing-file-modified-sort="1794149491935" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1124">
+<div class="quarto-post image-right" data-index="29" data-categories="RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5" data-listing-date-sort="1640962800000" data-listing-file-modified-sort="1794149491935" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1124">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/thesis-background/2-multivariate-extremes.html" class="no-external">극단값 이론 (2): 다변량 극단값</a>
@@ -373,7 +953,7 @@ Jan 1, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5" data-listing-date-sort="1640962800000" data-listing-file-modified-sort="1794149491935" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1612">
+<div class="quarto-post image-right" data-index="30" data-categories="RXh0cmVtZSUyMHZhbHVlJTIwdGhlb3J5" data-listing-date-sort="1640962800000" data-listing-file-modified-sort="1794149491935" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="9" data-listing-word-count-sort="1612">
 <div class="body">
 <h3 class="no-anchor listing-title">
 <a href="./posts/thesis-background/1-univariate-extremes.html" class="no-external">극단값 이론 (1): 일변량 극단값</a>
@@ -398,6 +978,9 @@ Jan 1, 2022
 </div>
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
+<nav id="listing-pagination" class="listing-pagination" aria-label="Page Navigation">
+  <ul class="pagination"></ul>
+</nav>
 </div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {

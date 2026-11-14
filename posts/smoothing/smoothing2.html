@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.8.27">
@@ -7,8 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Junho Lee">
-<meta name="dcterms.date" content="2022-10-04">
-<meta name="description" content="Bayesian smoothing 기법에 대한 소개">
+<meta name="description" content="확률보행 사전분포를 이용한 베이지안 시계열 평활과 PLS 추정량의 관계">
 
 <title>베이지안 평활기법 – Practical Bayesian Extremist</title>
 <style>
@@ -58,17 +57,17 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
   }
 }</script>
 
@@ -116,8 +115,8 @@ window.Quarto = {
     <span class="navbar-title">Practical Bayesian Extremist</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -164,7 +163,7 @@ window.Quarto = {
       <h1 class="title">베이지안 평활기법</h1>
                   <div>
         <div class="description">
-          Bayesian smoothing 기법에 대한 소개
+          확률보행 사전분포를 이용한 베이지안 시계열 평활과 PLS 추정량의 관계
         </div>
       </div>
                           <div class="quarto-categories">
@@ -177,16 +176,16 @@ window.Quarto = {
   <div class="quarto-title-meta">
 
       <div>
-      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-heading">저자</div>
       <div class="quarto-title-meta-contents">
                <p>Junho Lee </p>
             </div>
     </div>
       
       <div>
-      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-heading">공개</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">October 4, 2022</p>
+        <p class="date">2022년 10월 4일</p>
       </div>
     </div>
     
@@ -197,8 +196,18 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#관측모형과-우도함수" id="toc-관측모형과-우도함수" class="nav-link active" data-scroll-target="#관측모형과-우도함수">관측모형과 우도함수</a></li>
+  <li><a href="#확률보행-사전분포" id="toc-확률보행-사전분포" class="nav-link" data-scroll-target="#확률보행-사전분포">확률보행 사전분포</a></li>
+  <li><a href="#사후분포" id="toc-사후분포" class="nav-link" data-scroll-target="#사후분포">사후분포</a></li>
+  <li><a href="#pls-추정량과의-비교" id="toc-pls-추정량과의-비교" class="nav-link" data-scroll-target="#pls-추정량과의-비교">PLS 추정량과의 비교</a></li>
+  <li><a href="#다음-글" id="toc-다음-글" class="nav-link" data-scroll-target="#다음-글">다음 글</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
@@ -207,49 +216,130 @@ window.Quarto = {
 
 
 
-<section id="베이지안-평활기법" class="level4">
-<h4 class="anchored" data-anchor-id="베이지안-평활기법">2. 베이지안 평활기법</h4>
-<p>이제 시계열 자료에 대한 베이지안 입장에서 평활화에 대하여 살펴보자. 마찬가지로 시계열 자료에 내재된 추세를 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span> 라 하고, 정규분포 관측모형을 가정하면 관측값 <span class="math inline">\(\mathbf y\)</span> 는 가우스 조건부 확률분포, <span class="math display">\[
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 베이지안 평활기법 — 전체 목차
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>제1장 평활기법과 비모수 회귀분석의 기본 개념</strong></p>
+<ol type="1">
+<li><a href="../../posts/smoothing/smoothing1.html">평활화 기법 소개</a></li>
+<li><a href="../../posts/smoothing/smoothing2.html">베이지안 평활기법</a></li>
+<li><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a></li>
+<li><a href="../../posts/smoothing/smoothing4.html">벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing5.html">베이지안 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing6.html">비정규분포 관측값의 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing7.html">범주형 관측값 모형과 평활화 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a></li>
+</ol>
+<p><strong>제2장 선형혼합모형</strong></p>
+<ol start="9" type="1">
+<li><a href="../../posts/smoothing/smoothing9.html">선형혼합모형</a></li>
+<li><a href="../../posts/smoothing/smoothing10.html">선형혼합모형의 우도 기반 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing11.html">선형혼합모형의 베이지안 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing12.html">유한 혼합모형</a></li>
+</ol>
+<p><strong>제3장 종단 데이터를 위한 비모수 혼합모형</strong></p>
+<ol start="13" type="1">
+<li><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a></li>
+</ol>
+<p><strong>제4장 공간 평활화와 공간가법 회귀모형</strong></p>
+<ol start="14" type="1">
+<li><a href="../../posts/smoothing/smoothing14.html">공간 평활과 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing15.html">가우스 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing16.html">텐서곱 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing17.html">방사 기저 평활</a></li>
+<li><a href="../../posts/smoothing/smoothing18.html">정상 가우스 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing19.html">베리오그램과 공분산 모수의 추정</a></li>
+<li><a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p><a href="../../posts/smoothing/smoothing1.html">앞 글</a>에서는 벌점최소제곱(PLS) 기준으로 시계열의 추세를 추정하는 전통적 평활기법을 살펴보았다. 이번 글에서는 같은 문제를 베이지안 입장에서 다루고, 추세에 확률보행 사전분포를 부여하여 얻은 사후분포가 PLS 추정량과 어떤 관계에 있는지 살펴본다.</p>
+<section id="관측모형과-우도함수" class="level2">
+<h2 class="anchored" data-anchor-id="관측모형과-우도함수">관측모형과 우도함수</h2>
+<p>앞 글과 마찬가지로 시계열 자료에 내재된 추세를 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span>라 하고 정규분포 관측모형을 가정하면, 관측값 <span class="math inline">\(\mathbf y\)</span>는 다음의 조건부 가우스 분포를 따른다.</p>
+<p><span class="math display">\[
 \mathbf y \mid \boldsymbol \mu \sim N(\boldsymbol\mu, \sigma^2\mathbf I)
-\]</span> 를 따른다. 여기서 일단 <span class="math inline">\(\sigma^2\)</span> 가 알려져 있다고 가정하면, 관측치의 우도함수는 다음과 같다. <span class="math display">\[
-p(\mathbf y\mid \boldsymbol\mu)\propto \exp\left\{-\frac{1}{2\sigma^2}(\mathbf y-\boldsymbol \mu)'(\mathbf y-\boldsymbol\mu)\right\}.
 \]</span></p>
-<p>이제 <span class="math inline">\(\boldsymbol\mu\)</span> 에 대하여 사전분포 <span class="math inline">\(p(\boldsymbol\mu)\)</span> 를 부여하는 방법에 대하여 알아보자. 2차 확률보행의 경우 <span class="math inline">\(\mu_t\)</span> 의 사전분포는 <span class="math display">\[
-\mu_t=2\mu_{t-1}-\mu_{t-2}+u_t, \quad u_t\sim N(0,\tau^2),\quad t=3,\ldots,T.
-\]</span> 여기서 <span class="math inline">\(u_t\)</span> 는 분산이 <span class="math inline">\(\tau^2\)</span> 인 가우스 분포를 나타낸다. 초기값 <span class="math inline">\(\mu_1\)</span> 과 <span class="math inline">\(\mu_2\)</span> 에 대해서는 별도의 사전분포를 부여해야 하는데 우리는 각각 다음과 같이 가우스 분포를 부여한다. <span class="math display">\[
-(\mu_1,\mu_2)\sim N(0,c\mathbf I_2)
-\]</span> 위 초기값에 해당하는 사전분포는 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span> 에 대한 정칙(proper) 결합 가우스 분포를 얻게 해주며, 확률보행 사전분포의 오차항과 독립이다. 또한 <span class="math inline">\(c\to\infty\)</span> 이면, 위 사전분포는 평탄한 비정칙(improper) 분포, 즉 <span class="math display">\[
+<p>일단 <span class="math inline">\(\sigma^2\)</span>이 알려져 있다고 가정하면 관측값의 우도함수는 다음과 같다.</p>
+<p><span id="eq-lik"><span class="math display">\[
+p(\mathbf y\mid \boldsymbol\mu)\propto \exp\left\{-\frac{1}{2\sigma^2}(\mathbf y-\boldsymbol \mu)^{\top}(\mathbf y-\boldsymbol\mu)\right\}
+\tag{1}\]</span></span></p>
+</section>
+<section id="확률보행-사전분포" class="level2">
+<h2 class="anchored" data-anchor-id="확률보행-사전분포">확률보행 사전분포</h2>
+<p>이제 <span class="math inline">\(\boldsymbol\mu\)</span>에 사전분포 <span class="math inline">\(p(\boldsymbol\mu)\)</span>를 부여하는 방법을 알아보자. 2차 확률보행(second-order random walk)의 경우 <span class="math inline">\(\mu_t\)</span>의 사전분포는 다음과 같다.</p>
+<p><span id="eq-rw2"><span class="math display">\[
+\mu_t=2\mu_{t-1}-\mu_{t-2}+u_t, \quad u_t\sim N(0,\tau^2),\quad t=3,\ldots,T
+\tag{2}\]</span></span></p>
+<p>여기서 <span class="math inline">\(u_t\)</span>는 분산이 <span class="math inline">\(\tau^2\)</span>인 가우스 오차항이다. 초기값 <span class="math inline">\(\mu_1\)</span>과 <span class="math inline">\(\mu_2\)</span>에는 별도의 사전분포를 부여해야 하는데, 여기서는 다음과 같은 가우스 분포를 부여한다.</p>
+<p><span class="math display">\[
+(\mu_1,\mu_2)^{\top}\sim N(\mathbf 0,c\,\mathbf I_2)
+\]</span></p>
+<p>초기값에 대한 이 사전분포는 확률보행의 오차항과 독립이며, 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span>에 대한 정칙(proper) 결합 가우스 분포를 준다. 또한 <span class="math inline">\(c\to\infty\)</span>이면 위 사전분포는 평탄한 비정칙(improper) 분포, 즉</p>
+<p><span class="math display">\[
 p(\mu_1)\propto \text{상수},\quad  p(\mu_2)\propto \text{상수}
-\]</span> 가 되는데 이 경우 <span class="math inline">\(\boldsymbol\mu\)</span> 의 결합 사전분포는 부분적으로 비정칙인(partially improper) 가우스 분포이다.</p>
-<p>초기값 <span class="math inline">\(\mu_1\)</span> 과 <span class="math inline">\(\mu_2\)</span> 에 대하여 평탄한 사전분포를 가정하고, 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span> 에 대한 결합 가우스 사전분포를 정리하면 <span class="math display">\[
-p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu'\mathbf K \boldsymbol \mu\right)
 \]</span></p>
-<p>이고, 여기서 <span class="math inline">\(\mathbf K=\mathbf K_2\)</span> 는 랭크가 <span class="math inline">\(T-2\)</span> 인 벌점행렬이다. 즉, 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span> 의 결합 사전분포는 정밀도 행렬이 <span class="math inline">\(\mathbf K_2/\tau^2\)</span>이고, 특이 가우스 분포를 갖는다. 빈도주의 입장에서 벌점항은 베이지언 입장에서 음의 로그 사전분포와 (상수항 부분을 제외하고) 동일하다는 것을 알 수 있다.</p>
-<p>확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span> 의 사후분포는 베이즈 법칙으로부터 다음과 같이 도출한다. <span class="math display">\[
+<p>가 되는데, 이 경우 <span class="math inline">\(\boldsymbol\mu\)</span>의 결합 사전분포는 부분적으로 비정칙인(partially improper) 가우스 분포가 된다.</p>
+<p>초기값 <span class="math inline">\(\mu_1\)</span>과 <span class="math inline">\(\mu_2\)</span>에 평탄한 사전분포를 가정하고 확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span>의 결합 가우스 사전분포를 정리하면</p>
+<p><span id="eq-prior"><span class="math display">\[
+p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu^{\top}\mathbf K \boldsymbol \mu\right)
+\tag{3}\]</span></span></p>
+<p>이다. 여기서 <span class="math inline">\(\mathbf K=\mathbf K_2\)</span>는 랭크가 <span class="math inline">\(T-2\)</span>인 2차 벌점행렬이다. 즉, <span class="math inline">\(\boldsymbol\mu\)</span>의 결합 사전분포는 정밀도 행렬이 <span class="math inline">\(\mathbf K_2/\tau^2\)</span>인 특이(singular) 가우스 분포이다. 이로부터 빈도주의 입장의 벌점항이 베이지안 입장의 음의 로그 사전분포와 (상수항을 제외하면) 같다는 것을 알 수 있다.</p>
+</section>
+<section id="사후분포" class="level2">
+<h2 class="anchored" data-anchor-id="사후분포">사후분포</h2>
+<p>확률벡터 <span class="math inline">\(\boldsymbol\mu\)</span>의 사후분포는 베이즈 법칙으로부터 다음과 같이 얻는다.</p>
+<p><span class="math display">\[
 p(\boldsymbol\mu\mid \mathbf y)=\frac{p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)}{p(\mathbf y)}\propto p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)
 \]</span></p>
-<p>사후분포 <span class="math inline">\(p(\boldsymbol\mu\mid \mathbf y)\)</span> 의 특징은 다음과 같다.</p>
+<p>사후분포 <span class="math inline">\(p(\boldsymbol\mu\mid \mathbf y)\)</span>의 특징은 다음과 같다.</p>
 <ol type="1">
-<li><p>두 분포 <span class="math inline">\(p(\mathbf y\mid \boldsymbol\mu)\)</span> 과 <span class="math inline">\(p(\boldsymbol\mu)\)</span> 가 가우스 분포이기 때문에 사후분포 또한 가우스 분포를 갖는다. 따라서 그 특징을 사후분포의 기대값 <span class="math inline">\(E(\boldsymbol\mu\mid \mathbf y)\)</span>과 공분산 행렬 <span class="math inline">\(Cov(\boldsymbol\mu\mid \mathbf y)\)</span> 만으로 묘사할 수 있다.</p></li>
-<li><p>사후분포의 기대값과 최빈값 (mode) 는 로그사후분포를 극대화하는 값이다. 즉, 가우스분포로부터 <span class="math display">\[
-\log p(\boldsymbol\mu\mid \mathbf y)=\log p(\mathbf y\mid \boldsymbol\mu)+\log p(\boldsymbol\mu)
+<li><p><span class="math inline">\(p(\mathbf y\mid \boldsymbol\mu)\)</span>와 <span class="math inline">\(p(\boldsymbol\mu)\)</span>가 모두 가우스 분포이므로 사후분포도 가우스 분포이다. 따라서 사후분포는 기대값 <span class="math inline">\(E(\boldsymbol\mu\mid \mathbf y)\)</span>와 공분산 행렬 <span class="math inline">\(\text{Cov}(\boldsymbol\mu\mid \mathbf y)\)</span>만으로 완전히 기술된다.</p></li>
+<li><p>가우스 분포이므로 사후분포의 기대값과 최빈값(mode)은 같으며, 이는 다음 로그 사후분포를 최대화하는 값이다.</p>
+<p><span class="math display">\[
+\log p(\boldsymbol\mu\mid \mathbf y)=\log p(\mathbf y\mid \boldsymbol\mu)+\log p(\boldsymbol\mu)+\text{상수}
 \]</span></p></li>
-<li><p>조건부 독립성 가정과 초기값에 대하여 평탄 사전분포를 가정하면 사후 최빈값은 다음 식을 최소화하는 <span class="math inline">\(\boldsymbol\mu^*\)</span> 값이다. <span class="math display">\[
-\boldsymbol\mu^*=\arg\min_{\boldsymbol\mu}\frac{1}{\sigma^2}\sum_{t=1}^T (y_t-\mu_t)^2+\frac{1}{\tau^2}\sum_{t=3}^T (\mu_t-2\mu_{t-1}+\mu_{t-2})^2
+<li><p>조건부 독립성과 초기값에 대한 평탄 사전분포를 가정하면, 사후 최빈값은 다음 식을 최소화하는 <span class="math inline">\(\boldsymbol\mu^*\)</span>이다.</p>
+<p><span class="math display">\[
+\boldsymbol\mu^*=\arg\min_{\boldsymbol\mu}\;\frac{1}{\sigma^2}\sum_{t=1}^T (y_t-\mu_t)^2+\frac{1}{\tau^2}\sum_{t=3}^T (\mu_t-2\mu_{t-1}+\mu_{t-2})^2
 \]</span></p></li>
-<li><p>평활화 파라미터 <span class="math inline">\(\tau^2\)</span> 와 분산 <span class="math inline">\(\sigma^2\)</span> 의 비율 <span class="math inline">\(\lambda=\sigma^2/\tau^2\)</span> 를 정의하면 <span class="math inline">\(\hat{\boldsymbol\mu}_{PLS}\)</span>와 <span class="math inline">\(\boldsymbol\mu^*\)</span>은 동일하다.</p></li>
+<li><p>분산 <span class="math inline">\(\sigma^2\)</span>과 평활화 파라미터 <span class="math inline">\(\tau^2\)</span>의 비율을 <span class="math inline">\(\lambda=\sigma^2/\tau^2\)</span>로 정의하면 <span class="math inline">\(\hat{\boldsymbol\mu}_{\text{PLS}}\)</span>와 <span class="math inline">\(\boldsymbol\mu^*\)</span>는 동일하다.</p></li>
 </ol>
-<p>베이지안 접근법을 PLS 추정량과 비교하면 베이지안의 <span class="math inline">\(p(\boldsymbol\mu\mid \mathbf y)\)</span> 사후분포가 아래와 같이 가우스분포로 귀결됨에 따라 <span class="math display">\[
-\begin{align}
-p(\boldsymbol\mu\mid \mathbf y)&amp;\propto p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\sigma^2}(\mathbf y-\boldsymbol\mu)'(\mathbf y-\boldsymbol\mu)\right)\exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu'\mathbf K\boldsymbol\mu\right)\\
-&amp;\propto \exp\left(-\frac{1}{2}(\boldsymbol\mu-(\mathbf I +\lambda\mathbf K )^{-1}\mathbf y)'\frac{1}{\sigma^2}(\mathbf I +\lambda\mathbf K)(\boldsymbol\mu-(\mathbf I +\lambda\mathbf K )^{-1}\mathbf y) \right)\\
-&amp;\Rightarrow\quad  \boldsymbol\mu\mid \mathbf y \sim N((\mathbf I +\lambda\mathbf K)^{-1}\mathbf y,\sigma^2(\mathbf I +\lambda\mathbf K)^{-1})
-\end{align}
-\]</span> PLS 추정량은 사후분포의 최빈값 및 기대값 <span class="math inline">\(E(\boldsymbol\mu\mid \mathbf y)\)</span> 과 일치한다. 또한 이 결과는 어떤 임의의 <span class="math inline">\(d\)</span> 차 확률보행 사전분포에 대해서도 성립하므로 벌점행렬 <span class="math inline">\(\mathbf K\)</span> 에 대해서도 유효하게 성립한다. 하지만, <span class="math inline">\(p(\boldsymbol\mu\mid \mathbf y)\)</span> 사후분포의 공분산 행렬은 PLS 추정량의 공분산과 다르다. 즉, <span class="math display">\[
-Cov(\hat{\boldsymbol\mu})=\sigma^2(\mathbf I +\lambda\mathbf K)^{-2}\neq\sigma^2(\mathbf I +\lambda\mathbf K)^{-1}=Cov(\boldsymbol\mu\mid \mathbf y)
-\]</span> 두 공분산의 차이는 양의 준정부호(positive semi-definite)인데, 이런 의미에서 사후분포의 공분산이 PLS 추정량의 공분산보다 크다고 할 수 있다. <span class="math display">\[
-Cov(\boldsymbol\mu\mid \mathbf y) - Cov(\hat{\boldsymbol\mu})=Cov(\boldsymbol\mu\mid \mathbf y) (\mathbf I -(\mathbf I +\lambda\mathbf K)^{-1})
-\]</span> 하지만, 위와 같은 전통적 PLS 추정량과 베이지안 접근법의 동일한 결과는 오직 점추정치에 한하여 성립할 뿐, 통계적 추정량의 측면에서는 전혀 다르다.</p>
+</section>
+<section id="pls-추정량과의-비교" class="level2">
+<h2 class="anchored" data-anchor-id="pls-추정량과의-비교">PLS 추정량과의 비교</h2>
+<p>베이지안 접근법을 PLS 추정량과 비교해 보자. 사후분포 <span class="math inline">\(p(\boldsymbol\mu\mid \mathbf y)\)</span>를 정리하면 다음과 같이 가우스 분포가 된다.</p>
+<p><span id="eq-posterior"><span class="math display">\[
+\begin{aligned}
+p(\boldsymbol\mu\mid \mathbf y)&amp;\propto p(\mathbf y\mid \boldsymbol\mu)p(\boldsymbol\mu)\propto \exp\left(-\frac{1}{2\sigma^2}(\mathbf y-\boldsymbol\mu)^{\top}(\mathbf y-\boldsymbol\mu)\right)\exp\left(-\frac{1}{2\tau^2}\boldsymbol\mu^{\top}\mathbf K\boldsymbol\mu\right)\\
+&amp;\propto \exp\left(-\frac{1}{2}\left(\boldsymbol\mu-(\mathbf I +\lambda\mathbf K )^{-1}\mathbf y\right)^{\top}\frac{1}{\sigma^2}(\mathbf I +\lambda\mathbf K)\left(\boldsymbol\mu-(\mathbf I +\lambda\mathbf K )^{-1}\mathbf y\right) \right)\\
+&amp;\Rightarrow\quad  \boldsymbol\mu\mid \mathbf y \sim N\left((\mathbf I +\lambda\mathbf K)^{-1}\mathbf y,\;\sigma^2(\mathbf I +\lambda\mathbf K)^{-1}\right)
+\end{aligned}
+\tag{4}\]</span></span></p>
+<p>따라서 빈도주의 방법인 PLS 추정량은 사후분포의 최빈값, 곧 사후 기대값 <span class="math inline">\(E(\boldsymbol\mu\mid \mathbf y)\)</span>와 일치한다. 이 결과는 임의의 <span class="math inline">\(d\)</span>차 확률보행 사전분포, 즉 그에 대응하는 벌점행렬 <span class="math inline">\(\mathbf K=\mathbf K_d\)</span>에 대해서도 성립한다.</p>
+<p>하지만 PLS 추정량의 공분산과 사후분포 <span class="math inline">\(p(\boldsymbol\mu\mid \mathbf y)\)</span>의 공분산 행렬은 서로 다르다. 즉,</p>
+<p><span class="math display">\[
+\text{Cov}(\hat{\boldsymbol\mu})=\sigma^2(\mathbf I +\lambda\mathbf K)^{-2}\neq\sigma^2(\mathbf I +\lambda\mathbf K)^{-1}=\text{Cov}(\boldsymbol\mu\mid \mathbf y)
+\]</span></p>
+<p>두 공분산의 차이</p>
+<p><span class="math display">\[
+\text{Cov}(\boldsymbol\mu\mid \mathbf y) - \text{Cov}(\hat{\boldsymbol\mu})=\text{Cov}(\boldsymbol\mu\mid \mathbf y) \left(\mathbf I -(\mathbf I +\lambda\mathbf K)^{-1}\right)
+\]</span></p>
+<p>는 양의 준정부호(positive semi-definite) 행렬이며, 이런 의미에서 사후분포의 공분산이 PLS 추정량의 공분산보다 크다고 할 수 있다. 결국 전통적 PLS 추정량과 베이지안 접근법이 같은 결과를 주는 것은 점추정치에 한해서일 뿐, 추정량의 통계적 성질 측면에서는 전혀 다르다.</p>
+</section>
+<section id="다음-글" class="level2">
+<h2 class="anchored" data-anchor-id="다음-글">다음 글</h2>
+<p><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a>에서는 평활화 파라미터의 추정, 계절효과, 상관된 오차, 국소적응 평활 등 모형의 확장과 비정규 관측값 모형을 다룬다.</p>
 
 
 </section>
@@ -280,12 +370,12 @@ Cov(\boldsymbol\mu\mid \mathbf y) - Cov(\hat{\boldsymbol\mu})=Cov(\boldsymbol\mu
       // flash "checked"
       button.classList.add('code-copy-button-checked');
       var currentTitle = button.getAttribute("title");
-      button.setAttribute("title", "Copied!");
+      button.setAttribute("title", "복사완료!");
       let tooltip;
       if (window.bootstrap) {
         button.setAttribute("data-bs-toggle", "tooltip");
         button.setAttribute("data-bs-placement", "left");
-        button.setAttribute("data-bs-title", "Copied!");
+        button.setAttribute("data-bs-title", "복사완료!");
         tooltip = new bootstrap.Tooltip(button, 
           { trigger: "manual", 
             customClass: "code-copy-button-tooltip",

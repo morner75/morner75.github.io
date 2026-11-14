@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="벤포드 법칙과 그 성립 조건, 카이제곱 검정·숫자별 Z 검정·MAD로 적합도를 판단하는 방법, 그리고 표본 크기와 종속성이 적합도 판단에 주는 영향을 모의실험으로 살펴본다.">
+
+<title>벤포드 적합도 검정 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">벤포드 적합도 검정</h1>
+                  <div>
+        <div class="description">
+          벤포드 법칙과 그 성립 조건, 카이제곱 검정·숫자별 Z 검정·MAD로 적합도를 판단하는 방법, 그리고 표본 크기와 종속성이 적합도 판단에 주는 영향을 모의실험으로 살펴본다.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Benford's law</div>
+                <div class="quarto-category">Hypothesis testing</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2026년 11월 9일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#벤포드-법칙" id="toc-벤포드-법칙" class="nav-link active" data-scroll-target="#벤포드-법칙">벤포드 법칙</a>
+  <ul class="collapse">
+  <li><a href="#첫-자리와-둘째-자리의-분포" id="toc-첫-자리와-둘째-자리의-분포" class="nav-link" data-scroll-target="#첫-자리와-둘째-자리의-분포">첫 자리와 둘째 자리의 분포</a></li>
+  <li><a href="#왜-성립하는가" id="toc-왜-성립하는가" class="nav-link" data-scroll-target="#왜-성립하는가">왜 성립하는가</a></li>
+  <li><a href="#세-가지-예시-자료" id="toc-세-가지-예시-자료" class="nav-link" data-scroll-target="#세-가지-예시-자료">세 가지 예시 자료</a></li>
+  </ul></li>
+  <li><a href="#적합도를-판단하는-세-가지-방법" id="toc-적합도를-판단하는-세-가지-방법" class="nav-link" data-scroll-target="#적합도를-판단하는-세-가지-방법">적합도를 판단하는 세 가지 방법</a>
+  <ul class="collapse">
+  <li><a href="#카이제곱-적합도-검정" id="toc-카이제곱-적합도-검정" class="nav-link" data-scroll-target="#카이제곱-적합도-검정">카이제곱 적합도 검정</a></li>
+  <li><a href="#숫자별-z-검정" id="toc-숫자별-z-검정" class="nav-link" data-scroll-target="#숫자별-z-검정">숫자별 Z 검정</a></li>
+  <li><a href="#평균절대편차mad" id="toc-평균절대편차mad" class="nav-link" data-scroll-target="#평균절대편차mad">평균절대편차(MAD)</a></li>
+  </ul></li>
+  <li><a href="#표본-크기의-함정" id="toc-표본-크기의-함정" class="nav-link" data-scroll-target="#표본-크기의-함정">표본 크기의 함정</a>
+  <ul class="collapse">
+  <li><a href="#카이제곱-검정은-표본이-크면-무엇이든-기각한다" id="toc-카이제곱-검정은-표본이-크면-무엇이든-기각한다" class="nav-link" data-scroll-target="#카이제곱-검정은-표본이-크면-무엇이든-기각한다">카이제곱 검정은 표본이 크면 무엇이든 기각한다</a></li>
+  <li><a href="#mad는-표본이-작으면-커진다" id="toc-mad는-표본이-작으면-커진다" class="nav-link" data-scroll-target="#mad는-표본이-작으면-커진다">MAD는 표본이 작으면 커진다</a></li>
+  </ul></li>
+  <li><a href="#관측치가-독립이-아닐-때" id="toc-관측치가-독립이-아닐-때" class="nav-link" data-scroll-target="#관측치가-독립이-아닐-때">관측치가 독립이 아닐 때</a></li>
+  <li><a href="#정리" id="toc-정리" class="nav-link" data-scroll-target="#정리">정리</a></li>
+  <li><a href="#참고문헌" id="toc-참고문헌" class="nav-link" data-scroll-target="#참고문헌">참고문헌</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>회계 장부의 금액, 도시의 인구, 강의 길이, 주식 거래량처럼 여러 자릿수에 걸쳐 퍼져 있는 수치를 모아 첫 자리 숫자를 세어 보면, 1이 전체의 약 30%를 차지하고 9는 5%도 되지 않는다. 이 규칙을 <strong>벤포드 법칙</strong>(Benford’s law)이라 한다. 자연스럽게 생성된 자료는 이 법칙을 따르는 경우가 많고, 사람이 꾸며 내거나 기계적으로 만든 숫자는 벗어나는 경향이 있어 회계 감사, 선거 자료, 거시경제 통계, 금융시장의 이상 거래 탐지 등에 널리 쓰인다.</p>
+<p>이 글에서는 벤포드 법칙과 그 성립 조건을 정리하고, 자료가 벤포드 분포를 따르는지 판단하는 세 가지 방법(카이제곱 검정, 숫자별 Z 검정, MAD)을 살펴본다. 이어서 실무에서 자주 부딪히는 두 가지 문제, 즉 <strong>표본 크기</strong>와 <strong>관측치 간 종속성</strong>이 적합도 판단을 어떻게 왜곡하는지 모의실험으로 확인한다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1938</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>col_main <span class="ot">&lt;-</span> <span class="st">"#325d88"</span>; col_alt <span class="ot">&lt;-</span> <span class="st">"#d9822b"</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>P <span class="ot">&lt;-</span> <span class="fu">log10</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>))                                   <span class="co"># 벤포드 첫 자리 확률</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>first_digit <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {                                 <span class="co"># 양수의 첫 유효숫자</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x[x <span class="sc">&gt;</span> <span class="dv">0</span>]; <span class="fu">floor</span>(x <span class="sc">/</span> <span class="dv">10</span><span class="sc">^</span><span class="fu">floor</span>(<span class="fu">log10</span>(x)))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="벤포드-법칙" class="level2">
+<h2 class="anchored" data-anchor-id="벤포드-법칙">벤포드 법칙</h2>
+<section id="첫-자리와-둘째-자리의-분포" class="level3">
+<h3 class="anchored" data-anchor-id="첫-자리와-둘째-자리의-분포">첫 자리와 둘째 자리의 분포</h3>
+<p>Newcomb (1881)이 로그표의 앞쪽 페이지가 유난히 닳아 있는 것을 보고 처음 관찰하였고, Benford (1938)가 20여 종의 자료로 확인한 이 법칙에 따르면, 첫 유효숫자가 <span class="math inline">\(d\)</span> 일 확률은</p>
+<p><span id="eq-benford1"><span class="math display">\[
+P(D_1=d)=\log_{10}\!\left(1+\frac1d\right),\qquad d=1,\ldots,9
+\tag{1}\]</span></span></p>
+<p>이다. 첫 자리가 1일 확률은 약 0.301, 9일 확률은 약 0.046이다. 같은 원리로 첫 두 자리가 <span class="math inline">\(10\le k\le99\)</span> 일 확률은 <span class="math inline">\(\log_{10}(1+1/k)\)</span> 이고, 둘째 자리가 <span class="math inline">\(d\)</span> 일 확률은 첫 자리에 대해 합하여</p>
+<p><span id="eq-benford2"><span class="math display">\[
+P(D_2=d)=\sum_{k=1}^{9}\log_{10}\!\left(1+\frac{1}{10k+d}\right),\qquad d=0,1,\ldots,9
+\tag{2}\]</span></span></p>
+<p>로 얻는다. 둘째 자리의 분포는 0이 약 12.0%, 9가 약 8.5%로 균등분포에 훨씬 가깝다. 자리가 뒤로 갈수록 분포는 빠르게 균등해진다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>P2 <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>, <span class="cf">function</span>(d) <span class="fu">sum</span>(<span class="fu">log10</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">10</span> <span class="sc">*</span> (<span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">+</span> d))))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>bd <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">data.frame</span>(자리 <span class="ot">=</span> <span class="st">"첫째 자리"</span>, <span class="at">d =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">p =</span> P, <span class="at">u =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">9</span>),</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>            <span class="fu">data.frame</span>(자리 <span class="ot">=</span> <span class="st">"둘째 자리"</span>, <span class="at">d =</span> <span class="dv">0</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">p =</span> P2, <span class="at">u =</span> <span class="dv">1</span> <span class="sc">/</span> <span class="dv">10</span>))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>bd<span class="sc">$</span>자리 <span class="ot">&lt;-</span> <span class="fu">factor</span>(bd<span class="sc">$</span>자리, <span class="fu">c</span>(<span class="st">"첫째 자리"</span>, <span class="st">"둘째 자리"</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(bd, <span class="fu">aes</span>(<span class="fu">factor</span>(d), p)) <span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> col_main, <span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="fu">aes</span>(<span class="at">yintercept =</span> u), <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> <span class="st">"grey40"</span>) <span class="sc">+</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>자리, <span class="at">scales =</span> <span class="st">"free_x"</span>) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"숫자"</span>, <span class="at">y =</span> <span class="st">"확률"</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-benford" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-benford-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-benford-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-benford-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;1: 벤포드 법칙의 첫 자리와 둘째 자리 분포. 점선은 균등분포이다.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="왜-성립하는가" class="level3">
+<h3 class="anchored" data-anchor-id="왜-성립하는가">왜 성립하는가</h3>
+<p>벤포드 법칙이 나타나는 이유로는 세 가지 설명이 대표적이다.</p>
+<ul>
+<li><strong>척도 불변성</strong>: 모든 값에 같은 상수를 곱해도(예: 원화를 달러로 바꾸어도) 첫 자리 분포가 변하지 않는 분포는 벤포드 분포뿐이다(Pinkham, 1961). 측정 단위가 임의적인 자료라면 첫 자리 분포가 단위에 의존하지 않아야 하므로 벤포드 분포가 자연스럽다.</li>
+<li><strong>곱셈적 생성 과정</strong>: 어떤 수량이 여러 독립적인 요인의 곱으로 생성되면, 그 로그값은 요인들의 합이 되어 넓게 퍼진다. <span class="math inline">\(\log_{10}X\)</span> 의 소수 부분이 균등분포에 가까워지면 첫 자리는 벤포드 분포를 따른다. 실제로 <span class="math inline">\(X=10^U\)</span> (<span class="math inline">\(U\)</span> 는 소수 부분이 균등분포) 이면 <span class="math inline">\(P(D_1=d)=P(\log_{10}d\le U&lt;\log_{10}(d+1))=\log_{10}(1+1/d)\)</span> 이다.</li>
+<li><strong>혼합 분포</strong>: Hill (1995)은 여러 분포에서 뽑은 표본을 합친 자료의 첫 자리 분포가, 분포들이 특정 척도에 치우치지 않게 선택되면 개별 분포의 형태와 무관하게 벤포드 분포로 수렴함을 보였다(Berger and Hill, 2011).</li>
+</ul>
+<p>이 설명들에서 법칙이 기대되는 조건도 읽을 수 있다. 자료가 <strong>여러 자릿수에 걸쳐</strong> 분포하고, <strong>인위적인 상한이나 하한</strong>(예: 최저 임금, 가격 상한, 일정한 주문 단위)이 없어야 한다. 키나 시험 점수처럼 좁은 범위에 몰린 자료는 정상적인 자료라도 벤포드 법칙을 따르지 않는다.</p>
+</section>
+<section id="세-가지-예시-자료" class="level3">
+<h3 class="anchored" data-anchor-id="세-가지-예시-자료">세 가지 예시 자료</h3>
+<p>아래에서는 다음 세 자료를 예시로 쓴다. 각각 3,000개의 관측치이다.</p>
+<ul>
+<li><strong>넓은 로그정규</strong>: <span class="math inline">\(\ln X\sim N(5,\,2.5^2)\)</span>. 여러 자릿수에 걸쳐 퍼져 있어 벤포드 법칙을 잘 따를 것으로 기대된다.</li>
+<li><strong>좁은 로그정규</strong>: <span class="math inline">\(\ln X\sim N(5,\,0.4^2)\)</span>. 대부분의 값이 100~300 사이에 몰려 있다.</li>
+<li><strong>꾸며 낸 숫자</strong>: 100~999 사이에서 균등하게 뽑은 정수. 사람이 “그럴듯한” 금액을 지어낼 때처럼 첫 자리가 고르게 나온다.</li>
+</ul>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>n0 <span class="ot">&lt;-</span> <span class="dv">3000</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ex <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">`</span><span class="at">넓은 로그정규</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">rlnorm</span>(n0, <span class="dv">5</span>, <span class="fl">2.5</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">`</span><span class="at">좁은 로그정규</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">rlnorm</span>(n0, <span class="dv">5</span>, <span class="fl">0.4</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">`</span><span class="at">꾸며 낸 숫자</span><span class="st">`</span>  <span class="ot">=</span> <span class="fu">sample</span>(<span class="dv">100</span><span class="sc">:</span><span class="dv">999</span>, n0, <span class="cn">TRUE</span>))</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>digit_tab <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">tabulate</span>(<span class="fu">first_digit</span>(x), <span class="dv">9</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>fd <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">names</span>(ex), <span class="cf">function</span>(k)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(자료 <span class="ot">=</span> k, <span class="at">d =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">9</span>, <span class="at">p =</span> <span class="fu">digit_tab</span>(ex[[k]]) <span class="sc">/</span> n0, <span class="at">P =</span> P)))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>fd<span class="sc">$</span>자료 <span class="ot">&lt;-</span> <span class="fu">factor</span>(fd<span class="sc">$</span>자료, <span class="fu">names</span>(ex))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(fd, <span class="fu">aes</span>(<span class="fu">factor</span>(d), p)) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"grey70"</span>, <span class="at">width =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> P), <span class="at">colour =</span> col_alt, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>자료) <span class="sc">+</span> <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"첫 자리"</span>, <span class="at">y =</span> <span class="st">"비율"</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-examples" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-examples-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-examples-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;2: 세 예시 자료의 첫 자리 분포(막대)와 벤포드 분포(점).
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="적합도를-판단하는-세-가지-방법" class="level2">
+<h2 class="anchored" data-anchor-id="적합도를-판단하는-세-가지-방법">적합도를 판단하는 세 가지 방법</h2>
+<p><span class="math inline">\(n\)</span> 개의 관측치에서 첫 자리가 <span class="math inline">\(d\)</span> 인 관측치의 수를 <span class="math inline">\(O_d\)</span>, 그 비율을 <span class="math inline">\(\hat p_d=O_d/n\)</span> 이라 하자.</p>
+<section id="카이제곱-적합도-검정" class="level3">
+<h3 class="anchored" data-anchor-id="카이제곱-적합도-검정">카이제곱 적합도 검정</h3>
+<p>가장 널리 쓰이는 방법은 피어슨(Pearson, 1900)의 카이제곱 적합도 검정이다.</p>
+<section id="무엇을-검정하는가" class="level4">
+<h4 class="anchored" data-anchor-id="무엇을-검정하는가">무엇을 검정하는가</h4>
+<p>자료의 첫 자리가 실제로 따르는 확률을 <span class="math inline">\(q_1,\ldots,q_9\)</span> 라 하자. 적합도 검정은 이 확률들이 벤포드 확률과 <strong>모두 같은지</strong>를 묻는다.</p>
+<p><span class="math display">\[
+H_0:\ q_d=P(d)\ \ (d=1,\ldots,9)\qquad\text{대}\qquad H_1:\ \text{적어도 하나의 } d \text{ 에서 } q_d\neq P(d)
+\]</span></p>
+<p>귀무가설은 아홉 개 확률이 <strong>정확히</strong> 벤포드 값과 같다는 점 가설이다. 따라서 이 검정이 기각하는 것은 “첫 자리 분포가 정확히 벤포드는 아니다”라는 사실뿐이며, 자료가 조작되었는지나 괴리가 실질적으로 큰지는 말해 주지 않는다. 이 점은 뒤의 <a href="#표본-크기의-함정">표본 크기의 함정</a>에서 다시 중요해진다.</p>
+</section>
+<section id="기대도수와-관측도수" class="level4">
+<h4 class="anchored" data-anchor-id="기대도수와-관측도수">기대도수와 관측도수</h4>
+<p>검정의 출발점은 귀무가설이 맞을 때 각 숫자가 몇 번 나와야 하는지이다. 관측치가 서로 독립이고 <span class="math inline">\(H_0\)</span> 이 참이면, 첫 자리가 <span class="math inline">\(d\)</span> 인 관측치의 수 <span class="math inline">\(O_d\)</span> 는 시행 횟수 <span class="math inline">\(n\)</span>, 성공 확률 <span class="math inline">\(P(d)\)</span> 인 이항분포를 따르고, 아홉 개 도수를 함께 보면 다항분포를 따른다.</p>
+<p><span class="math display">\[
+(O_1,\ldots,O_9)\sim\text{Multinomial}\big(n;\,P(1),\ldots,P(9)\big)
+\]</span></p>
+<p>따라서 기대도수(expected count)는 <span class="math inline">\(E_d=E[O_d]=nP(d)\)</span> 이고, 각 도수의 분산과 두 도수의 공분산은</p>
+<p><span id="eq-multinom-cov"><span class="math display">\[
+\operatorname{Var}[O_d]=nP(d)\{1-P(d)\},\qquad \operatorname{Cov}[O_d,O_e]=-nP(d)P(e)\quad(d\neq e)
+\tag{3}\]</span></span></p>
+<p>이다. 공분산이 음수인 것은 아홉 개 도수의 합이 항상 <span class="math inline">\(n\)</span> 으로 고정되어 있기 때문이다. 한 숫자가 많이 나오면 다른 숫자는 그만큼 적게 나올 수밖에 없다.</p>
+</section>
+<section id="왜-o_d-e_d2e_d-를-더하는가" class="level4">
+<h4 class="anchored" data-anchor-id="왜-o_d-e_d2e_d-를-더하는가">왜 <span class="math inline">\((O_d-E_d)^2/E_d\)</span> 를 더하는가</h4>
+<p>관측도수와 기대도수의 차이 <span class="math inline">\(O_d-E_d\)</span> 를 그대로 더하면 양수와 음수가 상쇄되어 항상 0이 된다(<span class="math inline">\(\sum_dO_d=\sum_dE_d=n\)</span>). 그래서 차이를 제곱하는데, 제곱한 차이를 그대로 더하면 기대도수가 큰 숫자의 차이가 지나치게 크게 반영된다. 예를 들어 <span class="math inline">\(n=3{,}000\)</span> 일 때 첫 자리 1의 기대도수는 약 903개이고 9의 기대도수는 약 137개이다. 30개의 차이는 1에서는 기대도수의 3%에 불과하지만 9에서는 22%에 이른다. 같은 30개라도 9에서의 차이가 훨씬 이례적이다.</p>
+<p>이렇게 우연한 변동의 크기가 숫자마다 다르므로, 각 차이를 그 숫자에서 기대되는 변동의 크기로 나누어 <strong>표준화</strong>해야 한다. 이항분포에서 <span class="math inline">\(O_d\)</span> 의 분산은 <span class="math inline">\(E_d\{1-P(d)\}\)</span> 이므로 자연스러운 표준화는 <span class="math inline">\((O_d-E_d)^2/[E_d\{1-P(d)\}]\)</span> 일 것 같지만, 피어슨 통계량의 분모는 <span class="math inline">\(1-P(d)\)</span> 가 없는 <span class="math inline">\(E_d\)</span> 이다.</p>
+<p><span id="eq-chisq"><span class="math display">\[
+\chi^2=\sum_{d=1}^9\frac{(O_d-E_d)^2}{E_d}=\sum_{d=1}^9\frac{\{O_d-nP(d)\}^2}{nP(d)}
+\tag{4}\]</span></span></p>
+<p>이 차이는 도수들이 서로 독립이 아니라는 데서 온다. <a href="#eq-chisq" class="quarto-xref">식&nbsp;4</a> 는 사실 <a href="#eq-multinom-cov" class="quarto-xref">식&nbsp;3</a> 의 공분산 구조를 모두 반영하여 차이 벡터를 표준화한 값과 <strong>정확히 같다.</strong> 이를 확인해 보자.</p>
+<p>아홉 개 도수 가운데 마지막 하나는 나머지로 정해지므로(<span class="math inline">\(O_9=n-\sum_{d=1}^8O_d\)</span>), 독립적인 정보는 처음 여덟 개에 있다. 차이 벡터를 <span class="math inline">\(\mathbf x=(O_1-E_1,\ldots,O_8-E_8)^{\top}\)</span>, 확률 벡터를 <span class="math inline">\(\mathbf p=(P(1),\ldots,P(8))^{\top}\)</span> 라 하면 <a href="#eq-multinom-cov" class="quarto-xref">식&nbsp;3</a> 에 의해 <span class="math inline">\(\mathbf x\)</span> 의 공분산 행렬은</p>
+<p><span class="math display">\[
+\boldsymbol\Sigma=n\left\{\operatorname{diag}(\mathbf p)-\mathbf p\mathbf p^{\top}\right\}
+\]</span></p>
+<p>이다. 서로 상관된 확률벡터를 공분산 행렬로 표준화한 거리는 이차형식 <span class="math inline">\(\mathbf x^{\top}\boldsymbol\Sigma^{-1}\mathbf x\)</span> (마할라노비스 거리의 제곱)이다. 셔먼–모리슨 공식으로 역행렬을 구하면</p>
+<p><span class="math display">\[
+\boldsymbol\Sigma^{-1}=\frac1n\left\{\operatorname{diag}(\mathbf p)^{-1}+\frac{\mathbf 1\mathbf 1^{\top}}{P(9)}\right\}
+\]</span></p>
+<p>이다(<span class="math inline">\(1-\sum_{d=1}^8P(d)=P(9)\)</span> 를 이용). 이를 대입하면</p>
+<p><span class="math display">\[
+\mathbf x^{\top}\boldsymbol\Sigma^{-1}\mathbf x
+=\sum_{d=1}^8\frac{(O_d-E_d)^2}{nP(d)}+\frac{1}{nP(9)}\left\{\sum_{d=1}^8(O_d-E_d)\right\}^2
+\]</span></p>
+<p>인데, 차이의 합이 0이므로 <span class="math inline">\(\sum_{d=1}^8(O_d-E_d)=-(O_9-E_9)\)</span> 이고, 둘째 항은 <span class="math inline">\((O_9-E_9)^2/E_9\)</span> 가 된다. 결국</p>
+<p><span class="math display">\[
+\mathbf x^{\top}\boldsymbol\Sigma^{-1}\mathbf x=\sum_{d=1}^9\frac{(O_d-E_d)^2}{E_d}=\chi^2
+\]</span></p>
+<p>이다. 즉 피어슨 통계량은 “차이를 숫자별로 따로 표준화해서 더한 값”이 아니라, <strong>도수들 사이의 음의 상관까지 고려하여 차이 벡터 전체를 표준화한 거리</strong>이다. 분모에서 <span class="math inline">\(1-P(d)\)</span> 가 빠지는 대신 아홉 번째 항이 더해져, 그 효과가 정확히 상쇄된다.</p>
+</section>
+<section id="왜-자유도-8의-카이제곱-분포인가" class="level4">
+<h4 class="anchored" data-anchor-id="왜-자유도-8의-카이제곱-분포인가">왜 자유도 8의 카이제곱 분포인가</h4>
+<p><span class="math inline">\(n\)</span> 이 크면 다변량 중심극한정리에 의해 <span class="math inline">\(\mathbf x\)</span> 는 평균 <span class="math inline">\(\mathbf 0\)</span>, 공분산 <span class="math inline">\(\boldsymbol\Sigma\)</span> 인 8차원 정규분포에 가까워진다. 이런 벡터의 마할라노비스 거리의 제곱 <span class="math inline">\(\mathbf x^{\top}\boldsymbol\Sigma^{-1}\mathbf x\)</span> 는 서로 독립인 표준정규변수 8개의 제곱합과 같은 분포, 즉 <strong>자유도 8의 카이제곱 분포</strong>를 따른다.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> 자유도가 범주 수 9가 아니라 8인 것은 “도수의 합이 <span class="math inline">\(n\)</span> 으로 고정된다”는 제약 하나 때문에 자유롭게 변할 수 있는 도수가 8개뿐이기 때문이다. 그래서 <span class="math inline">\(H_0\)</span> 아래에서 <span class="math inline">\(E[\chi^2]\approx8\)</span> 이다.</p>
+<p>검정은 관측된 <span class="math inline">\(\chi^2\)</span> 가 자유도 8의 카이제곱 분포에서 얼마나 큰 값인지로 판단한다. p값은 <span class="math inline">\(P(\chi^2_8\ge\chi^2_{\text{관측}})\)</span> 이고, 5% 수준의 임계값은 <span class="math inline">\(\chi^2_{8,\,0.95}=15.51\)</span> 이다. 벤포드 확률은 자료에서 추정한 것이 아니라 미리 정해진 값이므로 자유도를 더 줄일 필요는 없다. 만약 분포의 모수를 자료에서 추정한 뒤 적합도를 검정한다면, 추정한 모수의 수만큼 자유도가 줄어든다.</p>
+<p>아래 모의실험은 벤포드 분포에서 <span class="math inline">\(n=3{,}000\)</span> 개를 뽑아 <span class="math inline">\(\chi^2\)</span> 를 계산하는 일을 5,000번 반복한 결과이다. 히스토그램이 자유도 8의 카이제곱 밀도(실선)와 잘 겹치고, 자유도 9의 밀도(점선)와는 어긋난다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>chi_null <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">5000</span>, {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  O <span class="ot">&lt;-</span> <span class="fu">tabulate</span>(<span class="fu">sample</span>(<span class="dv">9</span>, <span class="dv">3000</span>, <span class="cn">TRUE</span>, P), <span class="dv">9</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sum</span>((O <span class="sc">-</span> <span class="dv">3000</span> <span class="sc">*</span> P)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (<span class="dv">3000</span> <span class="sc">*</span> P))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>xs <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">30</span>, <span class="fl">0.1</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dens <span class="ot">&lt;-</span> <span class="fu">rbind</span>(<span class="fu">data.frame</span>(<span class="at">x =</span> xs, <span class="at">y =</span> <span class="fu">dchisq</span>(xs, <span class="dv">8</span>), <span class="at">df =</span> <span class="st">"자유도 8"</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>              <span class="fu">data.frame</span>(<span class="at">x =</span> xs, <span class="at">y =</span> <span class="fu">dchisq</span>(xs, <span class="dv">9</span>), <span class="at">df =</span> <span class="st">"자유도 9"</span>))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(<span class="at">chi =</span> chi_null), <span class="fu">aes</span>(chi)) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(<span class="at">y =</span> <span class="fu">after_stat</span>(density)), <span class="at">binwidth =</span> <span class="dv">1</span>, <span class="at">boundary =</span> <span class="dv">0</span>, <span class="at">fill =</span> <span class="st">"grey80"</span>, <span class="at">colour =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> dens, <span class="fu">aes</span>(x, y, <span class="at">linetype =</span> df), <span class="at">colour =</span> col_main, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_linetype_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"자유도 8"</span> <span class="ot">=</span> <span class="st">"solid"</span>, <span class="st">"자유도 9"</span> <span class="ot">=</span> <span class="st">"dashed"</span>), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="fu">expression</span>(chi<span class="sc">^</span><span class="dv">2</span>), <span class="at">y =</span> <span class="st">"밀도"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-chisq-null" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-chisq-null-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-chisq-null-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-chisq-null-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;3: 귀무가설 아래에서 피어슨 통계량의 분포(n = 3,000, 5,000회 반복). 실선은 자유도 8, 점선은 자유도 9의 카이제곱 밀도이다.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>모의실험에서 <span class="math inline">\(\chi^2\)</span> 의 평균은 8.03, 5% 임계값 15.51을 넘은 비율은 5.2%로, 이론과 잘 맞는다.</p>
+</section>
+<section id="근사가-성립하는-조건과-한계" class="level4">
+<h4 class="anchored" data-anchor-id="근사가-성립하는-조건과-한계">근사가 성립하는 조건과 한계</h4>
+<p>카이제곱 분포는 중심극한정리에 기댄 <strong>근사</strong>이므로 기대도수가 너무 작으면 정확하지 않다. 흔히 쓰는 기준은 모든 범주의 기대도수가 5 이상인 것이다. 첫 자리에서 가장 드문 9의 확률이 약 0.046이므로 <span class="math inline">\(n\ge5/0.046\approx110\)</span> 이면 충족된다. 첫 두 자리(90개 범주)처럼 범주가 많으면 가장 드문 99의 확률이 약 0.0044이므로 1,100개 이상이 필요하다.</p>
+<p>또한 피어슨 통계량은 분포 전체의 괴리를 하나의 숫자로 요약하므로, 어느 숫자에서 괴리가 생겼는지는 알려 주지 않는다. 이를 보완하는 것이 다음의 숫자별 Z 검정이다.</p>
+</section>
+</section>
+<section id="숫자별-z-검정" class="level3">
+<h3 class="anchored" data-anchor-id="숫자별-z-검정">숫자별 Z 검정</h3>
+<p>어느 숫자가 문제인지 보려면 숫자마다 관측 비율을 기대 비율과 비교한다. Nigrini (2012)는 연속성 보정을 포함한</p>
+<p><span id="eq-z"><span class="math display">\[
+Z_d=\frac{\left|\hat p_d-P(d)\right|-\dfrac{1}{2n}}{\sqrt{P(d)\{1-P(d)\}/n}}
+\tag{5}\]</span></span></p>
+<p>를 쓰고, <span class="math inline">\(Z_d&gt;1.96\)</span> 이면 5% 수준에서 그 숫자의 비율이 벤포드와 다르다고 본다(연속성 보정항이 <span class="math inline">\(|\hat p_d-P(d)|\)</span> 보다 크면 보정하지 않는다). 다만 아홉 개 숫자를 각각 검정하므로, 모든 숫자가 벤포드를 따르더라도 하나 이상이 우연히 유의할 확률은 5%보다 크다는 점에 유의해야 한다.</p>
+</section>
+<section id="평균절대편차mad" class="level3">
+<h3 class="anchored" data-anchor-id="평균절대편차mad">평균절대편차(MAD)</h3>
+<p>세 번째 방법은 검정이 아니라 괴리의 <strong>크기</strong>를 재는 지표이다.</p>
+<p><span id="eq-mad"><span class="math display">\[
+\text{MAD}=\frac19\sum_{d=1}^9\left|\hat p_d-P(d)\right|
+\tag{6}\]</span></span></p>
+<p>Nigrini (2012)는 여러 실제 자료를 바탕으로 첫 자리 MAD의 판정 기준을 다음과 같이 제시하였다.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>첫 자리 MAD</th>
+<th>판정</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.006 미만</td>
+<td>근접 적합(close conformity)</td>
+</tr>
+<tr class="even">
+<td>0.006 이상 0.012 미만</td>
+<td>수용 가능(acceptable conformity)</td>
+</tr>
+<tr class="odd">
+<td>0.012 이상 0.015 이하</td>
+<td>경계적 수용(marginally acceptable)</td>
+</tr>
+<tr class="even">
+<td>0.015 초과</td>
+<td>비적합(nonconformity)</td>
+</tr>
+</tbody>
+</table>
+<p>세 예시 자료에 세 방법을 적용하면 다음과 같다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nigrini <span class="ot">&lt;-</span> <span class="cf">function</span>(m) <span class="fu">cut</span>(m, <span class="fu">c</span>(<span class="sc">-</span><span class="cn">Inf</span>, <span class="fl">0.006</span>, <span class="fl">0.012</span>, <span class="fl">0.015</span>, <span class="cn">Inf</span>), <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"근접 적합"</span>, <span class="st">"수용 가능"</span>, <span class="st">"경계적 수용"</span>, <span class="st">"비적합"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>gof <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  O <span class="ot">&lt;-</span> <span class="fu">digit_tab</span>(x); n <span class="ot">&lt;-</span> <span class="fu">sum</span>(O); ph <span class="ot">&lt;-</span> O <span class="sc">/</span> n</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  chi <span class="ot">&lt;-</span> <span class="fu">sum</span>((O <span class="sc">-</span> n <span class="sc">*</span> P)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (n <span class="sc">*</span> P))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  dev <span class="ot">&lt;-</span> <span class="fu">abs</span>(ph <span class="sc">-</span> P); cc <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="dv">1</span> <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> n) <span class="sc">&lt;</span> dev, <span class="dv">1</span> <span class="sc">/</span> (<span class="dv">2</span> <span class="sc">*</span> n), <span class="dv">0</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  z   <span class="ot">&lt;-</span> (dev <span class="sc">-</span> cc) <span class="sc">/</span> <span class="fu">sqrt</span>(P <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P) <span class="sc">/</span> n)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  m   <span class="ot">&lt;-</span> <span class="fu">mean</span>(dev)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">n =</span> n, <span class="st">`</span><span class="at">χ²</span><span class="st">`</span> <span class="ot">=</span> chi, <span class="st">`</span><span class="at">χ² p값</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">pchisq</span>(chi, <span class="dv">8</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>             <span class="st">`</span><span class="at">Z&gt;1.96 숫자</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">which</span>(z <span class="sc">&gt;</span> <span class="fl">1.96</span>), <span class="at">collapse =</span> <span class="st">","</span>),</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>             <span class="at">MAD =</span> m, 판정 <span class="ot">=</span> <span class="fu">nigrini</span>(m), <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(ex, gof))</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>tab<span class="sc">$</span><span class="st">`</span><span class="at">χ² p값</span><span class="st">`</span> <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(tab<span class="sc">$</span><span class="st">`</span><span class="at">χ² p값</span><span class="st">`</span> <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">"&lt;0.001"</span>, <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, tab<span class="sc">$</span><span class="st">`</span><span class="at">χ² p값</span><span class="st">`</span>))</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>tab<span class="sc">$</span><span class="st">`</span><span class="at">Z&gt;1.96 숫자</span><span class="st">`</span>[tab<span class="sc">$</span><span class="st">`</span><span class="at">Z&gt;1.96 숫자</span><span class="st">`</span> <span class="sc">==</span> <span class="st">""</span>] <span class="ot">&lt;-</span> <span class="st">"없음"</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(tab, <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 7%">
+<col style="width: 14%">
+<col style="width: 10%">
+<col style="width: 23%">
+<col style="width: 10%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">n</th>
+<th style="text-align: right;">χ²</th>
+<th style="text-align: left;">χ² p값</th>
+<th style="text-align: left;">Z&gt;1.96 숫자</th>
+<th style="text-align: right;">MAD</th>
+<th style="text-align: left;">판정</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">넓은 로그정규</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: right;">10.9332</td>
+<td style="text-align: left;">0.206</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: right;">0.0049</td>
+<td style="text-align: left;">근접 적합</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">좁은 로그정규</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: right;">1775.2599</td>
+<td style="text-align: left;">&lt;0.001</td>
+<td style="text-align: left;">1,3,4,5,6,7,8,9</td>
+<td style="text-align: right;">0.0748</td>
+<td style="text-align: left;">비적합</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">꾸며 낸 숫자</td>
+<td style="text-align: right;">3000</td>
+<td style="text-align: right;">1263.1192</td>
+<td style="text-align: left;">&lt;0.001</td>
+<td style="text-align: left;">1,2,4,5,6,7,8,9</td>
+<td style="text-align: right;">0.0619</td>
+<td style="text-align: left;">비적합</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>넓은 로그정규 자료는 카이제곱 검정과 MAD로는 벤포드 법칙을 따르는 것으로 판단된다. 숫자별 Z 검정에서는 숫자 7에서 괴리가 유의하게 나왔는데, 아홉 개 숫자를 각각 5% 수준에서 검정하면 모든 숫자가 벤포드를 따르더라도 하나 이상이 우연히 유의할 확률이 약 <span class="math inline">\(1-0.95^9\approx0.37\)</span> 이므로 이 정도는 우연으로 볼 수 있다. 숫자별 Z 검정은 괴리가 <strong>어디에</strong> 있는지를 보는 보조 도구로 쓰는 것이 좋다. 반면 좁은 로그정규 자료와 꾸며 낸 숫자는 세 방법 모두에서 뚜렷하게 벗어난다. 좁은 로그정규 자료는 <strong>정상적으로 생성된 자료도 성립 조건을 충족하지 못하면 벤포드에서 벗어난다</strong>는 점을 보여 준다. 벤포드 법칙의 이탈은 조작의 증거가 아니라 “더 살펴볼 이유”이다.</p>
+</section>
+</section>
+<section id="표본-크기의-함정" class="level2">
+<h2 class="anchored" data-anchor-id="표본-크기의-함정">표본 크기의 함정</h2>
+<section id="카이제곱-검정은-표본이-크면-무엇이든-기각한다" class="level3">
+<h3 class="anchored" data-anchor-id="카이제곱-검정은-표본이-크면-무엇이든-기각한다">카이제곱 검정은 표본이 크면 무엇이든 기각한다</h3>
+<p>카이제곱 검정의 가장 큰 약점은 표본 크기에 대한 민감성이다. 실제 첫 자리 확률을 <span class="math inline">\(q_d\)</span> 라 하면</p>
+<p><span class="math display">\[
+\frac{\chi^2}{n}=\sum_{d=1}^9\frac{\{\hat p_d-P(d)\}^2}{P(d)}\;\xrightarrow{\;p\;}\;\sum_{d=1}^9\frac{\{q_d-P(d)\}^2}{P(d)}
+\]</span></p>
+<p>이므로, <span class="math inline">\(q\neq P\)</span> 인 한 <span class="math inline">\(\chi^2\)</span> 는 대략 <span class="math inline">\(n\)</span> 에 비례하여 커지고 기각 확률은 1로 간다. 실제 자료가 벤포드 분포를 <strong>정확히</strong> 따르는 경우는 드물기 때문에, 관측치가 수천~수만 개인 자료에서는 실질적으로 무의미한 괴리에도 귀무가설이 기각된다. 아래 모의실험은 첫 자리 1의 확률을 0.01만큼 줄이고 2의 확률을 그만큼 늘린 분포에서 표본을 뽑아, 표본 크기별로 카이제곱 검정의 기각률과 MAD의 평균을 비교한 것이다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>q <span class="ot">&lt;-</span> P; q[<span class="dv">1</span>] <span class="ot">&lt;-</span> q[<span class="dv">1</span>] <span class="sc">-</span> <span class="fl">0.01</span>; q[<span class="dv">2</span>] <span class="ot">&lt;-</span> q[<span class="dv">2</span>] <span class="sc">+</span> <span class="fl">0.01</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sim_gof <span class="ot">&lt;-</span> <span class="cf">function</span>(n, prob, <span class="at">R =</span> <span class="dv">500</span>) {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  r <span class="ot">&lt;-</span> <span class="fu">replicate</span>(R, {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">tabulate</span>(<span class="fu">sample</span>(<span class="dv">9</span>, n, <span class="cn">TRUE</span>, prob), <span class="dv">9</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="at">chi =</span> <span class="fu">sum</span>((x <span class="sc">-</span> n <span class="sc">*</span> P)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (n <span class="sc">*</span> P)), <span class="at">mad =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(x <span class="sc">/</span> n <span class="sc">-</span> P)))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">n =</span> n, <span class="at">reject =</span> <span class="fu">mean</span>(r[<span class="st">"chi"</span>, ] <span class="sc">&gt;</span> <span class="fu">qchisq</span>(<span class="fl">0.95</span>, <span class="dv">8</span>)), <span class="at">mad =</span> <span class="fu">mean</span>(r[<span class="st">"mad"</span>, ]))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>pw <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">2000</span>, <span class="dv">4000</span>, <span class="dv">9000</span>, <span class="dv">20000</span>), sim_gof, <span class="at">prob =</span> q))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(pw, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"관측치 수 n"</span>, <span class="st">"χ² 기각률(5%)"</span>, <span class="st">"MAD 평균"</span>))</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">관측치 수 n</th>
+<th style="text-align: right;">χ² 기각률(5%)</th>
+<th style="text-align: right;">MAD 평균</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">0.068</td>
+<td style="text-align: right;">0.0109</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1000</td>
+<td style="text-align: right;">0.104</td>
+<td style="text-align: right;">0.0082</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">0.118</td>
+<td style="text-align: right;">0.0061</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4000</td>
+<td style="text-align: right;">0.228</td>
+<td style="text-align: right;">0.0049</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9000</td>
+<td style="text-align: right;">0.468</td>
+<td style="text-align: right;">0.0039</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20000</td>
+<td style="text-align: right;">0.854</td>
+<td style="text-align: right;">0.0033</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>괴리의 크기는 그대로인데 <span class="math inline">\(n\)</span> 이 커지면 기각률이 빠르게 높아진다. 반면 MAD는 표본이 커질수록 오히려 작아져 <strong>진짜 괴리의 크기</strong>(이 예에서는 <span class="math inline">\(0.02/9\approx0.0022\)</span>)에 가까워진다. 대규모 자료에서 카이제곱 검정보다 MAD를 주된 판단 기준으로 쓰는 이유이다(Nigrini, 2012).</p>
+</section>
+<section id="mad는-표본이-작으면-커진다" class="level3">
+<h3 class="anchored" data-anchor-id="mad는-표본이-작으면-커진다">MAD는 표본이 작으면 커진다</h3>
+<p>반대로 MAD에는 <strong>작은 표본</strong>의 문제가 있다. 자료가 벤포드 분포를 정확히 따르더라도 유한표본에서는 <span class="math inline">\(\hat p_d\)</span> 가 <span class="math inline">\(P(d)\)</span> 주위에서 흔들리므로 MAD가 0이 되지 않는다. 그렇다면 벤포드 분포를 정확히 따르는 자료에서 MAD는 평균적으로 얼마나 될까? 네 단계로 나누어 구해 보자.</p>
+<p><strong>① 관측 비율 <span class="math inline">\(\hat p_d\)</span> 의 평균과 분산.</strong> 관측치 <span class="math inline">\(i\)</span> 의 첫 자리가 <span class="math inline">\(d\)</span> 이면 1, 아니면 0인 지시변수를 <span class="math inline">\(I_i=\mathbf 1(D_{1,i}=d)\)</span> 라 하자. 자료가 벤포드 분포를 따르면 <span class="math inline">\(I_i\)</span> 는 성공 확률이 <span class="math inline">\(P(d)\)</span> 인 베르누이 확률변수이므로 <span class="math inline">\(E[I_i]=P(d)\)</span>, <span class="math inline">\(\operatorname{Var}[I_i]=P(d)\{1-P(d)\}\)</span> 이다. 관측 비율은 이 지시변수들의 표본평균 <span class="math inline">\(\hat p_d=\frac1n\sum_{i=1}^nI_i\)</span> 이므로, 관측치가 서로 독립이면</p>
+<p><span class="math display">\[
+E[\hat p_d]=P(d),\qquad
+\operatorname{Var}[\hat p_d]=\frac1{n^2}\sum_{i=1}^n\operatorname{Var}[I_i]=\frac{P(d)\{1-P(d)\}}{n}
+\]</span></p>
+<p>이다. 즉 <span class="math inline">\(\hat p_d\)</span> 는 평균적으로 정확히 <span class="math inline">\(P(d)\)</span> 이지만, 표준편차 <span class="math inline">\(\sigma_d=\sqrt{P(d)\{1-P(d)\}/n}\)</span> 만큼 그 주위에서 흔들린다. 분산의 분모에 <span class="math inline">\(n\)</span> 이 있으므로 표본이 클수록 흔들림이 작아진다.</p>
+<p><strong>② 흔들림의 분포는 정규분포에 가깝다.</strong> <span class="math inline">\(\hat p_d\)</span> 는 독립인 확률변수들의 평균이므로, 중심극한정리에 의해 <span class="math inline">\(n\)</span> 이 충분히 크면</p>
+<p><span class="math display">\[
+\hat p_d-P(d)\;\approx\;N\!\left(0,\ \sigma_d^2\right),\qquad \sigma_d^2=\frac{P(d)\{1-P(d)\}}{n}
+\]</span></p>
+<p>이다. MAD에 들어가는 것은 이 흔들림의 <strong>절댓값</strong> <span class="math inline">\(|\hat p_d-P(d)|\)</span> 이다. 흔들림은 양쪽으로 대칭이어서 평균은 0이지만, 절댓값을 취하면 음수 쪽이 양수로 접혀 올라가므로 그 평균은 0보다 크다.</p>
+<p><strong>③ 정규분포를 절댓값으로 접으면 평균은 <span class="math inline">\(\sigma\sqrt{2/\pi}\)</span> 이다.</strong> <span class="math inline">\(Z\sim N(0,\sigma^2)\)</span> 라 하자. <span class="math inline">\(|Z|\)</span> 의 분포는 0을 기준으로 정규분포를 반으로 접은 반정규분포(half-normal distribution)이고, 그 평균은 밀도함수 <span class="math inline">\(\phi_\sigma(z)=\frac{1}{\sigma\sqrt{2\pi}}e^{-z^2/(2\sigma^2)}\)</span> 의 대칭성을 이용하여 다음과 같이 계산된다.</p>
+<p><span class="math display">\[
+E|Z|=2\int_0^\infty z\,\phi_\sigma(z)\,dz
+=\frac{2}{\sigma\sqrt{2\pi}}\int_0^\infty z\,e^{-z^2/(2\sigma^2)}\,dz
+=\frac{2}{\sigma\sqrt{2\pi}}\Big[-\sigma^2e^{-z^2/(2\sigma^2)}\Big]_0^\infty
+=\frac{2\sigma^2}{\sigma\sqrt{2\pi}}
+=\sigma\sqrt{\frac2\pi}.
+\]</span></p>
+<p><span class="math inline">\(\sqrt{2/\pi}\approx0.80\)</span> 이므로, 정규분포를 따르는 흔들림의 절댓값은 평균적으로 표준편차의 약 80% 크기이다. 이를 ②에 적용하면 숫자 <span class="math inline">\(d\)</span> 하나의 기대 편차는</p>
+<p><span class="math display">\[
+E\,|\hat p_d-P(d)|\;\approx\;\sigma_d\sqrt{\frac2\pi}=\sqrt{\frac{2P(d)\{1-P(d)\}}{\pi n}}
+\]</span></p>
+<p>이다.</p>
+<p><strong>④ 아홉 개 숫자의 평균을 낸다.</strong> MAD는 아홉 개 절대편차의 평균이고, 기댓값은 선형이므로</p>
+<p><span class="math display">\[
+E[\text{MAD}]=E\left[\frac19\sum_{d=1}^9|\hat p_d-P(d)|\right]=\frac19\sum_{d=1}^9E\,|\hat p_d-P(d)|
+\]</span></p>
+<p>이다. 여기서 한 가지 짚어 둘 점이 있다. 아홉 개 비율은 합이 항상 1이므로 서로 독립이 아니다. 예를 들어 1의 비율이 우연히 높게 나오면 나머지 숫자의 비율은 그만큼 낮아진다. 그러나 <strong>합의 기댓값은 기댓값의 합</strong>이라는 성질은 확률변수들이 종속이어도 항상 성립하므로, 각 숫자의 기대 편차를 따로 구해 더하기만 하면 된다. 종속성은 MAD의 분산에는 영향을 주지만 평균에는 영향을 주지 않는다. ③의 결과를 대입하면</p>
+<p><span id="eq-emad"><span class="math display">\[
+E[\text{MAD}]\approx\frac19\sum_{d=1}^9\sqrt{\frac{2P(d)\{1-P(d)\}}{\pi n}}
+\tag{7}\]</span></span></p>
+<p>를 얻는다.</p>
+<p><strong><span class="math inline">\(1/\sqrt n\)</span> 에 비례하는 이유.</strong> <a href="#eq-emad" class="quarto-xref">식&nbsp;7</a> 의 모든 항에서 <span class="math inline">\(n\)</span> 은 제곱근 안의 분모에만 있으므로, 이를 밖으로 빼면</p>
+<p><span class="math display">\[
+E[\text{MAD}]\approx\frac{c}{\sqrt n},\qquad c=\frac19\sum_{d=1}^9\sqrt{\frac{2P(d)\{1-P(d)\}}{\pi}}\approx0.235
+\]</span></p>
+<p>이다. 따라서 관측치를 4배로 늘려야 MAD의 기댓값이 절반으로 줄고, 100배로 늘려야 10분의 1로 준다. 이 근사는 중심극한정리에 기대므로 <span class="math inline">\(nP(d)\)</span> 가 작은 경우, 즉 표본이 아주 작아 9처럼 드문 숫자의 기대 빈도가 몇 개에 불과한 경우에는 정확도가 떨어진다. 아래 그림에서 보듯 관측치가 수백 개 이상이면 근사식은 모의실험 결과와 잘 맞는다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>emad <span class="ot">&lt;-</span> <span class="cf">function</span>(n) <span class="fu">mean</span>(<span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> P <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> P) <span class="sc">/</span> (pi <span class="sc">*</span> n)))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>grid_n <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">500</span>, <span class="dv">1000</span>, <span class="dv">1500</span>, <span class="dv">2000</span>, <span class="dv">3000</span>, <span class="dv">4500</span>, <span class="dv">6000</span>, <span class="dv">9000</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>mc <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(grid_n, <span class="cf">function</span>(n) {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">300</span>, <span class="fu">mean</span>(<span class="fu">abs</span>(<span class="fu">tabulate</span>(<span class="fu">sample</span>(<span class="dv">9</span>, n, <span class="cn">TRUE</span>, P), <span class="dv">9</span>) <span class="sc">/</span> n <span class="sc">-</span> P)))</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">n =</span> n, <span class="at">mean =</span> <span class="fu">mean</span>(m), <span class="at">lo =</span> <span class="fu">quantile</span>(m, <span class="fl">0.05</span>), <span class="at">hi =</span> <span class="fu">quantile</span>(m, <span class="fl">0.95</span>))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>curve_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">n =</span> <span class="fu">seq</span>(<span class="dv">250</span>, <span class="dv">9200</span>, <span class="dv">50</span>)); curve_df<span class="sc">$</span>emad <span class="ot">&lt;-</span> <span class="fu">sapply</span>(curve_df<span class="sc">$</span>n, emad)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>n_cross <span class="ot">&lt;-</span> <span class="fu">uniroot</span>(<span class="cf">function</span>(n) <span class="fu">emad</span>(n) <span class="sc">-</span> <span class="fl">0.006</span>, <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">10000</span>))<span class="sc">$</span>root</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_ribbon</span>(<span class="at">data =</span> mc, <span class="fu">aes</span>(n, <span class="at">ymin =</span> lo, <span class="at">ymax =</span> hi), <span class="at">fill =</span> <span class="st">"grey85"</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">data =</span> curve_df, <span class="fu">aes</span>(n, emad), <span class="at">colour =</span> col_main, <span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> mc, <span class="fu">aes</span>(n, mean), <span class="at">colour =</span> col_main, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.006</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">colour =</span> col_alt) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">9000</span>, <span class="at">y =</span> <span class="fl">0.0066</span>, <span class="at">label =</span> <span class="st">"근접 적합 기준 0.006"</span>, <span class="at">hjust =</span> <span class="dv">1</span>, <span class="at">colour =</span> col_alt, <span class="at">size =</span> <span class="fl">3.5</span>) <span class="sc">+</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"관측치 수 n"</span>, <span class="at">y =</span> <span class="st">"MAD"</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-emad" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-emad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-emad-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-emad-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;4: 관측치 수에 따른 MAD의 기댓값. 선은 근사식, 점은 벤포드 분포에서 뽑은 모의 표본(각 300회)의 MAD 평균, 회색 띠는 5~95% 범위이다.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>관측치가 약 1,530개보다 적으면, 벤포드 분포에서 완벽하게 뽑은 자료라도 MAD의 기댓값이 근접 적합 기준(0.006)을 넘는다. Nigrini의 기준은 대규모 자료를 염두에 둔 것이므로, 관측치 수가 서로 다른 여러 자료(예: 거래처별, 월별 장부)를 MAD로 비교하면 “자료가 적은 집단일수록 벤포드에서 많이 벗어난다”는 착시가 생긴다. 이럴 때는 MAD에서 기댓값을 뺀</p>
+<p><span id="eq-excess-mad"><span class="math display">\[
+\text{초과 MAD}=\text{MAD}-E[\text{MAD}]
+\tag{8}\]</span></span></p>
+<p>로 비교하면 관측치 수의 영향을 걷어 낼 수 있다.</p>
+</section>
+</section>
+<section id="관측치가-독립이-아닐-때" class="level2">
+<h2 class="anchored" data-anchor-id="관측치가-독립이-아닐-때">관측치가 독립이 아닐 때</h2>
+<p><a href="#eq-emad" class="quarto-xref">식&nbsp;7</a> 와 카이제곱 검정은 모두 관측치가 서로 <strong>독립</strong>이라는 가정에 기댄다. 시계열 자료처럼 이웃한 관측치가 비슷한 값을 가지면 유효 표본 크기가 <span class="math inline">\(n\)</span> 보다 작아져, 벤포드 분포를 정확히 따르는 자료라도 MAD가 근사식보다 커지고 카이제곱 검정은 과대 기각한다. 아래 실험은 첫 자리의 주변분포가 정확히 벤포드이면서 이웃한 관측치끼리 AR(1) 상관을 갖도록 만든 자료(<span class="math inline">\(X=10^{U}\)</span>, <span class="math inline">\(U\)</span> 는 AR(1) 과정을 균등분포로 변환한 값)로 MAD 평균과 카이제곱 검정의 기각률을 구한 것이다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>ar_benford <span class="ot">&lt;-</span> <span class="cf">function</span>(n, phi) {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> <span class="cf">if</span> (phi <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">rnorm</span>(n) <span class="cf">else</span> <span class="fu">as.numeric</span>(<span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> phi), n)) <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">1</span> <span class="sc">-</span> phi<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  O <span class="ot">&lt;-</span> <span class="fu">tabulate</span>(<span class="fu">floor</span>(<span class="dv">10</span><span class="sc">^</span><span class="fu">pnorm</span>(z)), <span class="dv">9</span>)                       <span class="co"># U ~ Uniform(0,1) 이면 floor(10^U) 는 벤포드</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="at">mad =</span> <span class="fu">mean</span>(<span class="fu">abs</span>(O <span class="sc">/</span> n <span class="sc">-</span> P)), <span class="at">rej =</span> <span class="fu">sum</span>((O <span class="sc">-</span> n <span class="sc">*</span> P)<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (n <span class="sc">*</span> P)) <span class="sc">&gt;</span> <span class="fu">qchisq</span>(<span class="fl">0.95</span>, <span class="dv">8</span>))</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>dep <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.9</span>), <span class="cf">function</span>(f) <span class="fu">rowMeans</span>(<span class="fu">replicate</span>(<span class="dv">400</span>, <span class="fu">ar_benford</span>(<span class="dv">3000</span>, f)))))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="st">`</span><span class="at">AR 계수</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.9</span>), <span class="st">`</span><span class="at">MAD 평균</span><span class="st">`</span> <span class="ot">=</span> dep[, <span class="st">"mad"</span>], <span class="st">`</span><span class="at">E[MAD] 근사</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">emad</span>(<span class="dv">3000</span>),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                        <span class="st">`</span><span class="at">χ² 기각률(5%)</span><span class="st">`</span> <span class="ot">=</span> dep[, <span class="st">"rej"</span>], <span class="at">check.names =</span> <span class="cn">FALSE</span>), <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">AR 계수</th>
+<th style="text-align: right;">MAD 평균</th>
+<th style="text-align: right;">E[MAD] 근사</th>
+<th style="text-align: right;">χ² 기각률(5%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">0.0042</td>
+<td style="text-align: right;">0.0043</td>
+<td style="text-align: right;">0.0525</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.5</td>
+<td style="text-align: right;">0.0050</td>
+<td style="text-align: right;">0.0043</td>
+<td style="text-align: right;">0.1700</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.9</td>
+<td style="text-align: right;">0.0086</td>
+<td style="text-align: right;">0.0043</td>
+<td style="text-align: right;">0.6975</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>자기상관이 강할수록 벤포드를 완벽히 따르는 자료도 MAD가 커지고, 카이제곱 검정은 명목 수준 5%보다 훨씬 자주 기각한다. 종속성이 있는 자료에서는 카이제곱 검정의 p값과 MAD의 절대 기준을 그대로 믿기 어렵고, 같은 구조를 가진 비교 집단과의 <strong>상대 비교</strong>가 더 믿을 만하다.</p>
+</section>
+<section id="정리" class="level2">
+<h2 class="anchored" data-anchor-id="정리">정리</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>방법</th>
+<th>알려 주는 것</th>
+<th>주의할 점</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>카이제곱 검정</td>
+<td>분포 전체가 벤포드와 다른지</td>
+<td>표본이 크면 무의미한 괴리도 기각, 종속성이 있으면 과대 기각</td>
+</tr>
+<tr class="even">
+<td>숫자별 Z 검정</td>
+<td>어느 숫자에서 괴리가 생겼는지</td>
+<td>9번의 반복 검정</td>
+</tr>
+<tr class="odd">
+<td>MAD</td>
+<td>괴리의 크기</td>
+<td>표본이 작으면 정상 자료도 커짐 → 초과 MAD로 보정</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>벤포드 법칙은 여러 자릿수에 걸쳐 퍼져 있고 인위적인 상·하한이 없는 자료에서 기대된다. 성립 조건을 먼저 확인해야 한다.</li>
+<li>대규모 자료에서는 카이제곱 검정보다 MAD로 괴리의 크기를 판단한다.</li>
+<li>관측치 수가 다른 자료를 비교할 때는 MAD의 기댓값을 빼서 표본 크기의 영향을 제거한다.</li>
+<li>시계열처럼 종속성이 있는 자료에서는 절대 기준보다 비교 집단과의 상대 비교를 중시한다.</li>
+<li>벤포드 법칙에서 벗어났다는 사실은 조작의 증거가 아니라 추가 조사가 필요하다는 신호이다.</li>
+</ul>
+</section>
+<section id="참고문헌" class="level2">
+<h2 class="anchored" data-anchor-id="참고문헌">참고문헌</h2>
+<ul>
+<li>Benford, F. (1938). The law of anomalous numbers. <em>Proceedings of the American Philosophical Society</em>, 78, 551–572.</li>
+<li>Berger, A. and Hill, T. P. (2011). A basic theory of Benford’s law. <em>Probability Surveys</em>, 8, 1–126.</li>
+<li>Hill, T. P. (1995). A statistical derivation of the significant-digit law. <em>Statistical Science</em>, 10, 354–363.</li>
+<li>Newcomb, S. (1881). Note on the frequency of use of the different digits in natural numbers. <em>American Journal of Mathematics</em>, 4, 39–40.</li>
+<li>Nigrini, M. J. (2012). <em>Benford’s Law: Applications for Forensic Accounting, Auditing, and Fraud Detection</em>. Wiley.</li>
+<li>Pearson, K. (1900). On the criterion that a given system of deviations from the probable in the case of a correlated system of variables is such that it can be reasonably supposed to have arisen from random sampling. <em>Philosophical Magazine</em>, Series 5, 50, 157–175.</li>
+<li>Pinkham, R. S. (1961). On the distribution of first significant digits. <em>The Annals of Mathematical Statistics</em>, 32, 1223–1230.</li>
+</ul>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">각주</h2>
+
+<ol>
+<li id="fn1"><p><span class="math inline">\(\boldsymbol\Sigma^{-1/2}\mathbf x\)</span> 는 공분산이 단위행렬인 8차원 정규벡터, 즉 독립인 표준정규변수 8개이고, <span class="math inline">\(\mathbf x^{\top}\boldsymbol\Sigma^{-1}\mathbf x\)</span> 는 그 성분들의 제곱합이다.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

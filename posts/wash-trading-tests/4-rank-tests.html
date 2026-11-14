@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="Wilcoxon 부호순위 검정과 순위합 검정, Holm 보정의 원리를 정리하고, 34개 종목의 모의 패널로 법 시행 전후 비교와 사건 분석을 처음부터 끝까지 따라가 본다.">
+
+<title>워시 트레이딩 검정법 (4): 부호순위 검정, 순위합 검정, Holm 보정 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">워시 트레이딩 검정법 (4): 부호순위 검정, 순위합 검정, Holm 보정</h1>
+                  <div>
+        <div class="description">
+          Wilcoxon 부호순위 검정과 순위합 검정, Holm 보정의 원리를 정리하고, 34개 종목의 모의 패널로 법 시행 전후 비교와 사건 분석을 처음부터 끝까지 따라가 본다.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">가상자산</div>
+                <div class="quarto-category">Nonparametric statistics</div>
+                <div class="quarto-category">Hypothesis testing</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2026년 11월 9일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#signed-rank" id="toc-signed-rank" class="nav-link active" data-scroll-target="#signed-rank">1. Wilcoxon 부호순위 검정</a>
+  <ul class="collapse">
+  <li><a href="#검정통계량" id="toc-검정통계량" class="nav-link" data-scroll-target="#검정통계량">검정통계량</a></li>
+  <li><a href="#귀무분포의-평균과-분산" id="toc-귀무분포의-평균과-분산" class="nav-link" data-scroll-target="#귀무분포의-평균과-분산">귀무분포의 평균과 분산</a></li>
+  <li><a href="#정확-분포와-정규근사" id="toc-정확-분포와-정규근사" class="nav-link" data-scroll-target="#정확-분포와-정규근사">정확 분포와 정규근사</a></li>
+  </ul></li>
+  <li><a href="#rank-sum" id="toc-rank-sum" class="nav-link" data-scroll-target="#rank-sum">2. Wilcoxon 순위합 검정과 독립성</a>
+  <ul class="collapse">
+  <li><a href="#검정통계량-1" id="toc-검정통계량-1" class="nav-link" data-scroll-target="#검정통계량-1">검정통계량</a></li>
+  <li><a href="#같은-종목의-월별-값은-독립이-아니다" id="toc-같은-종목의-월별-값은-독립이-아니다" class="nav-link" data-scroll-target="#같은-종목의-월별-값은-독립이-아니다">같은 종목의 월별 값은 독립이 아니다</a></li>
+  </ul></li>
+  <li><a href="#holm" id="toc-holm" class="nav-link" data-scroll-target="#holm">3. 여러 사건을 반복 검정할 때: Holm 보정</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example">4. 예시: 모의 패널로 따라가는 비교 절차</a>
+  <ul class="collapse">
+  <li><a href="#단계-그룹-안의-시행-전후-비교-부호순위-검정" id="toc-단계-그룹-안의-시행-전후-비교-부호순위-검정" class="nav-link" data-scroll-target="#단계-그룹-안의-시행-전후-비교-부호순위-검정">1단계: 그룹 안의 시행 전후 비교 (부호순위 검정)</a></li>
+  <li><a href="#단계-두-그룹의-변화-폭-비교-순위합-검정" id="toc-단계-두-그룹의-변화-폭-비교-순위합-검정" class="nav-link" data-scroll-target="#단계-두-그룹의-변화-폭-비교-순위합-검정">2단계: 두 그룹의 변화 폭 비교 (순위합 검정)</a></li>
+  <li><a href="#단계-개별-종목의-전후-비교-순위합-검정-참고용" id="toc-단계-개별-종목의-전후-비교-순위합-검정-참고용" class="nav-link" data-scroll-target="#단계-개별-종목의-전후-비교-순위합-검정-참고용">3단계: 개별 종목의 전후 비교 (순위합 검정, 참고용)</a></li>
+  <li><a href="#단계-주요-사건-전후-비교와-holm-보정" id="toc-단계-주요-사건-전후-비교와-holm-보정" class="nav-link" data-scroll-target="#단계-주요-사건-전후-비교와-holm-보정">4단계: 주요 사건 전후 비교와 Holm 보정</a></li>
+  <li><a href="#예시에서-얻는-교훈" id="toc-예시에서-얻는-교훈" class="nav-link" data-scroll-target="#예시에서-얻는-교훈">예시에서 얻는 교훈</a></li>
+  </ul></li>
+  <li><a href="#참고문헌" id="toc-참고문헌" class="nav-link" data-scroll-target="#참고문헌">참고문헌</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 워시 트레이딩 논문의 검정법
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>이 연재는 <a href="../../research/wash-trading/index.html">가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향</a>(이준호·최범전, 2026, working paper)에서 쓰인 통계적 방법을 모의실험과 함께 자세히 설명한다. 예시는 모두 모의 자료이다. 첫 번째 지표인 벤포드 적합도는 별도의 글 <a href="../../posts/benford-test/index.html">벤포드 적합도 검정</a>에서 다룬다.</p>
+<ol start="2" type="1">
+<li><a href="../../posts/wash-trading-tests/2-tail-index.html">Hill 추정량과 꼬리지수</a></li>
+<li><a href="../../posts/wash-trading-tests/3-pelt.html">PELT 변화점 탐지와 벌점 보정</a></li>
+<li><a href="../../posts/wash-trading-tests/4-rank-tests.html">부호순위 검정, 순위합 검정, Holm 보정</a></li>
+<li><a href="../../posts/wash-trading-tests/5-did.html">이중차분과 와일드 군집 부트스트랩</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p>워시 트레이딩을 재는 세 지표(<a href="../../posts/benford-test/index.html">벤포드 초과 MAD</a>, <a href="../../posts/wash-trading-tests/2-tail-index.html">꼬리지수</a>, <a href="../../posts/wash-trading-tests/3-pelt.html">변화점 수</a>)는 모두 종목–월 단위의 값이다. <a href="../../research/wash-trading/index.html">가상자산이용자보호법 시행이 국내 가상자산시장의 워시 트레이딩에 미친 영향</a>(이준호·최범전, 2026, working paper)은 이 값들을 법 시행 전후로 비교할 때 세 가지 비모수 도구를 쓴다.</p>
+<ul>
+<li><strong>Wilcoxon 부호순위 검정</strong>: 그룹 안에서 종목별 시행 전후 차이를 검정한다.</li>
+<li><strong>Wilcoxon 순위합 검정</strong>: 두 그룹의 변화 폭을 비교하거나, 한 종목의 시행 전 월별 값과 시행 후 월별 값을 비교한다.</li>
+<li><strong>Holm 보정</strong>: 여러 사건에서 같은 검정을 반복할 때 오류율을 통제한다.</li>
+</ul>
+<p>이 글에서는 세 도구의 원리를 차례로 정리한 뒤, 마지막 절에서 34개 종목의 <strong>모의 패널</strong>로 논문의 비교 절차를 처음부터 끝까지 따라가 본다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">20240719</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>))</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>col_main <span class="ot">&lt;-</span> <span class="st">"#325d88"</span>; col_alt <span class="ot">&lt;-</span> <span class="st">"#d9822b"</span></span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="signed-rank" class="level2">
+<h2 class="anchored" data-anchor-id="signed-rank">1. Wilcoxon 부호순위 검정</h2>
+<section id="검정통계량" class="level3">
+<h3 class="anchored" data-anchor-id="검정통계량">검정통계량</h3>
+<p>그룹 안의 시행 전후 비교는 종목 <span class="math inline">\(i\)</span> 의 시행 전후 월평균의 차이 <span class="math inline">\(d_i=\bar Y_i^{post}-\bar Y_i^{pre}\)</span>, <span class="math inline">\(i=1,\ldots,n\)</span> 에 대한 검정이다. 대형 그룹은 <span class="math inline">\(n=8\)</span>, 중소형 그룹은 <span class="math inline">\(n=26\)</span> 으로 표본이 작고 지표의 분포가 치우쳐 있어, 정규성에 의존하는 대응표본 <span class="math inline">\(t\)</span> 검정 대신 순위를 이용한다. <span class="math inline">\(|d_i|\)</span> 의 순위를 <span class="math inline">\(R_i\)</span> 라 하면 통계량은</p>
+<p><span id="eq-wplus"><span class="math display">\[
+W^+=\sum_{i=1}^nR_i\cdot\mathbf 1(d_i&gt;0)
+\tag{1}\]</span></span></p>
+<p>이다. 귀무가설은 “차이의 분포가 0을 중심으로 대칭”이다.</p>
+</section>
+<section id="귀무분포의-평균과-분산" class="level3">
+<h3 class="anchored" data-anchor-id="귀무분포의-평균과-분산">귀무분포의 평균과 분산</h3>
+<p>귀무가설 아래에서 순위 <span class="math inline">\(1,\ldots,n\)</span> 각각에 붙는 부호는 서로 독립이고 각각 확률 1/2로 양수이다. 따라서 <span class="math inline">\(W^+=\sum_{r=1}^nr\,B_r\)</span> (<span class="math inline">\(B_r\sim\text{Bernoulli}(1/2)\)</span>, 독립)로 쓸 수 있고</p>
+<p><span id="eq-wplus-moments"><span class="math display">\[
+E[W^+]=\frac12\sum_{r=1}^nr=\frac{n(n+1)}4,\qquad
+\operatorname{Var}[W^+]=\frac14\sum_{r=1}^nr^2=\frac{n(n+1)(2n+1)}{24}
+\tag{2}\]</span></span></p>
+<p>이다. 동순위가 있으면 평균 순위를 쓰고, 크기 <span class="math inline">\(t\)</span> 인 동순위 묶음마다 분산에서 <span class="math inline">\((t^3-t)/48\)</span> 을 뺀다. 차이가 정확히 0인 종목은 보통 제외한다.</p>
+</section>
+<section id="정확-분포와-정규근사" class="level3">
+<h3 class="anchored" data-anchor-id="정확-분포와-정규근사">정확 분포와 정규근사</h3>
+<p><span class="math inline">\(2^n\)</span> 가지 부호 조합이 모두 같은 확률을 가지므로 <span class="math inline">\(W^+\)</span> 의 정확한 귀무분포는 열거로 구할 수 있다. <span class="math inline">\(n=8\)</span> 개 종목이 <strong>모두 같은 방향</strong>으로 변하면 <span class="math inline">\(W^+=36\)</span> 이고, 이런 결과는 <span class="math inline">\(2^8=256\)</span> 가지 중 양쪽 끝의 두 가지뿐이므로 양측 정확 p값은 <span class="math inline">\(2/256\approx0.0078\)</span> 이다. 논문은 연속성 보정과 동순위 보정을 포함한 정규근사를 썼는데, 이 경우</p>
+<p><span class="math display">\[
+z=\frac{36-18-0.5}{\sqrt{51}}\approx2.45,\qquad p\approx0.014
+\]</span></p>
+<p>가 된다. 논문 본문의 “대형 그룹은 8개 종목이 모두 같은 방향으로 변해도 p값이 약 0.014에 그친다”는 문장이 바로 이 계산이다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>d8 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.8</span>, <span class="fl">0.3</span>, <span class="fl">1.2</span>, <span class="fl">0.5</span>, <span class="fl">0.9</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1.1</span>)    <span class="co"># 8개 종목이 모두 같은 방향으로 변한 경우</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(정확 <span class="ot">=</span> <span class="fu">wilcox.test</span>(d8, <span class="at">exact =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>p.value,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  정규근사 <span class="ot">=</span> <span class="fu">wilcox.test</span>(d8, <span class="at">exact =</span> <span class="cn">FALSE</span>, <span class="at">correct =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>p.value)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      정확   정규근사 
+0.00781250 0.01426619 </code></pre>
+</div>
+</div>
+<p>R의 <code>wilcox.test()</code> 는 표본이 50개 미만이고 동순위가 없으면 기본으로 정확 분포를 쓰므로, 논문과 같은 값을 재현하려면 <code>exact = FALSE</code> 를 지정해야 한다. 어느 쪽이든 종목 수가 8개뿐이면 아무리 변화가 일관되어도 p값의 하한이 정해져 있다. 그래서 논문은 p값과 함께 “8개 중 7개 감소”처럼 <strong>증가·감소 종목 수</strong>를 함께 보고한다.</p>
+<p>부호순위 검정은 변화 폭의 순위까지 반영하므로, 증가·감소 종목 수만 세는 부호 검정보다 일반적으로 검정력이 높다. 대신 “차이의 분포가 대칭”이라는 가정이 필요하다. 이 가정이 깨지면 부호순위 검정은 중위수가 아니라 차이의 대칭성 자체를 검정하게 된다.</p>
+</section>
+</section>
+<section id="rank-sum" class="level2">
+<h2 class="anchored" data-anchor-id="rank-sum">2. Wilcoxon 순위합 검정과 독립성</h2>
+<section id="검정통계량-1" class="level3">
+<h3 class="anchored" data-anchor-id="검정통계량-1">검정통계량</h3>
+<p>순위합 검정(Mann–Whitney 검정)은 짝지어지지 않은 두 집단을 비교한다. 논문에서는 두 가지 용도로 쓰인다.</p>
+<ul>
+<li><strong>그룹 간 비교</strong>: 대형 8개 종목과 중소형 26개 종목의 변화 폭</li>
+<li><strong>개별 종목의 전후 비교</strong>: 한 종목의 시행 전 25개월 값과 시행 후 17개월 값</li>
+</ul>
+<p>크기 <span class="math inline">\(n_1\)</span>, <span class="math inline">\(n_2\)</span> 인 두 집단을 합쳐 순위를 매기고 첫째 집단의 순위 합을 <span class="math inline">\(W=\sum_{j=1}^{n_1}R_j\)</span> 라 하면, 두 집단의 분포가 같다는 귀무가설 아래에서 순위의 모든 배치가 같은 확률을 가지므로</p>
+<p><span id="eq-ranksum"><span class="math display">\[
+E[W]=\frac{n_1(n_1+n_2+1)}2,\qquad\operatorname{Var}[W]=\frac{n_1n_2(n_1+n_2+1)}{12}
+\tag{3}\]</span></span></p>
+<p>이다. <span class="math inline">\(U=W-n_1(n_1+1)/2\)</span> 로 쓰면 <span class="math inline">\(U/(n_1n_2)\)</span> 는 “첫째 집단에서 뽑은 값이 둘째 집단에서 뽑은 값보다 클 확률” <span class="math inline">\(P(X&gt;Y)\)</span> 의 추정량이 되어 해석이 쉽다. R의 <code>wilcox.test()</code> 가 보고하는 <code>W</code> 는 이 <span class="math inline">\(U\)</span> 이다.</p>
+</section>
+<section id="같은-종목의-월별-값은-독립이-아니다" class="level3">
+<h3 class="anchored" data-anchor-id="같은-종목의-월별-값은-독립이-아니다">같은 종목의 월별 값은 독립이 아니다</h3>
+<p><a href="#eq-ranksum" class="quarto-xref">방정식&nbsp;3</a> 은 “순위의 모든 배치가 같은 확률”이라는 <strong>교환가능성</strong>에 기댄다. 그런데 한 종목의 월별 지표는 서로 상관되어 있다. 이웃한 달끼리 비슷하면 시행 전 25개월과 시행 후 17개월이 각각 덩어리로 몰리고, 변화가 없어도 두 집단의 순위가 갈라지기 쉽다. 아래 실험은 변화가 전혀 없는 42개월 AR(1) 시계열을 25개월과 17개월로 나누어 5% 순위합 검정을 반복한 결과이다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rs_size <span class="ot">&lt;-</span> <span class="cf">function</span>(phi, <span class="at">R =</span> <span class="dv">2000</span>) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(<span class="fu">replicate</span>(R, {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="cf">if</span> (phi <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">rnorm</span>(<span class="dv">42</span>) <span class="cf">else</span> <span class="fu">as.numeric</span>(<span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> phi), <span class="dv">42</span>))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">wilcox.test</span>(x[<span class="dv">1</span><span class="sc">:</span><span class="dv">25</span>], x[<span class="dv">26</span><span class="sc">:</span><span class="dv">42</span>], <span class="at">exact =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>p.value <span class="sc">&lt;</span> <span class="fl">0.05</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="st">`</span><span class="at">AR 계수</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>), <span class="st">`</span><span class="at">5% 검정의 실제 기각률</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sapply</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>), rs_size),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">check.names =</span> <span class="cn">FALSE</span>), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">AR 계수</th>
+<th style="text-align: right;">5% 검정의 실제 기각률</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">0.046</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0.3</td>
+<td style="text-align: right;">0.138</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0.6</td>
+<td style="text-align: right;">0.297</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>자기상관이 0.6이면 실제 변화가 없어도 30% 안팎이 유의하게 나온다. 논문이 개별 종목의 순위합 검정 결과를 “독립성 가정을 충족하지 못하므로 참고 자료로 해석한다”고 명시한 이유이다. 반면 그룹 간 비교는 <strong>종목</strong>을 단위로 하므로, 종목 간 독립이 성립하는 한 이 문제는 훨씬 작다.</p>
+</section>
+</section>
+<section id="holm" class="level2">
+<h2 class="anchored" data-anchor-id="holm">3. 여러 사건을 반복 검정할 때: Holm 보정</h2>
+<p>사건 분석은 8개 사건마다 대형 그룹, 중소형 그룹, 그룹 간 차이를 검정한다. 지표 하나에서 같은 질문을 8번 반복하므로, 각 검정을 5% 수준에서 하면 “적어도 하나가 우연히 유의할 확률”(가족별 오류율, FWER)은 5%보다 커진다. 검정들이 독립이라면 <span class="math inline">\(1-0.95^8\approx0.34\)</span> 이다.</p>
+<p>Holm (1979)의 단계적 보정은 다음과 같다. <span class="math inline">\(m\)</span> 개의 p값을 작은 순서로 <span class="math inline">\(p_{(1)}\le\cdots\le p_{(m)}\)</span> 이라 하면</p>
+<ol type="1">
+<li><span class="math inline">\(p_{(1)}\le\alpha/m\)</span> 이면 첫째 가설을 기각하고 다음으로 간다. 아니면 멈춘다.</li>
+<li><span class="math inline">\(p_{(2)}\le\alpha/(m-1)\)</span> 이면 둘째 가설을 기각하고 다음으로 간다. 아니면 멈춘다.</li>
+<li>이를 <span class="math inline">\(p_{(j)}\le\alpha/(m-j+1)\)</span> 이 처음으로 깨질 때까지 반복한다.</li>
+</ol>
+<p>보정 p값으로 쓰면 <span class="math inline">\(\tilde p_{(j)}=\max_{l\le j}\min\{1,(m-l+1)p_{(l)}\}\)</span> 이다. 본페로니 보정(<span class="math inline">\(m\,p_j\)</span>)과 같은 FWER를 보장하면서 항상 그보다 덜 보수적이고, 검정 간 종속 구조에 대한 가정도 필요 없다. 아래는 가상의 8개 사건 p값에 두 보정을 적용한 예이다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>p_raw <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">0.441</span>, <span class="fl">0.183</span>, <span class="fl">0.0004</span>, <span class="fl">0.162</span>, <span class="fl">0.003</span>, <span class="fl">0.0002</span>, <span class="fl">0.0009</span>, <span class="fl">0.104</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(사건 <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"사건 "</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>), 원래 <span class="ot">=</span> p_raw,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">Holm =</span> <span class="fu">p.adjust</span>(p_raw, <span class="st">"holm"</span>), 본페로니 <span class="ot">=</span> <span class="fu">p.adjust</span>(p_raw, <span class="st">"bonferroni"</span>)),</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">digits =</span> <span class="dv">4</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">사건</th>
+<th style="text-align: right;">원래</th>
+<th style="text-align: right;">Holm</th>
+<th style="text-align: right;">본페로니</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">사건 1</td>
+<td style="text-align: right;">0.4410</td>
+<td style="text-align: right;">0.4860</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">사건 2</td>
+<td style="text-align: right;">0.1830</td>
+<td style="text-align: right;">0.4860</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">사건 3</td>
+<td style="text-align: right;">0.0004</td>
+<td style="text-align: right;">0.0028</td>
+<td style="text-align: right;">0.0032</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">사건 4</td>
+<td style="text-align: right;">0.1620</td>
+<td style="text-align: right;">0.4860</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">사건 5</td>
+<td style="text-align: right;">0.0030</td>
+<td style="text-align: right;">0.0150</td>
+<td style="text-align: right;">0.0240</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">사건 6</td>
+<td style="text-align: right;">0.0002</td>
+<td style="text-align: right;">0.0016</td>
+<td style="text-align: right;">0.0016</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">사건 7</td>
+<td style="text-align: right;">0.0009</td>
+<td style="text-align: right;">0.0054</td>
+<td style="text-align: right;">0.0072</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">사건 8</td>
+<td style="text-align: right;">0.1040</td>
+<td style="text-align: right;">0.4160</td>
+<td style="text-align: right;">0.8320</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>논문은 Holm 보정 전후의 결과를 함께 보고하고, 사건 분석 전체를 인과효과 추정이 아니라 <strong>탐색적 비교</strong>로 해석한다. 사건별 비교 기간(전후 3개월)이 서로 겹치므로, 한 사건의 효과가 다른 사건의 비교 기간에 섞여 들어갈 수 있기 때문이다.</p>
+</section>
+<section id="example" class="level2">
+<h2 class="anchored" data-anchor-id="example">4. 예시: 모의 패널로 따라가는 비교 절차</h2>
+<p>이제 세 도구를 한 자료에 차례로 적용해 보자. 논문과 같은 구조의 모의 패널을 만든다.</p>
+<ul>
+<li>종목: 대형 8개, 중소형 26개</li>
+<li>기간: 2022년 6월~2025년 12월의 43개월이며, 시행월(2024년 7월)은 비교에서 제외한다.</li>
+<li>지표: 종목–월 초과 MAD</li>
+</ul>
+<p>자료를 만들 때 <strong>법 시행의 효과는 전혀 넣지 않았다.</strong> 대신 실제 시장에서 있을 법한 두 가지 요인을 넣었다.</p>
+<ol type="1">
+<li>중소형 그룹의 지표가 분석기간 내내 조금씩 높아지는 <strong>추세</strong></li>
+<li>거래수수료가 무료인 기간(2023년 10월~2024년 1월, 2024년 10월 이후)에 중소형 그룹의 지표가 낮아지는 <strong>수수료 효과</strong></li>
+</ol>
+<p>여기에 종목마다 다른 수준, 시장 공통의 월별 충격, 종목 안의 AR(1) 오차를 더했다. 검정 절차가 “법 시행 효과가 없다”는 사실을 제대로 드러내는지 보는 것이 이 예시의 목적이다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>months <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"2022-06-01"</span>), <span class="fu">as.Date</span>(<span class="st">"2025-12-01"</span>), <span class="at">by =</span> <span class="st">"month"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>law    <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="st">"2024-07-01"</span>)                               <span class="co"># 시행월(비교에서 제외)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>coins  <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">coin  =</span> <span class="fu">sprintf</span>(<span class="st">"C%02d"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">34</span>),</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">group =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"대형"</span>, <span class="st">"중소형"</span>), <span class="fu">c</span>(<span class="dv">8</span>, <span class="dv">26</span>)))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>level  <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(coins<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"대형"</span>, <span class="fu">rnorm</span>(<span class="dv">34</span>, <span class="fl">0.003</span>, <span class="fl">0.001</span>), <span class="fu">rnorm</span>(<span class="dv">34</span>, <span class="fl">0.006</span>, <span class="fl">0.0015</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fee_free <span class="ot">&lt;-</span> (months <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2023-10-01"</span>) <span class="sc">&amp;</span> months <span class="sc">&lt;</span> <span class="fu">as.Date</span>(<span class="st">"2024-02-01"</span>)) <span class="sc">|</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            months <span class="sc">&gt;=</span> <span class="fu">as.Date</span>(<span class="st">"2024-10-01"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>tm     <span class="ot">&lt;-</span> <span class="fu">seq_along</span>(months)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>common <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="fu">length</span>(months), <span class="dv">0</span>, <span class="fl">0.0005</span>)                    <span class="co"># 시장 공통 충격</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>panel_all <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">lapply</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">34</span>, <span class="cf">function</span>(i) {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  small <span class="ot">&lt;-</span> coins<span class="sc">$</span>group[i] <span class="sc">==</span> <span class="st">"중소형"</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  e <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">arima.sim</span>(<span class="fu">list</span>(<span class="at">ar =</span> <span class="fl">0.5</span>), <span class="fu">length</span>(months))) <span class="sc">*</span> <span class="fl">0.0012</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> level[i] <span class="sc">+</span> common <span class="sc">+</span> small <span class="sc">*</span> (<span class="fl">0.00015</span> <span class="sc">*</span> (tm <span class="sc">-</span> <span class="dv">25</span>) <span class="sc">-</span> <span class="fl">0.002</span> <span class="sc">*</span> fee_free) <span class="sc">+</span> e</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">coin =</span> coins<span class="sc">$</span>coin[i], <span class="at">group =</span> coins<span class="sc">$</span>group[i], <span class="at">month =</span> months, <span class="at">y =</span> y)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>}))</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>panel <span class="ot">&lt;-</span> <span class="fu">subset</span>(panel_all, month <span class="sc">!=</span> law)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>gm <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(y <span class="sc">~</span> group <span class="sc">+</span> month, panel_all, mean)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>fee_box <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">start =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2023-10-01"</span>, <span class="st">"2024-10-01"</span>)),</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">end   =</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2024-01-31"</span>, <span class="st">"2025-12-31"</span>)))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(gm, <span class="fu">aes</span>(month, y, <span class="at">colour =</span> group)) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_rect</span>(<span class="at">data =</span> fee_box, <span class="fu">aes</span>(<span class="at">xmin =</span> start, <span class="at">xmax =</span> end, <span class="at">ymin =</span> <span class="sc">-</span><span class="cn">Inf</span>, <span class="at">ymax =</span> <span class="cn">Inf</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="at">fill =</span> <span class="st">"grey92"</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> law, <span class="at">colour =</span> <span class="st">"firebrick"</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">linewidth =</span> <span class="fl">0.8</span>) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="fl">1.4</span>) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_colour_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(대형 <span class="ot">=</span> col_main, 중소형 <span class="ot">=</span> col_alt), <span class="at">name =</span> <span class="cn">NULL</span>) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="cn">NULL</span>, <span class="at">y =</span> <span class="st">"초과 MAD(그룹 평균)"</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div id="fig-ex-panel" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ex-panel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="4-rank-tests_files/figure-html/fig-ex-panel-1.png" class="img-fluid figure-img" width="768">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ex-panel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+그림&nbsp;1: 모의 패널의 그룹별 월평균 초과 MAD. 음영은 거래수수료 무료 기간, 빨간 점선은 법 시행월이다. 자료에는 법 시행의 효과가 들어 있지 않다.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<section id="단계-그룹-안의-시행-전후-비교-부호순위-검정" class="level3">
+<h3 class="anchored" data-anchor-id="단계-그룹-안의-시행-전후-비교-부호순위-검정">1단계: 그룹 안의 시행 전후 비교 (부호순위 검정)</h3>
+<p>종목마다 시행 전 25개월과 시행 후 17개월의 평균을 내고, 그 차이 <span class="math inline">\(d_i\)</span> 에 부호순위 검정을 적용한다. <a href="#eq-wplus" class="quarto-xref">방정식&nbsp;1</a> 를 직접 계산한 값과 <code>wilcox.test()</code> 의 결과를 나란히 놓았다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pre  <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(y <span class="sc">~</span> coin <span class="sc">+</span> group, <span class="fu">subset</span>(panel, month <span class="sc">&lt;</span> law), mean)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>post <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(y <span class="sc">~</span> coin,          <span class="fu">subset</span>(panel, month <span class="sc">&gt;</span> law), mean)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>chg  <span class="ot">&lt;-</span> <span class="fu">merge</span>(<span class="fu">setNames</span>(pre, <span class="fu">c</span>(<span class="st">"coin"</span>, <span class="st">"group"</span>, <span class="st">"pre"</span>)), <span class="fu">setNames</span>(post, <span class="fu">c</span>(<span class="st">"coin"</span>, <span class="st">"post"</span>)))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>chg<span class="sc">$</span>d <span class="ot">&lt;-</span> chg<span class="sc">$</span>post <span class="sc">-</span> chg<span class="sc">$</span>pre</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>fmt_p <span class="ot">&lt;-</span> <span class="cf">function</span>(p) <span class="fu">ifelse</span>(p <span class="sc">&lt;</span> <span class="fl">0.001</span>, <span class="st">"&lt;0.001"</span>, <span class="fu">sprintf</span>(<span class="st">"%.3f"</span>, p))</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>signed_rank <span class="ot">&lt;-</span> <span class="cf">function</span>(d) {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">length</span>(d); r <span class="ot">&lt;-</span> <span class="fu">rank</span>(<span class="fu">abs</span>(d))</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(종목수 <span class="ot">=</span> n, 증가 <span class="ot">=</span> <span class="fu">sum</span>(d <span class="sc">&gt;</span> <span class="dv">0</span>), 감소 <span class="ot">=</span> <span class="fu">sum</span>(d <span class="sc">&lt;</span> <span class="dv">0</span>),</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">W+</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(r[d <span class="sc">&gt;</span> <span class="dv">0</span>]), <span class="st">`</span><span class="at">E[W+]</span><span class="st">`</span> <span class="ot">=</span> n <span class="sc">*</span> (n <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">/</span> <span class="dv">4</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    p값 <span class="ot">=</span> <span class="fu">wilcox.test</span>(d, <span class="at">exact =</span> <span class="cn">FALSE</span>, <span class="at">correct =</span> <span class="cn">TRUE</span>)<span class="sc">$</span>p.value)</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>sr <span class="ot">&lt;-</span> <span class="fu">rbind</span>(대형 <span class="ot">=</span> <span class="fu">signed_rank</span>(chg<span class="sc">$</span>d[chg<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"대형"</span>]),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            중소형 <span class="ot">=</span> <span class="fu">signed_rank</span>(chg<span class="sc">$</span>d[chg<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"중소형"</span>]))</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>sr_tab <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(sr[, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>], p값 <span class="ot">=</span> <span class="fu">fmt_p</span>(sr[, <span class="st">"p값"</span>]), <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(sr_tab, <span class="at">digits =</span> <span class="dv">1</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">종목수</th>
+<th style="text-align: right;">증가</th>
+<th style="text-align: right;">감소</th>
+<th style="text-align: right;">W+</th>
+<th style="text-align: right;">E[W+]</th>
+<th style="text-align: left;">p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">대형</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">18.0</td>
+<td style="text-align: left;">0.529</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">중소형</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">351</td>
+<td style="text-align: right;">175.5</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>중소형 그룹은 26개 종목이 증가하고 0개가 감소하였으며, 부호순위 검정의 p값은 &lt;0.001이다. 대형 그룹은 3개 증가, 5개 감소(<span class="math inline">\(p\)</span>=0.529)이다. 자료에는 법 시행 효과가 전혀 없지만, 중소형 그룹에서는 시행 전부터 이어진 추세 때문에 시행 후 평균이 높아진 종목이 더 많다. <strong>그룹 안의 전후 비교만으로는 법 시행의 효과와 기존 추세를 구분할 수 없다.</strong></p>
+</section>
+<section id="단계-두-그룹의-변화-폭-비교-순위합-검정" class="level3">
+<h3 class="anchored" data-anchor-id="단계-두-그룹의-변화-폭-비교-순위합-검정">2단계: 두 그룹의 변화 폭 비교 (순위합 검정)</h3>
+<p>대형 그룹을 대조군으로 삼아, 중소형 그룹의 변화 폭 <span class="math inline">\(d_i\)</span> 가 대형 그룹의 변화 폭과 다른지 순위합 검정으로 비교한다. 시장 전체에 공통된 변화는 두 그룹의 <span class="math inline">\(d_i\)</span> 에 함께 들어가므로 이 비교에서 상쇄된다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rs <span class="ot">&lt;-</span> <span class="fu">wilcox.test</span>(d <span class="sc">~</span> group, <span class="at">data =</span> chg, <span class="at">exact =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">&lt;-</span> <span class="fu">sum</span>(chg<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"대형"</span>); n2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(chg<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"중소형"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">U =</span> <span class="fu">unname</span>(rs<span class="sc">$</span>statistic), <span class="st">`</span><span class="at">U/(n1 n2)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">unname</span>(rs<span class="sc">$</span>statistic) <span class="sc">/</span> (n1 <span class="sc">*</span> n2),</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                        p값 <span class="ot">=</span> <span class="fu">fmt_p</span>(rs<span class="sc">$</span>p.value), <span class="at">check.names =</span> <span class="cn">FALSE</span>), <span class="at">digits =</span> <span class="dv">3</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: right;">U</th>
+<th style="text-align: right;">U/(n1 n2)</th>
+<th style="text-align: left;">p값</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">0.053</td>
+<td style="text-align: left;">&lt;0.001</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><span class="math inline">\(U/(n_1n_2)\)</span> 는 “대형 종목의 변화 폭이 중소형 종목의 변화 폭보다 클 확률”의 추정치이다. 0.5보다 작으면 중소형 그룹의 변화 폭이 대체로 더 크다는 뜻이다. 다만 이 비교도 시행 전 추세의 차이를 걸러내지 못한다. 논문이 <a href="../../posts/wash-trading-tests/5-did.html">이중차분 모형</a>에 그룹별 추세 항을 넣어 다시 점검하는 이유이다.</p>
+</section>
+<section id="단계-개별-종목의-전후-비교-순위합-검정-참고용" class="level3">
+<h3 class="anchored" data-anchor-id="단계-개별-종목의-전후-비교-순위합-검정-참고용">3단계: 개별 종목의 전후 비교 (순위합 검정, 참고용)</h3>
+<p>종목마다 시행 전 25개월의 월별 값과 시행 후 17개월의 월별 값을 순위합 검정으로 비교하면, 5% 수준에서 유의한 종목이 다음과 같이 나온다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pc <span class="ot">&lt;-</span> <span class="fu">sapply</span>(<span class="fu">split</span>(panel, panel<span class="sc">$</span>coin), <span class="cf">function</span>(z)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wilcox.test</span>(z<span class="sc">$</span>y[z<span class="sc">$</span>month <span class="sc">&lt;</span> law], z<span class="sc">$</span>y[z<span class="sc">$</span>month <span class="sc">&gt;</span> law], <span class="at">exact =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>p.value)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">table</span>(그룹 <span class="ot">=</span> coins<span class="sc">$</span>group[<span class="fu">match</span>(<span class="fu">names</span>(pc), coins<span class="sc">$</span>coin)],</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                   <span class="st">`</span><span class="at">p &lt; 0.05</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(pc <span class="sc">&lt;</span> <span class="fl">0.05</span>, <span class="st">"유의"</span>, <span class="st">"유의하지 않음"</span>)))</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: right;">유의</th>
+<th style="text-align: right;">유의하지 않음</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">대형</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">중소형</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>법 시행 효과가 없는데도 여러 종목이 “유의하게” 변한 것으로 나온다. 중소형 종목은 추세 때문이고, 대형 종목은 월별 값의 자기상관 때문이다. 2절에서 본 것처럼 같은 종목의 월별 값은 독립이 아니므로, 개별 종목의 순위합 검정은 어떤 종목을 더 들여다볼지 고르는 <strong>참고 자료</strong>로만 쓴다.</p>
+</section>
+<section id="단계-주요-사건-전후-비교와-holm-보정" class="level3">
+<h3 class="anchored" data-anchor-id="단계-주요-사건-전후-비교와-holm-보정">4단계: 주요 사건 전후 비교와 Holm 보정</h3>
+<p>마지막으로 논문의 8개 사건 각각에 대해, 사건월을 제외한 직전 3개월과 직후 3개월의 종목별 평균을 비교한다. 그룹 안의 변화는 부호순위 검정으로, 두 그룹의 변화 폭 차이는 순위합 검정으로 판단하고, 열마다 8개 사건의 p값에 Holm 보정을 적용한다.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>events <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  번호 <span class="ot">=</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">8</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  사건 <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"FTX 파산 신청"</span>, <span class="st">"법 공포"</span>, <span class="st">"수수료 무료 시작"</span>, <span class="st">"수수료 유료 전환"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>           <span class="st">"법 시행"</span>, <span class="st">"수수료 무료 재개"</span>, <span class="st">"자전거래 방지 시스템"</span>, <span class="st">"비상계엄 선포"</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  일자 <span class="ot">=</span> <span class="fu">as.Date</span>(<span class="fu">c</span>(<span class="st">"2022-11-11"</span>, <span class="st">"2023-07-18"</span>, <span class="st">"2023-10-04"</span>, <span class="st">"2024-02-05"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"2024-07-19"</span>, <span class="st">"2024-10-01"</span>, <span class="st">"2024-11-25"</span>, <span class="st">"2024-12-03"</span>)))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>event_test <span class="ot">&lt;-</span> <span class="cf">function</span>(date) {</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  em     <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(<span class="fu">format</span>(date, <span class="st">"%Y-%m-01"</span>))</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  before <span class="ot">&lt;-</span> <span class="fu">seq</span>(em, <span class="at">by =</span> <span class="st">"-1 month"</span>, <span class="at">length.out =</span> <span class="dv">4</span>)[<span class="sc">-</span><span class="dv">1</span>]     <span class="co"># 사건월 제외 직전 3개월</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  after  <span class="ot">&lt;-</span> <span class="fu">seq</span>(em, <span class="at">by =</span> <span class="st">"1 month"</span>,  <span class="at">length.out =</span> <span class="dv">4</span>)[<span class="sc">-</span><span class="dv">1</span>]     <span class="co"># 사건월 제외 직후 3개월</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>  b <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(y <span class="sc">~</span> coin <span class="sc">+</span> group, <span class="fu">subset</span>(panel_all, month <span class="sc">%in%</span> before), mean)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(y <span class="sc">~</span> coin,          <span class="fu">subset</span>(panel_all, month <span class="sc">%in%</span> after),  mean)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">&lt;-</span> <span class="fu">merge</span>(b, a, <span class="at">by =</span> <span class="st">"coin"</span>); m<span class="sc">$</span>d <span class="ot">&lt;-</span> m<span class="sc">$</span>y.y <span class="sc">-</span> m<span class="sc">$</span>y.x</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(대형 <span class="ot">=</span> <span class="fu">wilcox.test</span>(m<span class="sc">$</span>d[m<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"대형"</span>], <span class="at">exact =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>p.value,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    중소형 <span class="ot">=</span> <span class="fu">wilcox.test</span>(m<span class="sc">$</span>d[m<span class="sc">$</span>group <span class="sc">==</span> <span class="st">"중소형"</span>], <span class="at">exact =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>p.value,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    그룹차이 <span class="ot">=</span> <span class="fu">wilcox.test</span>(d <span class="sc">~</span> group, m, <span class="at">exact =</span> <span class="cn">FALSE</span>)<span class="sc">$</span>p.value)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>ev <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(events<span class="sc">$</span>일자, event_test))</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>ev_holm <span class="ot">&lt;-</span> <span class="fu">apply</span>(ev, <span class="dv">2</span>, p.adjust, <span class="at">method =</span> <span class="st">"holm"</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>out <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(events[, <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], ev, ev_holm, <span class="at">check.names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(out)[<span class="dv">3</span><span class="sc">:</span><span class="dv">8</span>] <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"대형 p"</span>, <span class="st">"중소형 p"</span>, <span class="st">"그룹차이 p"</span>, <span class="st">"대형 Holm"</span>, <span class="st">"중소형 Holm"</span>, <span class="st">"그룹차이 Holm"</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(out, <span class="at">digits =</span> <span class="dv">4</span>, <span class="at">row.names =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="클립보드 복사" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 23%">
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 12%">
+<col style="width: 11%">
+<col style="width: 13%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">번호</th>
+<th style="text-align: left;">사건</th>
+<th style="text-align: right;">대형 p</th>
+<th style="text-align: right;">중소형 p</th>
+<th style="text-align: right;">그룹차이 p</th>
+<th style="text-align: right;">대형 Holm</th>
+<th style="text-align: right;">중소형 Holm</th>
+<th style="text-align: right;">그룹차이 Holm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FTX 파산 신청</td>
+<td style="text-align: right;">0.8336</td>
+<td style="text-align: right;">0.5938</td>
+<td style="text-align: right;">0.8870</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">법 공포</td>
+<td style="text-align: right;">0.4412</td>
+<td style="text-align: right;">0.0422</td>
+<td style="text-align: right;">0.9192</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.1983</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">수수료 무료 시작</td>
+<td style="text-align: right;">0.1073</td>
+<td style="text-align: right;">0.0013</td>
+<td style="text-align: right;">0.0025</td>
+<td style="text-align: right;">0.5604</td>
+<td style="text-align: right;">0.0088</td>
+<td style="text-align: right;">0.0149</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">수수료 유료 전환</td>
+<td style="text-align: right;">0.2340</td>
+<td style="text-align: right;">0.0000</td>
+<td style="text-align: right;">0.0008</td>
+<td style="text-align: right;">0.9358</td>
+<td style="text-align: right;">0.0001</td>
+<td style="text-align: right;">0.0057</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">법 시행</td>
+<td style="text-align: right;">0.3627</td>
+<td style="text-align: right;">0.0842</td>
+<td style="text-align: right;">0.5561</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.2525</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">수수료 무료 재개</td>
+<td style="text-align: right;">0.0801</td>
+<td style="text-align: right;">0.0013</td>
+<td style="text-align: right;">0.0007</td>
+<td style="text-align: right;">0.5604</td>
+<td style="text-align: right;">0.0088</td>
+<td style="text-align: right;">0.0056</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">자전거래 방지 시스템</td>
+<td style="text-align: right;">0.0143</td>
+<td style="text-align: right;">0.6294</td>
+<td style="text-align: right;">0.0099</td>
+<td style="text-align: right;">0.1141</td>
+<td style="text-align: right;">1.0000</td>
+<td style="text-align: right;">0.0497</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">비상계엄 선포</td>
+<td style="text-align: right;">0.0801</td>
+<td style="text-align: right;">0.0397</td>
+<td style="text-align: right;">0.3199</td>
+<td style="text-align: right;">0.5604</td>
+<td style="text-align: right;">0.1983</td>
+<td style="text-align: right;">1.0000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Holm 보정 후에도 중소형 그룹 안의 변화가 5% 수준에서 유의한 사건은 수수료 무료 시작, 수수료 유료 전환, 수수료 무료 재개이다. 두 그룹의 변화 폭 차이가 유의하게 남는 사건은 수수료 무료 시작, 수수료 유료 전환, 수수료 무료 재개, 자전거래 방지 시스템이다. 수수료 정책이 바뀐 시점의 변화가 뚜렷하게 드러나는 것은 자료에 넣은 수수료 효과 그대로이다. 법 시행(⑤) 시점의 그룹 간 차이는 유의하지 않다(Holm 보정 p값 1.000).</p>
+<p>수수료와 무관한 사건에서 차이가 유의하게 나왔다면 비교 기간을 확인해야 한다. 예를 들어 자전거래 방지 시스템(⑦)의 직전 3개월(2024년 8~10월)에는 수수료가 유료인 두 달이 들어 있고, 직후 3개월(2024년 12월~2025년 2월)은 모두 무료 기간이다. 이 사건의 전후 비교에는 사건 자체와 무관한 수수료 효과가 섞여 들어간다. 사건들이 몇 달 간격으로 이어지면 이런 겹침을 피하기 어렵다. 논문이 사건 분석의 결과를 인과효과가 아니라 탐색적 비교로 해석하는 또 하나의 이유이다.</p>
+<p>한편 중소형 그룹에는 분석기간 내내 이어지는 추세가 있으므로, 사건과 무관하게 전후 3개월 사이에도 지표가 높아진다. 법 시행처럼 수수료 효과가 없는 사건에서 중소형 그룹 안의 변화가 유의하게 나오더라도, 그것이 사건의 효과라고 단정할 수 없는 이유이다. 그래서 논문은 사건 분석을 인과효과 추정이 아니라 탐색적 비교로 해석하고, 법 시행 시점의 변화가 다른 사건들에 비해 특별히 큰지를 본다.</p>
+</section>
+<section id="예시에서-얻는-교훈" class="level3">
+<h3 class="anchored" data-anchor-id="예시에서-얻는-교훈">예시에서 얻는 교훈</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>단계</th>
+<th>이 예시에서 본 것</th>
+<th>논문의 대응</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>그룹 안 전후 비교</td>
+<td>효과가 없어도 추세 때문에 유의할 수 있다</td>
+<td>증가·감소 종목 수와 함께 해석</td>
+</tr>
+<tr class="even">
+<td>그룹 간 변화 폭 비교</td>
+<td>공통 변화는 상쇄되지만 추세 차이는 남는다</td>
+<td>이중차분에 그룹별 추세 항 추가</td>
+</tr>
+<tr class="odd">
+<td>개별 종목 비교</td>
+<td>자기상관과 추세로 “유의한” 종목이 쉽게 나온다</td>
+<td>참고 자료로만 사용</td>
+</tr>
+<tr class="even">
+<td>사건 분석 + Holm</td>
+<td>실제로 영향을 준 사건(수수료 정책)이 드러난다</td>
+<td>법 시행의 변화 폭을 다른 사건과 견줌</td>
+</tr>
+</tbody>
+</table>
+<p>하나의 검정 결과만 보면 “법 시행 후 중소형 종목의 지표가 유의하게 높아졌다”는 결론을 내리기 쉽다. 여러 비교를 겹쳐 보아야 그 변화가 법 시행 때문인지, 원래 있던 추세나 다른 사건 때문인지를 가려낼 수 있다. 다음 글에서는 그룹 간 비교를 회귀모형으로 확장한 <a href="../../posts/wash-trading-tests/5-did.html">이중차분 모형과 소수 군집 추론</a>을 다룬다.</p>
+</section>
+</section>
+<section id="참고문헌" class="level2">
+<h2 class="anchored" data-anchor-id="참고문헌">참고문헌</h2>
+<ul>
+<li>Hollander, M., Wolfe, D. A. and Chicken, E. (2014). <em>Nonparametric Statistical Methods</em>, 3rd ed.&nbsp;Wiley.</li>
+<li>Holm, S. (1979). A simple sequentially rejective multiple test procedure. <em>Scandinavian Journal of Statistics</em>, 6, 65–70.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

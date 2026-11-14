@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="방사 기저함수와 공간채우기 알고리즘, 텐서곱 기저와의 비교">
+
+<title>방사 기저 평활 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">방사 기저 평활</h1>
+                  <div>
+        <div class="description">
+          방사 기저함수와 공간채우기 알고리즘, 텐서곱 기저와의 비교
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Bayesian smoothing</div>
+                <div class="quarto-category">Spatial statistics</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2022년 10월 19일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#방사-기저" id="toc-방사-기저" class="nav-link active" data-scroll-target="#방사-기저">방사 기저</a>
+  <ul class="collapse">
+  <li><a href="#공간채우기-알고리즘" id="toc-공간채우기-알고리즘" class="nav-link" data-scroll-target="#공간채우기-알고리즘">공간채우기 알고리즘</a></li>
+  <li><a href="#방사-기저에-대한-벌점" id="toc-방사-기저에-대한-벌점" class="nav-link" data-scroll-target="#방사-기저에-대한-벌점">방사 기저에 대한 벌점</a></li>
+  </ul></li>
+  <li><a href="#텐서곱-대-방사-기저" id="toc-텐서곱-대-방사-기저" class="nav-link" data-scroll-target="#텐서곱-대-방사-기저">텐서곱 대 방사 기저</a></li>
+  <li><a href="#다음-글" id="toc-다음-글" class="nav-link" data-scroll-target="#다음-글">다음 글</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 베이지안 평활기법 — 전체 목차
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>제1장 평활기법과 비모수 회귀분석의 기본 개념</strong></p>
+<ol type="1">
+<li><a href="../../posts/smoothing/smoothing1.html">평활화 기법 소개</a></li>
+<li><a href="../../posts/smoothing/smoothing2.html">베이지안 평활기법</a></li>
+<li><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a></li>
+<li><a href="../../posts/smoothing/smoothing4.html">벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing5.html">베이지안 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing6.html">비정규분포 관측값의 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing7.html">범주형 관측값 모형과 평활화 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a></li>
+</ol>
+<p><strong>제2장 선형혼합모형</strong></p>
+<ol start="9" type="1">
+<li><a href="../../posts/smoothing/smoothing9.html">선형혼합모형</a></li>
+<li><a href="../../posts/smoothing/smoothing10.html">선형혼합모형의 우도 기반 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing11.html">선형혼합모형의 베이지안 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing12.html">유한 혼합모형</a></li>
+</ol>
+<p><strong>제3장 종단 데이터를 위한 비모수 혼합모형</strong></p>
+<ol start="13" type="1">
+<li><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a></li>
+</ol>
+<p><strong>제4장 공간 평활화와 공간가법 회귀모형</strong></p>
+<ol start="14" type="1">
+<li><a href="../../posts/smoothing/smoothing14.html">공간 평활과 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing15.html">가우스 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing16.html">텐서곱 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing17.html">방사 기저 평활</a></li>
+<li><a href="../../posts/smoothing/smoothing18.html">정상 가우스 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing19.html">베리오그램과 공분산 모수의 추정</a></li>
+<li><a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p><a href="../../posts/smoothing/smoothing16.html">앞 글</a>에서는 텐서곱 기저와 크로네커곱 벌점을 이용한 텐서곱 벌점 스플라인을 살펴보았다. 이번 글에서는 연속 공간 평활화의 두 번째 방법인 방사 기저(radial basis)를 다루고, 두 접근법의 장단점을 비교한다.</p>
+<section id="방사-기저" class="level2">
+<h2 class="anchored" data-anchor-id="방사-기저">방사 기저</h2>
+<p>방사 기저의 기본 아이디어는 기저함수의 다변수 인자를 바꾸어 일변수 문제로 만드는 것이다. 공간상의 임의의 결합점 <span class="math inline">\(\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K\)</span> 를 고려해 보자. 방사 기저의 주된 이점은 데이터가 밀집한 지역에 더 많은 결합점을 놓을 수 있다는 것이다. 각 기저함수는 단 하나의 결합점에 할당된다. 이를 모형화하면 기저함수는</p>
+<p><span class="math display">\[
+B_k(\mathbf s)=B(\|\mathbf s-\boldsymbol\kappa_k\|)
+\]</span></p>
+<p>이고, 여기서 <span class="math inline">\(B(\cdot)\)</span> 는 일변수 함수이며, <span class="math inline">\(\|\mathbf s-\boldsymbol\kappa_k\|\)</span> 는 각 점과 결합점 <span class="math inline">\(\boldsymbol\kappa_k\)</span> 사이의 거리를 측정한다. 공간함수 <span class="math inline">\(f(\mathbf s)\)</span> 는</p>
+<p><span id="eq-radial"><span class="math display">\[
+f(\mathbf s)=\sum_{k=1}^K \gamma_k B_k(\mathbf s)
+\tag{1}\]</span></span></p>
+<p>로 근사할 수 있다.</p>
+<p>함수 <span class="math inline">\(B(\cdot)\)</span> 나 거리측도 <span class="math inline">\(\|\cdot\|\)</span> 를 바꾸면 다양한 종류의 방사 기저를 얻을 수 있다. 보통 거리로는 원형 등고선을 제공하는 유클리드 거리를 사용하기 때문에 방사 기저라고 부른다. 가장 많이 사용되는 방사 기저함수는 다음과 같다.</p>
+<ul>
+<li><span class="math inline">\(B(r)=\exp(-cr^2),\quad c&gt;0\)</span></li>
+<li><span class="math inline">\(B(r)=r^2\log(r)\)</span> (박판 스플라인, thin plate spline)</li>
+<li><span class="math inline">\(B(r)=r^k\)</span>, <span class="math inline">\(k\)</span> 는 짝수</li>
+<li><span class="math inline">\(B(r)=\sqrt{r^2+c^2}\)</span>, <span class="math inline">\(c&gt;0\)</span></li>
+</ul>
+<p>텐서곱 스플라인 기저함수에 비해 방사 기저함수가 갖는 장점은 두 가지이다. 첫째, 텐서곱 스플라인 기저함수에서는 결합점의 일부가 데이터가 전혀 없는 곳에 놓일 수 있다. 이 경우 예측에는 문제가 없을지 몰라도 계산해야 하는 계수의 수가 불필요하게 크게 증가한다. 둘째, 방사 기저함수에서는 결합점을 보다 유연하게 배치하여 데이터가 밀집한 지역에 보다 많은 기저함수를 추가할 수 있다.</p>
+<section id="공간채우기-알고리즘" class="level3">
+<h3 class="anchored" data-anchor-id="공간채우기-알고리즘">공간채우기 알고리즘</h3>
+<p>앞에서 언급한 것처럼 데이터를 감안하여 결합점을 배치하려면 데이터와 결합점의 일치도를 측정할 필요가 있다. 공간채우기 알고리즘(space filling algorithm)은 이러한 측도를 제공하고 최적 결합점을 설정하도록 해준다.</p>
+<p><span class="math inline">\(D=\{\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K\}\)</span> 를 방사 기저의 결합점을 정의하는, 관측위치 <span class="math inline">\(C=\{\mathbf s_1, \ldots,\mathbf s_n\}\)</span> 의 부분집합이라 하고, 임의의 위치 <span class="math inline">\(\mathbf{s}\in C\)</span> 와 결합점 집합 <span class="math inline">\(D\)</span> 사이의 거리측도를</p>
+<p><span id="eq-sf-distance"><span class="math display">\[
+d(\mathbf s,D)=\left(\sum_{\boldsymbol\kappa\in D}\|\mathbf s-\boldsymbol\kappa\|^p\right)^{1/p}
+\tag{2}\]</span></span></p>
+<p>라 하자. 거리측도는 계수 <span class="math inline">\(p\)</span> 에 의해 결정되며, 제약조건 <span class="math inline">\(p&lt;0\)</span> 은 결합점 집합과 그 집합 내에 있는 한 결합점 사이의 거리를 0으로 만들어 준다. 즉,</p>
+<p><span class="math display">\[
+d(\boldsymbol\kappa,D)=0,\quad \boldsymbol\kappa\in D
+\]</span></p>
+<p>이다. 결합점과 데이터 간의 일치도는 다음과 같이 정의할 수 있다.</p>
+<p><span id="eq-sf-criterion"><span class="math display">\[
+\left[\sum_{\mathbf{s}\in C}d(\mathbf{s},D)^q\right]^{1/q},\quad q&gt;0
+\tag{3}\]</span></span></p>
+<p>모수 <span class="math inline">\(q\)</span> 는 모든 결합점 <span class="math inline">\(D\)</span> 로부터 충분히 떨어진 관측치에 대하여 <span class="math inline">\(d(\mathbf{s},D)\)</span> 의 값이 크게 반영되도록 양수 값을 가져야 한다. 표준적인 값은 각각 <span class="math inline">\(p=-20,\;q=20\)</span> 이다.</p>
+<p>최적 결합점은 <a href="#eq-sf-criterion" class="quarto-xref">방정식&nbsp;3</a> 을 최소화하는 점들로 정해지지만, 전역 최적해를 구하는 방법은 명확하지 않아서 경험적으로 국소 최적해를 구하는 다음 알고리즘을 이용한다.</p>
+<blockquote class="blockquote">
+<p><strong>공간채우기 알고리즘(space filling algorithm)</strong></p>
+<ol type="1">
+<li>임의의 시작 결합점 집합 <span class="math inline">\(D\)</span> 를 정하고, 이 결합점에 대한 <a href="#eq-sf-criterion" class="quarto-xref">방정식&nbsp;3</a> 의 일치도를 구한다.</li>
+<li>남아 있는 관측위치 <span class="math inline">\(\mathbf{s}\in C\backslash D\)</span> 와 현재 결합점 <span class="math inline">\(\boldsymbol\kappa\in D\)</span> 를 대상으로 순환한다. 각 쌍 <span class="math inline">\((\mathbf s,\boldsymbol\kappa)\)</span> 에 대하여 <span class="math inline">\(\boldsymbol\kappa\)</span> 가 <span class="math inline">\(\mathbf s\)</span> 로 대체되었을 때의 일치도를 계산한다.</li>
+<li><a href="#eq-sf-criterion" class="quarto-xref">방정식&nbsp;3</a> 의 일치도를 가장 크게 감소시키는 교체를 실행한다.</li>
+<li>더 이상 일치도가 향상되지 않으면 알고리즘을 중단한다. 그렇지 않으면 2번으로 돌아간다.</li>
+</ol>
+</blockquote>
+</section>
+<section id="방사-기저에-대한-벌점" class="level3">
+<h3 class="anchored" data-anchor-id="방사-기저에-대한-벌점">방사 기저에 대한 벌점</h3>
+<p>결합점을 바탕으로 기저함수가 주어지면, 방사 기저에 대한 벌점이 필요하다. 행과 열에 기반한 벌점은 여기에 적용할 수 없지만, 이변수 미분연산자와 같은 이차 미분의 제곱은 적용할 수 있다. 이 벌점은 가장 잘 알려진 방사 기저함수인 박판 스플라인과 밀접한 관련이 있다.</p>
+<p>서로 다른 위치 데이터 <span class="math inline">\(\mathbf s_1,\ldots, \mathbf s_n\)</span> 에 대하여, 연속적으로 두 번 미분가능한 모든 이변수 함수 <span class="math inline">\(f(\mathbf s)\)</span> 를 대상으로 벌점 최소제곱 기준</p>
+<p><span id="eq-tps-criterion"><span class="math display">\[
+\min_{f} \;\sum_{i=1}^n (y_i-f(\mathbf s_i))^2 +\lambda\int\!\!\int\left[\left(\frac{\partial^2}{\partial s_1^2}+2\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2} \right)f(s_1,s_2)\right]^2ds_1\,ds_2
+\tag{4}\]</span></span></p>
+<p>을 적용하면, 평활 스플라인의 이변수 버전인 다음과 같은 함수를 구할 수 있다.</p>
+<p><span id="eq-tps"><span class="math display">\[
+\begin{aligned}
+f(\mathbf s)&amp;=\beta_0+\beta_1 s_1 +\beta_2 s_2 +\sum_{k=1}^n \gamma_k B_k(\mathbf s),\\
+B_k(\mathbf s)&amp;=B(\|\mathbf s-\mathbf s_k\|)=\|\mathbf s-\mathbf s_k\|^2\log(\|\mathbf s-\mathbf s_k\|)
+\end{aligned}
+\tag{5}\]</span></span></p>
+<p>이 함수는 경계 결합점 바깥 지역에서 선형이기 때문에 박판 스플라인(thin plate spline)이라고 불린다. 선형 부분을 제외하면, 박판 스플라인은 기저함수가 <span class="math inline">\(B(r)=r^2\log(r)\)</span> 이고 서로 다른 관측점을 결합점으로 하는 방사 기저로 만들어진다.</p>
+<p>박판 스플라인의 단점은 그 최적성이 모든 관측점을 결합점으로 이용할 때 성립하기 때문에, 관측치가 많은 경우 실제로 이용하기 어렵다는 점이다. 그러나 박판 스플라인 기저 또는 다른 기저함수를 더 적은 수의 결합점과 함께 이용할 때에도 여전히 이 벌점항을 적용할 수 있다.</p>
+<p>즉, 기저함수에 적용되는 이변수 미분연산자의 축약 표현으로 이차형식의 벌점 <span class="math inline">\(\lambda\boldsymbol\gamma^{\top} \mathbf K\boldsymbol\gamma\)</span> 를 사용할 수 있는데, 여기서 벌점 행렬의 각 원소는</p>
+<p><span class="math display">\[
+\mathbf K[j,k]=\int B_j''(\mathbf s)B_k''(\mathbf s)\,d\mathbf s,\quad B_k''(\mathbf s)=\left(\frac{\partial^2}{\partial s_1^2}+\frac{\partial^2}{\partial s_1 \partial s_2}+\frac{\partial^2}{\partial s_2^2}\right)B_k(\mathbf s)
+\]</span></p>
+<p>이다.</p>
+<p>또 다른 벌점 개념은 방사 기저함수를 이용한 이변수 평활화와 재생 커널 힐베르트 공간(reproducing kernel Hilbert space; RKHS) 사이의 연관성에서 나온다. 방사 기저함수가 양의 정부호라면, 즉 임의의 <span class="math inline">\(m\in \mathbb{N}\)</span> 과 적어도 하나는 0이 아닌 임의의 상수 <span class="math inline">\(a_1,\ldots,a_m\)</span>, 그리고 임의의 위치 데이터 <span class="math inline">\(\mathbf s_1,\ldots,\mathbf s_m\)</span> 에 대하여</p>
+<p><span class="math display">\[
+\sum_{i=1}^m\sum_{j=1}^m a_i a_j B(\|\mathbf s_i-\mathbf s_j\|)&gt;0
+\]</span></p>
+<p>이면, 이 기저함수는 RKHS의 커널함수로 간주할 수 있다. RKHS 이론으로부터 이차형식의 벌점을 얻을 수 있는데, 그 벌점 행렬의 원소는 <span class="math inline">\(B(\|\boldsymbol\kappa_j-\boldsymbol\kappa_k\|)\)</span>, 즉 결합점 사이의 거리에서의 방사 기저함수 값으로 구한다. 이 형태의 벌점항은 이후 <a href="../../posts/smoothing/smoothing19.html">가우스 확률필드</a>에서 다시 살펴볼 것이다.</p>
+</section>
+</section>
+<section id="텐서곱-대-방사-기저" class="level2">
+<h2 class="anchored" data-anchor-id="텐서곱-대-방사-기저">텐서곱 대 방사 기저</h2>
+<p>이제 텐서곱 스플라인과 방사 기저의 장단점을 정리해 보자.</p>
+<ul>
+<li><strong>설명변수의 척도</strong>: 텐서곱은 각 일변수 설명변수의 척도에 대한 가정을 하지 않으므로 어떤 설명변수 간의 결합에도 적용할 수 있다. 반면 유클리드 거리를 사용하는 방사 기저는 두 설명변수가 동일한 단위일 때 더 적합하다. 수학적 관점에서 텐서곱은 설명변수의 선형 변환에 불변이지만, 방사 기저함수는 설명변수의 회전에 불변이다.</li>
+<li><strong>결합점의 위치</strong>: 텐서곱 스플라인의 결합점은 변수축을 따라 놓여야 하지만, 방사 기저는 결합점을 자유롭게 배치할 수 있다.</li>
+<li><strong>고차 평활화</strong>: 두 방법 모두 고차 평활화로 확장 가능하지만, 유클리드 거리는 임의의 차원에서 바로 이용 가능하고 결합점의 수를 조절할 수 있어서 방사 기저가 더 유리하다. 다만 공간과 시간을 결합하여 3변수 평활함수로 확장하는 경우에는 단위가 서로 달라 방사 기저에 문제가 있을 수 있으므로 텐서곱 방식이 유리하다.</li>
+</ul>
+</section>
+<section id="다음-글" class="level2">
+<h2 class="anchored" data-anchor-id="다음-글">다음 글</h2>
+<p><a href="../../posts/smoothing/smoothing18.html">다음 글</a>에서는 연속 공간 데이터를 위한 정상 가우스 확률필드와 상관계수 함수를 살펴본다.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

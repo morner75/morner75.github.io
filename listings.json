@@ -14,6 +14,29 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/wash-trading-tests/5-did.html",
+      "/posts/wash-trading-tests/4-rank-tests.html",
+      "/posts/wash-trading-tests/3-pelt.html",
+      "/posts/wash-trading-tests/2-tail-index.html",
+      "/posts/benford-test/index.html",
+      "/posts/smoothing/smoothing20.html",
+      "/posts/smoothing/smoothing19.html",
+      "/posts/smoothing/smoothing18.html",
+      "/posts/smoothing/smoothing17.html",
+      "/posts/smoothing/smoothing16.html",
+      "/posts/smoothing/smoothing15.html",
+      "/posts/smoothing/smoothing14.html",
+      "/posts/smoothing/smoothing13.html",
+      "/posts/smoothing/smoothing12.html",
+      "/posts/smoothing/smoothing11.html",
+      "/posts/smoothing/smoothing10.html",
+      "/posts/smoothing/smoothing9.html",
+      "/posts/smoothing/smoothing8.html",
+      "/posts/smoothing/smoothing7.html",
+      "/posts/smoothing/smoothing6.html",
+      "/posts/smoothing/smoothing5.html",
+      "/posts/smoothing/smoothing4.html",
+      "/posts/smoothing/smoothing3.html",
       "/posts/smoothing/smoothing2.html",
       "/posts/smoothing/smoothing1.html",
       "/posts/thesis-background/6-bernstein-polynomials.html",
@@ -25,7 +48,7 @@
     ]
   },
   {
-    "listing": "/index_en.html",
+    "listing": "/index.html",
     "items": [
       "/research/wash-trading/index.html",
       "/research/calf-diarrhoea/index.html",
@@ -37,7 +60,7 @@
     ]
   },
   {
-    "listing": "/index.html",
+    "listing": "/index_en.html",
     "items": [
       "/research/wash-trading/index.html",
       "/research/calf-diarrhoea/index.html",

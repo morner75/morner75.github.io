@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="정상 가우스 확률필드와 상관계수 함수, Bochner 정리와 이방형 상관계수">
+
+<title>정상 가우스 확률필드 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">정상 가우스 확률필드</h1>
+                  <div>
+        <div class="description">
+          정상 가우스 확률필드와 상관계수 함수, Bochner 정리와 이방형 상관계수
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Bayesian smoothing</div>
+                <div class="quarto-category">Spatial statistics</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2022년 10월 20일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#연속-공간-데이터와-크리깅" id="toc-연속-공간-데이터와-크리깅" class="nav-link active" data-scroll-target="#연속-공간-데이터와-크리깅">연속 공간 데이터와 크리깅</a></li>
+  <li><a href="#모형-구축" id="toc-모형-구축" class="nav-link" data-scroll-target="#모형-구축">모형 구축</a>
+  <ul class="collapse">
+  <li><a href="#가우스-확률필드와-정상성" id="toc-가우스-확률필드와-정상성" class="nav-link" data-scroll-target="#가우스-확률필드와-정상성">가우스 확률필드와 정상성</a></li>
+  <li><a href="#중복-관측과-사전분포" id="toc-중복-관측과-사전분포" class="nav-link" data-scroll-target="#중복-관측과-사전분포">중복 관측과 사전분포</a></li>
+  </ul></li>
+  <li><a href="#상관계수-함수" id="toc-상관계수-함수" class="nav-link" data-scroll-target="#상관계수-함수">상관계수 함수</a>
+  <ul class="collapse">
+  <li><a href="#너겟과-범위" id="toc-너겟과-범위" class="nav-link" data-scroll-target="#너겟과-범위">너겟과 범위</a></li>
+  <li><a href="#상관계수-함수와-확률과정의-매끄러움" id="toc-상관계수-함수와-확률과정의-매끄러움" class="nav-link" data-scroll-target="#상관계수-함수와-확률과정의-매끄러움">상관계수 함수와 확률과정의 매끄러움</a></li>
+  </ul></li>
+  <li><a href="#모수를-가진-상관계수-함수의-종류" id="toc-모수를-가진-상관계수-함수의-종류" class="nav-link" data-scroll-target="#모수를-가진-상관계수-함수의-종류">모수를 가진 상관계수 함수의 종류</a>
+  <ul class="collapse">
+  <li><a href="#거듭제곱-지수-유형" id="toc-거듭제곱-지수-유형" class="nav-link" data-scroll-target="#거듭제곱-지수-유형">거듭제곱 지수 유형</a></li>
+  <li><a href="#마턴-유형" id="toc-마턴-유형" class="nav-link" data-scroll-target="#마턴-유형">마턴 유형</a></li>
+  <li><a href="#이차비-유형" id="toc-이차비-유형" class="nav-link" data-scroll-target="#이차비-유형">이차비 유형</a></li>
+  <li><a href="#구형-유형" id="toc-구형-유형" class="nav-link" data-scroll-target="#구형-유형">구형 유형</a></li>
+  </ul></li>
+  <li><a href="#bochner-정리" id="toc-bochner-정리" class="nav-link" data-scroll-target="#bochner-정리">Bochner 정리</a></li>
+  <li><a href="#범위-이방형-상관계수-함수" id="toc-범위-이방형-상관계수-함수" class="nav-link" data-scroll-target="#범위-이방형-상관계수-함수">범위 이방형 상관계수 함수</a></li>
+  <li><a href="#다음-글" id="toc-다음-글" class="nav-link" data-scroll-target="#다음-글">다음 글</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 베이지안 평활기법 — 전체 목차
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>제1장 평활기법과 비모수 회귀분석의 기본 개념</strong></p>
+<ol type="1">
+<li><a href="../../posts/smoothing/smoothing1.html">평활화 기법 소개</a></li>
+<li><a href="../../posts/smoothing/smoothing2.html">베이지안 평활기법</a></li>
+<li><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a></li>
+<li><a href="../../posts/smoothing/smoothing4.html">벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing5.html">베이지안 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing6.html">비정규분포 관측값의 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing7.html">범주형 관측값 모형과 평활화 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a></li>
+</ol>
+<p><strong>제2장 선형혼합모형</strong></p>
+<ol start="9" type="1">
+<li><a href="../../posts/smoothing/smoothing9.html">선형혼합모형</a></li>
+<li><a href="../../posts/smoothing/smoothing10.html">선형혼합모형의 우도 기반 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing11.html">선형혼합모형의 베이지안 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing12.html">유한 혼합모형</a></li>
+</ol>
+<p><strong>제3장 종단 데이터를 위한 비모수 혼합모형</strong></p>
+<ol start="13" type="1">
+<li><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a></li>
+</ol>
+<p><strong>제4장 공간 평활화와 공간가법 회귀모형</strong></p>
+<ol start="14" type="1">
+<li><a href="../../posts/smoothing/smoothing14.html">공간 평활과 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing15.html">가우스 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing16.html">텐서곱 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing17.html">방사 기저 평활</a></li>
+<li><a href="../../posts/smoothing/smoothing18.html">정상 가우스 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing19.html">베리오그램과 공분산 모수의 추정</a></li>
+<li><a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p><a href="../../posts/smoothing/smoothing17.html">앞 글</a>에서는 방사 기저를 이용한 공간 평활화와 텐서곱 기저와의 비교를 살펴보았다. 이번 글에서는 연속 공간 데이터로 돌아가, 정상 가우스 확률필드와 그 핵심 구성요소인 상관계수 함수를 다룬다.</p>
+<section id="연속-공간-데이터와-크리깅" class="level2">
+<h2 class="anchored" data-anchor-id="연속-공간-데이터와-크리깅">연속 공간 데이터와 크리깅</h2>
+<p>이번에는 본격적으로 공간 데이터로 돌아가서, 지구통계학(geostatistics)과 크리깅(Kriging)이라는 제목으로 요약될 수 있는 접근방법을 살펴본다. 크리깅은 공간상의 어떤 위치에서 함수값을 모르는 경우, 이미 그 값을 알고 있는 주변 지역의 함수값의 선형결합을 이용하여 해당 값을 구하는 보간법을 말한다.</p>
+<p>회귀모형의 선형예측식에 공간적 상관관계가 있는 확률과정 <span class="math inline">\(\gamma(\mathbf s)\)</span> 를 추가하면</p>
+<p><span id="eq-kriging"><span class="math display">\[
+y(\mathbf s)=\mathbf u (\mathbf s)^{\top}\boldsymbol\beta+\gamma(\mathbf s)+\epsilon(\mathbf s)
+\tag{1}\]</span></span></p>
+<p>이다. 여기서 <span class="math inline">\(\mathbf s\)</span> 는 공간 정의역 안의 점을 의미하고, <span class="math inline">\(\mathbf s\in \mathbb{R}^2\)</span> 또는 보다 일반적으로 <span class="math inline">\(\mathbf s\in \mathbb{R}^d\)</span> 이다.</p>
+<p>앞으로 확률과정 <span class="math inline">\(\gamma(\mathbf s)\)</span> 를 종종 공간함수 <span class="math inline">\(f_{spat}(\mathbf s)\)</span> 로 표기할 것인데, 이후 공간 확률과정을 기저함수를 이용하여 다시 표현할 수 있으므로 <span class="math inline">\(f_{spat}(\mathbf s)\)</span> 표기법이 여전히 유효하다는 것을 보일 것이다. 공간 확률과정 <span class="math inline">\(\gamma(\mathbf s)\)</span> 의 사전분포로 가우스 확률과정(Gaussian process)을 가정하는데, 이는 공간 위치 간의 상관관계를 상관계수 함수(correlation function)로 명시적으로 나타낼 수 있게 해준다. 앞으로 상당 부분은 공간 상관계수 함수를 구체화하는 문제를 다룬다.</p>
+</section>
+<section id="모형-구축" class="level2">
+<h2 class="anchored" data-anchor-id="모형-구축">모형 구축</h2>
+<p>일반적인 크리깅 기법은 다음과 같은 모형을 고려한다.</p>
+<p><span class="math display">\[
+y(\mathbf s)=\mathbf u(\mathbf s)^{\top}\boldsymbol\beta+f(\mathbf s)+\epsilon(\mathbf s)
+\]</span></p>
+<p>이 모형으로 임의의 지역에서의 공간 표면 <span class="math inline">\(\hat f(\mathbf s)\)</span> 를 예측하거나 종속변수의 조건부 기대값 <span class="math inline">\(\hat y(\mathbf s)=\mathbf u(\mathbf s)^{\top}\boldsymbol\beta+\hat f(\mathbf s)\)</span> 를 구한다. 여기서는 공간 확률과정 <span class="math inline">\(f(\mathbf s)\)</span> 를 준모수 혼합모형의 선형예측식에 추가하는 것을 고려하고자 한다.</p>
+<section id="가우스-확률필드와-정상성" class="level3">
+<h3 class="anchored" data-anchor-id="가우스-확률필드와-정상성">가우스 확률필드와 정상성</h3>
+<p>가우스 확률필드는 확률과정 <span class="math inline">\(\{f(\mathbf s),\;\mathbf s \in \mathbb{R}^d\}\)</span> 로, 위치 <span class="math inline">\(\mathbf s_1,\ldots, \mathbf s_m,\;m\ge 1\)</span> 의 임의의 조합에 대하여 확률과정의 값 벡터 <span class="math inline">\(\mathbf f=(f(\mathbf s_1),\ldots,f(\mathbf s_m))^{\top}\)</span> 가 다변수 가우스 분포를 따른다. 가우스 확률필드는 기대값 함수와 공분산 함수</p>
+<p><span class="math display">\[
+\mu(\mathbf s)=E(f(\mathbf s)),\quad c(\mathbf s,\tilde{\mathbf s}) = Cov(f(\mathbf s), f(\tilde{\mathbf s}))
+\]</span></p>
+<p>로 규정할 수 있다. 다시 공분산을 분산과 상관계수로 분해할 수 있고, 분산함수와 상관계수 함수는 다음과 같다.</p>
+<p><span class="math display">\[
+\tau^2(\mathbf s)=Var(f(\mathbf s)),\quad \rho(\mathbf s, \tilde{\mathbf s})=Cor(f(\mathbf s),f(\tilde{\mathbf s}))
+\]</span></p>
+<p>그러나 일반적인 가우스 확률필드는 너무 광범위하기 때문에 정상 확률필드로 한정하여 모형화할 필요가 있다. 정상 확률필드는 유한차원 분포가 공간 평행이동(translation)에 불변인 것을 말한다. 즉, 평행이동 벡터 <span class="math inline">\(\mathbf h\in \mathbb R^d\)</span> 에 대하여</p>
+<p><span class="math display">\[
+(f(\mathbf s_1),\ldots,f(\mathbf s_m))\overset{D}{=}(f(\mathbf s_1+\mathbf h),\ldots,f(\mathbf s_m + \mathbf h))
+\]</span></p>
+<p>이며, 여기서 <span class="math inline">\(\overset{D}{=}\)</span> 는 분포가 동일하다는 것을 의미한다. 정상성은 대부분의 분포에서는 성립을 보이기 어렵지만, 가우스 확률필드는 처음 두 적률에 대한 조건만으로 성립한다. 즉, 정상성하에서 가우스 확률필드의 기대값 함수는 공간상에서 일정한 값(여기서는 0)을 갖고,</p>
+<p><span class="math display">\[
+\mu(\mathbf s)=E(f(\mathbf s))=0,\quad \forall \mathbf s \in \mathbb R^d
+\]</span></p>
+<p>두 점 <span class="math inline">\(\mathbf s\)</span> 와 <span class="math inline">\(\tilde {\mathbf s}\)</span> 사이의 공분산은 두 점의 차이 <span class="math inline">\(\mathbf s - \tilde{\mathbf s}\)</span> 에만 의존한다. 즉,</p>
+<p><span class="math display">\[
+c(\mathbf s , \tilde{\mathbf s})=Cov(f(\mathbf s),f(\tilde{\mathbf s}))=c(\mathbf s - \tilde{\mathbf s})
+\]</span></p>
+<p>이다. 일반적으로 기대값이 상수이고 공분산 함수가 차이에만 의존하는 것을 약정상성, 평행이동에 대한 분포의 불변성을 강정상성으로 정의한다. 일반적인 공간 확률과정에서는 이 두 가지 정상성 개념이 일치하지 않지만, 가우스 확률필드에서는 두 개념이 일치한다.</p>
+<p>정상 가우스 확률필드는 동분산성을 갖는다. 즉, 분산함수가 공간상에서 상수로 주어진다.</p>
+<p><span class="math display">\[
+Var(f(\mathbf s))=\tau^2,\quad \mathbf s\in \mathbb R^d
+\]</span></p>
+<p>따라서 상관계수 함수도 공분산과 마찬가지로 차이 벡터 <span class="math inline">\(\mathbf s - \tilde{\mathbf s}\)</span> 에만 의존한다. 일단 상관계수 함수가 알려져 있다고 가정하면, 공간 확률과정의 함수값 <span class="math inline">\(\mathbf f=(f(\mathbf s_1),\ldots, f(\mathbf s_n))^{\top}\)</span> 의 공분산 행렬을 도출할 수 있다.</p>
+<p><span class="math display">\[
+Cov(\mathbf f)=\tau^2 \mathbf R ,\quad \mathbf R[i,j]=Cor(f(\mathbf s_i),f(\mathbf s_j))=\rho(\mathbf s_i-\mathbf s_j)
+\]</span></p>
+<p>여기서 <span class="math inline">\(\mathbf f\)</span> 를 가법회귀모형의 선형예측식에 포함시키면, 가우스 확률필드 가정을 공간 상관관계에 대한 사전분포로 이용할 수 있다. 빈도주의나 경험 베이즈 관점에서는 공간효과를 공간 상관관계가 있는 확률효과(random effect)로 해석할 수 있다.</p>
+</section>
+<section id="중복-관측과-사전분포" class="level3">
+<h3 class="anchored" data-anchor-id="중복-관측과-사전분포">중복 관측과 사전분포</h3>
+<p>모형을 일반화하기 위하여 동일한 지점에서의 중복 관측을 허용해야 하는데, 이 경우 벡터 <span class="math inline">\(\mathbf f\)</span> 에서 상관계수가 1인 인위적인 상관관계가 생긴다. 이 어려움을 해결하기 위해서는 벡터 <span class="math inline">\(\boldsymbol\gamma\)</span> 로 모든 <span class="math inline">\(K\)</span> 개의 서로 다른 관측점에서의 확률과정 값을 요약해야 한다. 즉, <span class="math inline">\(\boldsymbol\kappa_1,\ldots,\boldsymbol\kappa_K,\; K\le n\)</span> 이 데이터에서 서로 다른 모든 위치를 나타낸다면 <span class="math inline">\(\boldsymbol\gamma=(f(\boldsymbol\kappa_1),\ldots,f(\boldsymbol\kappa_K))^{\top}\)</span> 이다. 확률과정 값들의 전체 벡터는 <span class="math inline">\(\mathbf f = \mathbf X \boldsymbol \gamma\)</span> 로 나타낼 수 있고, 행렬 <span class="math inline">\(\mathbf X\)</span> 는 마코프 확률필드와 마찬가지로 <span class="math inline">\(n\times K\)</span> 차원의 0과 1로 구성된 발생행렬(incidence matrix)이다. 즉, <span class="math inline">\(i=1,\ldots,n\)</span> 과 <span class="math inline">\(k=1,\ldots,K\)</span> 에 대하여</p>
+<p><span class="math display">\[
+\mathbf{X}[i,k]=\begin{cases}1, &amp; \mathbf s_i = \boldsymbol\kappa_k,\\ 0, &amp; \text{otherwise} \end{cases}
+\]</span></p>
+<p>이다. 가우스 확률과정 분포에 대한 가정은 계수벡터 <span class="math inline">\(\boldsymbol\gamma\)</span> 와 행렬 <span class="math inline">\(\mathbf R\)</span> 로 주어지는데,</p>
+<p><span class="math display">\[
+\boldsymbol\gamma\sim N(\mathbf 0,\tau^2\mathbf R)
+\]</span></p>
+<p>이고, 여기서 행렬 <span class="math inline">\(\mathbf R\)</span> 은 관측된 위치들 사이의 상관계수로 구성된 <span class="math inline">\(K\times K\)</span> 차원 행렬</p>
+<p><span class="math display">\[
+\mathbf R[j,k] = \rho (\boldsymbol\kappa_j - \boldsymbol\kappa_k),\quad j,k=1,\ldots,K
+\]</span></p>
+<p>이다. 계수 <span class="math inline">\(\boldsymbol\gamma\)</span> 의 결합 밀도함수는 준모수 혼합모형의 사전분포에서 벌점 행렬이 <span class="math inline">\(\mathbf K=\mathbf R^{-1}\)</span> 인 형태로</p>
+<p><span id="eq-grf-prior"><span class="math display">\[
+p(\boldsymbol\gamma\mid \tau^2)\propto\exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top} \mathbf R^{-1}\boldsymbol\gamma\right)
+\tag{2}\]</span></span></p>
+<p>로 주어진다. 앞에서 살펴본 경험 베이즈 추론과 완전 베이즈 추론 모두, 공간 항에 대한 가우스 확률필드 사전분포를 포함하는 공간 회귀 모형의 추정에 사용될 수 있다. 그러나 실제로는 상관계수 함수를 알 수 없기 때문에 추론이 복잡해진다. 상관계수 함수는 비모수적으로 구하거나, 특정 모수적 상관계수 함수를 가정하여 구할 수 있다.</p>
+</section>
+</section>
+<section id="상관계수-함수" class="level2">
+<h2 class="anchored" data-anchor-id="상관계수-함수">상관계수 함수</h2>
+<p>상관계수 함수를 구성하는 데에는 몇 가지 제약조건이 필요하다. 첫째, 상관계수 함수는 대칭적이어야 한다. 즉,</p>
+<p><span class="math display">\[
+Cor(f(\mathbf s),f(\tilde{\mathbf s}))=Cor(f(\tilde{\mathbf s}),f(\mathbf s))
+\]</span></p>
+<p>이다. 둘째, 상관계수 함수는 양의 정부호(positive definite)이어야 한다. 즉, 모든 <span class="math inline">\(m\ge 1\)</span> 과 임의의 상수 <span class="math inline">\(a_1,\ldots, a_m\)</span> (적어도 하나의 <span class="math inline">\(a_i\)</span> 는 0이 아님), 그리고 임의의 위치 <span class="math inline">\(\mathbf s_1,\ldots, \mathbf s_m\)</span> 에 대하여</p>
+<p><span class="math display">\[
+\sum_{i=1}^m\sum_{j=1}^m a_i a_j \rho(\mathbf s_i,\mathbf s_j)&gt;0
+\]</span></p>
+<p>이어야 한다. 두 번째 성질은 확률과정 함수값의 선형결합에 대한 분산이 양이 되도록 만들어 준다.</p>
+<p><span class="math display">\[
+Var\Big(\sum_{i=1}^m a_i f(\mathbf s_i)\Big)=\tau^2 \sum_{i=1}^m\sum_{j=1}^m a_i a_j \rho(\mathbf s_i,\mathbf s_j)&gt;0
+\]</span></p>
+<p>하지만 양의 정부호 함수를 구성하는 것은 실제로 어려우므로, 보통은 차이 벡터의 노름(norm)을 인수로 취하는 형태로 상관계수 함수를 구성한다.</p>
+<p><span class="math display">\[
+\rho(\mathbf s, \tilde{\mathbf s} )=\rho(\|\mathbf s - \tilde{\mathbf s}\|)=\rho(h)
+\]</span></p>
+<p>상관계수 함수가 스칼라 값인 거리에만 의존한다는 설정은 모수를 절약(parsimony)하기 위하여 도입된 가정이다. 예를 들어 유클리드 거리 <span class="math inline">\(h=\|\mathbf h\| =\sqrt{h_1^2+\cdots+h_d^2}\)</span> 를 적용하면, 차이 벡터 <span class="math inline">\(\mathbf h=\mathbf s -\tilde {\mathbf s}\)</span> 의 방향은 더 이상 중요하지 않고 거리 <span class="math inline">\(h\)</span> 만 고려하면 된다. 이 경우 상관계수 함수는 원형 등고선을 갖기 때문에 등방형(isotropic)이라고 한다. 다른 거리함수를 쓰는 경우 원형에서 벗어난 비등방형(anisotropic) 상관계수 함수를 얻기도 한다.</p>
+<section id="너겟과-범위" class="level3">
+<h3 class="anchored" data-anchor-id="너겟과-범위">너겟과 범위</h3>
+<p>다음으로 상관계수 함수의 특성을 묘사하는 몇 가지 개념을 정의하자.</p>
+<p>너겟(nugget)은 원점(<span class="math inline">\(\mathbf h=\mathbf 0\)</span>) 근처에서의 상관계수 함수의 움직임을 묘사한다. <span class="math inline">\(\rho(\mathbf 0)=1\)</span> 은 항상 성립하지만, <span class="math inline">\(\alpha\to 0\)</span> 일 때 <span class="math inline">\(\rho(\alpha\mathbf h)\to \rho(\mathbf 0)\)</span> 으로 가는 과정이 반드시 연속일 필요는 없다. 일반적으로 방향 <span class="math inline">\(\mathbf h /\|\mathbf h\|\)</span> 에 대한 너겟은 다음과 같이 정의한다.</p>
+<p><span class="math display">\[
+N_{\mathbf h} = \lim_{\alpha\to0} \rho(\alpha \mathbf h)
+\]</span></p>
+<p>만약 너겟이 방향 <span class="math inline">\(\mathbf h\)</span> 에 의존한다면 상관계수 함수는 너겟 이방형이라고 한다. 반면 등방형 상관계수 함수는 오직 하나의 너겟 <span class="math inline">\(N=\lim_{\mathbf h\to \mathbf 0}\rho (\mathbf h)\)</span> 을 갖는다. 너겟이 <span class="math inline">\(\rho(\mathbf 0)=1\)</span> 과 다르다는 것은 공간효과에 미시변화가 존재하는 경우에 의미가 있다. 예를 들어 <a href="#eq-kriging" class="quarto-xref">방정식&nbsp;1</a> 의 일반적인 크리깅 모형에서 종속변수의 상관계수는</p>
+<p><span class="math display">\[
+\begin{aligned}
+Cor(y(\mathbf s), y(\tilde{\mathbf s}))&amp;=\frac{Cov(y(\mathbf s),y(\tilde{\mathbf s}))}{\sqrt{Var(y(\mathbf s)) Var(y(\tilde{\mathbf s}))}}\\
+&amp;=\frac{Cov(y(\mathbf s),y(\tilde{\mathbf s}))}{\sqrt{\big(Var(f(\mathbf s))+Var(\epsilon(\mathbf s))\big)\big(Var(f(\tilde{\mathbf s}))+Var(\epsilon(\tilde{\mathbf s}))\big)}}=\frac{\tau^2\rho(\mathbf s -\tilde{\mathbf s})}{\tau^2+\sigma^2}
+\end{aligned}
+\]</span></p>
+<p>이다. 여기서 너겟은 추가적인 오차항 <span class="math inline">\(\epsilon (\mathbf s)\)</span> 에서 고려되며, <span class="math inline">\(\mathbf s - \tilde{\mathbf s}\to \mathbf 0\)</span> 일 때</p>
+<p><span class="math display">\[
+Cor(y(\mathbf s),y(\tilde{\mathbf s}))\to \frac{\tau^2}{\tau^2+\sigma^2}&lt;1
+\]</span></p>
+<p>이다. 공간 평활화에서는 <span class="math inline">\(f(\mathbf s)\)</span> 가 매끄럽다고 가정하기 때문에 상관계수 함수의 너겟이 <span class="math inline">\(N\neq 1\)</span> 이라는 것은 잘 맞는 가정이 아니다. 너겟 효과가 있는 상관계수 함수는 주로 고전 지구통계학에서 관측치가 없는 위치의 종속변수를 예측할 때 다루어졌다.</p>
+<p>상관계수 함수의 범위(range)는 방향 <span class="math inline">\(\mathbf h/\|\mathbf h\|\)</span> 에 대하여 극한값</p>
+<p><span id="eq-range"><span class="math display">\[
+R_{\mathbf h} = \lim_{\alpha\to\infty} \rho(\alpha \mathbf h)
+\tag{3}\]</span></span></p>
+<p>과 관련하여 정의한다. 대부분의 경우 상관계수는 거리가 증가할수록 0으로 감소하기 때문에 이 극한값은 0이 된다. 이 경우 범위는 두 관측치의 상관관계가 없어지게 되는 거리를 알려준다. 그러나 많은 상관계수 함수의 경우 모든 <span class="math inline">\(\alpha\)</span> 에 대하여 <span class="math inline">\(\rho(\alpha \mathbf h)&gt;0\)</span> 이어서 범위가 무한인 경우가 있다. 따라서 실제로는 상관계수가 특정 값보다 작아지는 거리 <span class="math inline">\(R_{\mathbf h}\)</span> 를 유효범위(effective range)로 정의한다. 유효범위는 상관계수 함수가 0으로 천천히 수렴하는 경우 넓고, 그 반대의 경우 좁다. 유효범위 이방형은 실제로 가장 많이 고려되는 이방형의 형태로, 상관계수가 특정 방향으로 더 빨리 0으로 수렴하는 경우를 말한다.</p>
+</section>
+<section id="상관계수-함수와-확률과정의-매끄러움" class="level3">
+<h3 class="anchored" data-anchor-id="상관계수-함수와-확률과정의-매끄러움">상관계수 함수와 확률과정의 매끄러움</h3>
+<p>너겟을 통하여 원점에서의 상관계수 함수의 움직임으로부터 가우스 확률과정의 매끄러운 특성을 읽어내는 것이 가능함을 보았다. 우리의 관심사는 확률과정의 경로(표면)의 매끄러움(평활성)에 있기 때문에 매끄러움에 대한 적절한 정의를 내릴 필요가 있다. 확률과정 <span class="math inline">\(f\)</span> 는 다음 조건을 만족하면 <span class="math inline">\(L^2\)</span>-연속이라고 부른다.</p>
+<p><span class="math display">\[
+\lim_{\alpha\to0}E\big(|f(\mathbf s+\alpha \mathbf h)-f(\mathbf s)|^2\big)=0,\quad \forall \mathbf h
+\]</span></p>
+<p>또한 확률과정 <span class="math inline">\(f\)</span> 는 다음을 만족하는 확률과정 <span class="math inline">\(f'\)</span> 가 존재하는 경우 <span class="math inline">\(L^2\)</span>-미분가능하다고 한다.</p>
+<p><span class="math display">\[
+\lim_{\alpha\to0}E\left(\left|\frac{f(\mathbf s+\alpha \mathbf h)-f(\mathbf s)}{\alpha\|\mathbf h\|}-f'(\mathbf s)\right|^2\right)=0,\quad \forall \mathbf h
+\]</span></p>
+<p>어떤 확률과정에 대하여 직접 연속성과 미분가능성을 보여 매끄러움을 확인하는 것은 어려운 일이다. 하지만 상관계수 함수를 이용하면 다음과 같은 동치 관계를 이용하여 쉽게 평활성을 보일 수 있다.</p>
+<p>정상 확률과정(stationary process) <span class="math inline">\(f\)</span> 에 대하여</p>
+<ul>
+<li><span class="math inline">\(f\)</span> 가 <span class="math inline">\(L^2\)</span>-연속이라는 것은 <span class="math inline">\(\rho(\mathbf h)\)</span> 가 <span class="math inline">\(\mathbf h=\mathbf 0\)</span> 에서 연속이라는 것(또는 모든 <span class="math inline">\(\mathbf h\)</span> 에 대하여 너겟 <span class="math inline">\(N_{\mathbf h}=1\)</span> 인 것)과 동치이다.</li>
+<li><span class="math inline">\(f\)</span> 가 <span class="math inline">\(k\)</span> 번 <span class="math inline">\(L^2\)</span>-미분가능하다는 것은 <span class="math inline">\(\rho(\mathbf h)\)</span> 가 <span class="math inline">\(\mathbf h=\mathbf 0\)</span> 에서 <span class="math inline">\(2k\)</span> 번 미분가능하다는 것과 동치이다.</li>
+</ul>
+</section>
+</section>
+<section id="모수를-가진-상관계수-함수의-종류" class="level2">
+<h2 class="anchored" data-anchor-id="모수를-가진-상관계수-함수의-종류">모수를 가진 상관계수 함수의 종류</h2>
+<p>다음으로 모수를 가진 상관계수 함수의 종류에 대하여 알아보자. 앞으로 살펴볼 상관계수 함수들은 스칼라 인자 <span class="math inline">\(h\)</span> 를 가진 등방형 유형이다.</p>
+<section id="거듭제곱-지수-유형" class="level3">
+<h3 class="anchored" data-anchor-id="거듭제곱-지수-유형">거듭제곱 지수 유형</h3>
+<p>거듭제곱 지수(power exponential) 유형의 상관계수 함수는 다음과 같이 정의된다.</p>
+<p><span id="eq-powexp"><span class="math display">\[
+\rho(h;\phi,\nu)=\exp(-|h/\phi|^{\nu})
+\tag{4}\]</span></span></p>
+<p>여기서 <span class="math inline">\(\phi&gt;0\)</span> 은 상관계수 함수의 감소율을 조절하여 유효범위를 결정하고, <span class="math inline">\(0&lt;\nu\le 2\)</span> 는 원점에서의 매끄러운 정도와 미분가능성을 조절하여 결과적으로 확률과정 전반의 부드러운 정도를 결정한다. <span class="math inline">\(\nu=2\)</span> 인 경우 가우스 상관계수 함수 <span class="math inline">\(\rho(h;\phi,\nu=2)=\exp(-h^2/\phi^2)\)</span> 를 얻는데, 이는 무한히 미분가능한 함수로 아주 부드러운 확률과정을 만들어 낸다. <span class="math inline">\(\nu=1\)</span> 인 경우 단순 지수 상관계수 함수 <span class="math inline">\(\rho(h;\phi,\nu=1)=\exp(-|h|/\phi)\)</span> 를 얻는데, 1차 자기회귀(autoregressive) 시계열 과정의 상관계수 함수와 비슷하게 지수적으로 감소하며, 가우스 상관계수 함수에 비해 훨씬 울퉁불퉁한 표면을 만들어낸다.</p>
+</section>
+<section id="마턴-유형" class="level3">
+<h3 class="anchored" data-anchor-id="마턴-유형">마턴 유형</h3>
+<p>다음으로 마턴(Matérn) 유형의 상관계수 함수는 다음과 같다.</p>
+<p><span id="eq-matern"><span class="math display">\[
+\rho(h;\phi,\nu)=\frac{1}{2^{\nu-1}\Gamma(\nu)}\left(\frac{h}{\phi}\right)^{\nu} K_{\nu}\left(\frac{h}{\phi}\right)
+\tag{5}\]</span></span></p>
+<p>마찬가지로 <span class="math inline">\(\phi&gt;0\)</span> 은 유효범위를, <span class="math inline">\(\nu&gt;0\)</span> 은 전반적인 부드러운 정도를 결정하며, <span class="math inline">\(K_{\nu}\)</span> 는 차수가 <span class="math inline">\(\nu\)</span> 인 제3종 수정 Bessel 함수를 나타낸다. 마턴 유형은 유연하게 적용할 수 있어 실무적으로 많이 사용된다. 하지만 일반적으로 Bessel 함수가 닫힌 형식(closed form)으로 존재하지 않기 때문에 함수 계산과 수치적 최적화에 시간이 오래 걸리는 단점이 있다. 다행히 <span class="math inline">\(\nu=0.5,1.5,2.5,\ldots\)</span> 인 경우 마턴 상관계수 함수는 닫힌 형식으로 표현이 가능하다.</p>
+<p><span class="math display">\[
+\begin{aligned}
+\rho(h;\phi,\nu=0.5)&amp;=\exp(-|h/\phi|),\\
+\rho(h;\phi,\nu=1.5)&amp;=\exp(-|h/\phi|)\,(1+|h/\phi|),\\
+\rho(h;\phi,\nu=2.5)&amp;=\exp(-|h/\phi|)\left(1+|h/\phi|+\tfrac{1}{3}|h/\phi|^2\right)
+\end{aligned}
+\]</span></p>
+<p>단순 지수 상관계수 함수는 마턴 유형의 한 특수한 경우로 볼 수 있다. 보통 <span class="math inline">\(\nu\)</span> 가 증가하면 상관계수 함수가 더 부드럽고 유효범위도 늘어나는데, <span class="math inline">\(\nu\to\infty\)</span> 일 때 마턴 상관계수 함수는 가우스 상관계수 함수에 수렴한다.</p>
+</section>
+<section id="이차비-유형" class="level3">
+<h3 class="anchored" data-anchor-id="이차비-유형">이차비 유형</h3>
+<p>또 다른 유형의 상관계수 함수는 다음과 같이 정의되는 이차비(rational quadratic) 상관계수 함수이다.</p>
+<p><span id="eq-ratquad"><span class="math display">\[
+\rho(h;\phi,\nu)=\left\{1+\left(\frac{h}{\phi}\right)^2\right\}^{-\nu}
+\tag{6}\]</span></span></p>
+<p>여기서 <span class="math inline">\(\phi&gt;0\)</span> 와 <span class="math inline">\(\nu&gt;0\)</span> 는 마찬가지로 범위와 부드러운 정도를 나타내는 모수이다.</p>
+<p>거듭제곱 지수(power exponential), 마턴(Matérn), 이차비(rational quadratic) 세 가지 상관계수 함수는 범위가 무한이기 때문에 유효범위를 지정하기 위하여 범위 모수 <span class="math inline">\(\phi\)</span> 가 이용되었다.</p>
+</section>
+<section id="구형-유형" class="level3">
+<h3 class="anchored" data-anchor-id="구형-유형">구형 유형</h3>
+<p>마지막으로 구형(spherical) 상관계수 함수는 유한한 범위를 갖고 오직 하나의 모수를 갖는 경우이다.</p>
+<p><span id="eq-spherical"><span class="math display">\[
+\rho(h;\phi)=\begin{cases}1-\frac{3}{2}|h/\phi|+\frac{1}{2}|h/\phi|^3, &amp; 0\le h\le \phi,\\ 0, &amp; h&gt;\phi.\end{cases}
+\tag{7}\]</span></span></p>
+<p>여기서 범위는 모수 <span class="math inline">\(\phi\)</span> 에 의하여 주어진다. 구형 상관계수 함수는 실제로는 잘 사용되지 않는데, 이는 <span class="math inline">\(\phi\)</span> 에 대하여 한 번만 미분가능하여 범위를 추정할 때 최우추정법을 사용하기 어렵기 때문이다.</p>
+</section>
+</section>
+<section id="bochner-정리" class="level2">
+<h2 class="anchored" data-anchor-id="bochner-정리">Bochner 정리</h2>
+<p>Bochner 정리(Bochner’s theorem)는 등방형 정상 상관계수 함수의 양의 정부호성을 검사하는 기준을 제공해 준다. 기본적으로 상관계수 함수 <span class="math inline">\(\rho(h)\)</span> 가 양의 정부호라는 것은 그 함수가 대칭인 확률변수 <span class="math inline">\(Z\)</span> 의 특성함수가 된다는 것이다. 즉, <span class="math inline">\(\rho(h)\)</span> 가 다음과 같이 표현될 수 있다.</p>
+<p><span id="eq-bochner"><span class="math display">\[
+\rho(h)=\int_{-\infty}^{\infty} \exp(ihz)f_Z(z)\, dz
+\tag{8}\]</span></span></p>
+<p>여기서 <span class="math inline">\(i=\sqrt{-1}\)</span> 이고, <span class="math inline">\(f_Z(z)\)</span> 는 <span class="math inline">\(Z\)</span> 의 확률밀도함수로 대칭성 <span class="math inline">\(f_Z(z)=f_Z(-z)\)</span> 을 만족한다. 복소지수함수 항등식 <span class="math inline">\(\exp(ihz)=\cos(hz)+i\sin(hz)\)</span> 에 따라 <a href="#eq-bochner" class="quarto-xref">방정식&nbsp;8</a> 는 다음과 같이 정리된다.</p>
+<p><span id="eq-bochner-cos"><span class="math display">\[
+\rho(h)=2\int_{0}^{\infty} \cos(hz) f_Z(z)\,dz
+\tag{9}\]</span></span></p>
+<p>Bochner 정리에는 세 가지 이점이 있다. 첫째, 상관계수 함수가 유효한지 확인할 수 있다. <a href="#eq-bochner-cos" class="quarto-xref">방정식&nbsp;9</a> 의 기준은 다음과 같이 변환할 수 있는데,</p>
+<p><span id="eq-bochner-inv"><span class="math display">\[
+f_Z(z)=\frac{1}{\pi}\int_0^{\infty} \cos(hz)\, \rho(h)\,dh
+\tag{10}\]</span></span></p>
+<p><a href="#eq-bochner-inv" class="quarto-xref">방정식&nbsp;10</a> 를 통하여 <span class="math inline">\(\rho(h)\)</span> 가 유효한 상관계수 함수인지 검사할 수 있다. 만약 <span class="math inline">\(f_Z(z)\)</span> 가 0에 대하여 대칭인 확률변수 <span class="math inline">\(Z\)</span> 의 밀도함수라면 <span class="math inline">\(\rho(h)\)</span> 는 양의 정부호이고, 유효한 상관계수 함수이다.</p>
+<p>둘째, 이 정리를 이용하면 대칭인 밀도함수를 대입하여 새로운 유형의 상관계수 함수를 만들 수 있다. 예를 들어 표준정규분포를 대입하면 (<span class="math inline">\(\phi=\sqrt 2\)</span> 인) 가우스 상관계수 함수를 얻을 수 있고, 지수 상관계수 함수는 Cauchy 분포 <span class="math inline">\(f_Z(z)=\frac{1}{\pi(1+z^2)}\)</span> 로부터 도출된다. 시계열분석에서 Bochner 정리는 상관계수 함수와 밀도함수 <span class="math inline">\(f_Z(z)\)</span> 사이의 이산 Fourier 변환과 역 Fourier 변환에 해당하며, 이때 <span class="math inline">\(f_Z(z)\)</span> 를 스펙트럼 밀도함수(spectral density)라고 부른다.</p>
+<p>셋째, 이 정리는 유효한 상관계수 함수들의 곱이 유효한 상관계수 함수라는 것을 보여 준다. 독립이고 대칭인 확률변수 <span class="math inline">\(Z_1\)</span> 과 <span class="math inline">\(Z_2\)</span> 가 밀도함수 <span class="math inline">\(f_{Z_1}(z)\)</span> 와 <span class="math inline">\(f_{Z_2}(z)\)</span> 를 갖는다고 생각해 보자. 두 확률변수의 합 <span class="math inline">\(Z=Z_1+Z_2\)</span> 또한 대칭이고, 그 특성함수는 단순히 두 특성함수의 곱이다. 따라서 주어진 두 상관계수 함수 <span class="math inline">\(\rho_1(h)\)</span> 과 <span class="math inline">\(\rho_2(h)\)</span> 에 대하여 Bochner 정리는 대칭인 확률변수 <span class="math inline">\(Z_1\)</span> 과 <span class="math inline">\(Z_2\)</span> 가 존재한다는 것을 확인해 주며, 상관계수 함수의 곱 <span class="math inline">\(\rho(h)=\rho_1(h)\cdot\rho_2(h)\)</span> 는 대칭인 <span class="math inline">\(Z=Z_1+Z_2\)</span> 의 특성함수이므로 유효한 상관계수 함수이다.</p>
+<p>위의 성질들은 새로운 유형의 상관계수 함수를 생성하는 데에도 이용될 수 있다. 예를 들어 상관계수 함수를 유한한 범위로 제한하고 싶다면, 단순히 유한한 범위를 가진 상관계수 함수를 곱하여 이러한 성질을 가진 상관계수 함수를 얻을 수 있다. 이것을 상관계수 함수의 단축화(tapering)라고 부른다.</p>
+</section>
+<section id="범위-이방형-상관계수-함수" class="level2">
+<h2 class="anchored" data-anchor-id="범위-이방형-상관계수-함수">범위 이방형 상관계수 함수</h2>
+<p>등방형 가정을 만족하지 않는 공간효과가 존재하는 경우, 유클리드 거리 대신 기하적 이방성(geometric anisotropy) 거리를 다음과 같이 정의한다.</p>
+<p><span class="math display">\[
+\|\mathbf s\|_{\mathbf B} =\sqrt{\mathbf s^{\top}\mathbf B \mathbf s}
+\]</span></p>
+<p>여기서 <span class="math inline">\(\mathbf B\)</span> 는 대칭이고 양의 정부호인 행렬이다. 이 경우 원형 등고선은 타원형 등고선으로 바뀌고, 이방성의 강도와 방향에 해당하는 타원의 확장과 회전이 일어난다. <span class="math inline">\(d=2\)</span> 인 경우 행렬 <span class="math inline">\(\mathbf B\)</span> 를 구성적으로 정의(constructive definition)하면 다음과 같다.</p>
+<p><span id="eq-aniso-B"><span class="math display">\[
+\mathbf B=\mathbf R(\psi_A)^{\top}\mathbf P(\psi_R) \mathbf R(\psi_A)
+\tag{11}\]</span></span></p>
+<p>여기서 <span class="math inline">\(\mathbf R(\psi_A)\)</span> 는 이방성 각도 <span class="math inline">\(\psi_A\in[0,2\pi]\)</span> 를 가진 회전행렬로</p>
+<p><span class="math display">\[
+\mathbf R (\psi_A) = \begin{pmatrix}\cos(\psi_A) &amp;\sin(\psi_A)\\-\sin(\psi_A) &amp; \cos(\psi_A) \end{pmatrix}
+\]</span></p>
+<p>로 정의되고, <span class="math inline">\(\mathbf P(\psi_R)\)</span> 은 이방성 비율 <span class="math inline">\(\psi_R \ge 1\)</span> 을 가진 확장행렬로</p>
+<p><span class="math display">\[
+\mathbf P (\psi_R) = \begin{pmatrix}\psi_R^{-1} &amp; 0 \\ 0 &amp; 1 \end{pmatrix}
+\]</span></p>
+<p>이다. 두 모수 <span class="math inline">\(\psi_A\)</span> 와 <span class="math inline">\(\psi_R\)</span> 은 직관적인 해석이 가능하다. <span class="math inline">\(\psi_R=1\)</span> 이면 등방형 상관계수 함수이고, <span class="math inline">\(\psi_R&gt;1\)</span> 이면 타원형 상관계수 함수를 얻는데, <span class="math inline">\(\psi_R\)</span> 은 타원의 두 주축을 따라 계산되는 상관계수 함수의 범위의 비율이다. 이방성 각도 <span class="math inline">\(\psi_A\)</span> 는 원점을 기준으로 상관계수 함수를 회전시킨다.</p>
+<p>또 다른 거리 개념으로는 맨해튼 거리(Manhattan distance)와 측지거리(geodesic distance)를 들 수 있다.</p>
+<p>맨해튼 거리는 격자형 도로를 가진 도시에서 블록을 따라 두 점의 거리를 잰 것으로, <span class="math inline">\(\|\mathbf s\|=\sum_{i=1}^d |s_i|\)</span> 로 정의된다.</p>
+<p>측지거리는 지구의 곡면을 따라 잰 최단 거리(반지름이 <span class="math inline">\(R\)</span> 인 구에서 대원 호의 길이)이다. <span class="math inline">\(\mathbf s_i=(s_{i1}, s_{i2})^{\top}\)</span> 를 위도와 경도로 표현한 지구 표면 위의 한 점이라고 하자. 지구의 반지름이 <span class="math inline">\(R\)</span> 이라면 두 점 <span class="math inline">\(\mathbf s_i\)</span> 와 <span class="math inline">\(\mathbf s_j\)</span> 사이의 거리는</p>
+<p><span class="math display">\[
+d(\mathbf s_i , \mathbf s_j)=R \arccos(\phi_{ij}), \quad \phi_{ij}=\sin(s_{i1})\sin(s_{j1})+\cos(s_{i1})\cos(s_{j1})\cos(s_{i2}-s_{j2})
+\]</span></p>
+<p>이고, 여기서 각도는 호도(radian) 단위로 나타낸다.</p>
+<p>어떤 유형의 거리측도를 사용할 것인지는 응용 문제에 달려 있다. 고려하는 지역이 작다면 지구의 곡률을 고려할 필요 없이 유클리드 거리나 그 이방형 버전으로 충분하다.</p>
+<p>보다 일반적인 형태의 비기하적 범위 이방성은 일변수 등방형 상관계수 함수열 <span class="math inline">\(\rho_1(h),\ldots,\rho_k(h)\)</span> 과 양의 정부호 행렬열 <span class="math inline">\(\mathbf B_1,\ldots,\mathbf B_k\)</span> 를 가지고 만들 수 있다. Bochner 정리에 따라 상관계수 함수</p>
+<p><span class="math display">\[
+\rho(\mathbf h)=\rho_1\Big(\sqrt{\mathbf h^{\top} \mathbf B_1 \mathbf h}\Big)\cdots\rho_k\Big(\sqrt{\mathbf h^{\top} \mathbf B_k \mathbf h}\Big)
+\]</span></p>
+<p>또한 유효한 상관계수 함수가 된다. 이 상관계수 함수는 일반적인 범위 이방형이고, 타원형의 기하적 범위 이방성에서 벗어나 있다. 행렬 <span class="math inline">\(\mathbf B_1,\ldots,\mathbf B_k\)</span> 각각은 서로 다른 이방성 각도와 비율을 정의할 수 있지만, 이 경우 곱으로 연결된 상관계수 함수를 해석하기 어렵다. 실제로는 대부분 적은 수의 단순한 모수를 가진 상관계수 함수를 이용한다.</p>
+</section>
+<section id="다음-글" class="level2">
+<h2 class="anchored" data-anchor-id="다음-글">다음 글</h2>
+<p><a href="../../posts/smoothing/smoothing19.html">다음 글</a>에서는 베리오그램과 공분산 모수의 추정, 그리고 가우스 확률필드를 방사 기저 평활로 해석하는 관점을 살펴본다.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

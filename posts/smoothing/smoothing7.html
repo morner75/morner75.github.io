@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="범주형 종속변수에 대한 비모수 회귀모형과 적분 벌점을 이용한 평활화 스플라인을 살펴본다.">
+
+<title>범주형 관측값 모형과 평활화 스플라인 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">범주형 관측값 모형과 평활화 스플라인</h1>
+                  <div>
+        <div class="description">
+          범주형 종속변수에 대한 비모수 회귀모형과 적분 벌점을 이용한 평활화 스플라인을 살펴본다.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Bayesian smoothing</div>
+                <div class="quarto-category">Splines</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2022년 10월 9일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#일변수-범주형-관측값-모형" id="toc-일변수-범주형-관측값-모형" class="nav-link active" data-scroll-target="#일변수-범주형-관측값-모형">일변수 범주형 관측값 모형</a></li>
+  <li><a href="#일반-범주형-모형-다항로짓모형" id="toc-일반-범주형-모형-다항로짓모형" class="nav-link" data-scroll-target="#일반-범주형-모형-다항로짓모형">일반 범주형 모형: 다항로짓모형</a>
+  <ul class="collapse">
+  <li><a href="#은닉효용-표현" id="toc-은닉효용-표현" class="nav-link" data-scroll-target="#은닉효용-표현">은닉효용 표현</a></li>
+  <li><a href="#범주-공통-설명변수와-범주별-설명변수" id="toc-범주-공통-설명변수와-범주별-설명변수" class="nav-link" data-scroll-target="#범주-공통-설명변수와-범주별-설명변수">범주 공통 설명변수와 범주별 설명변수</a></li>
+  </ul></li>
+  <li><a href="#순서형-범주에-대한-누적분포함수-모형" id="toc-순서형-범주에-대한-누적분포함수-모형" class="nav-link" data-scroll-target="#순서형-범주에-대한-누적분포함수-모형">순서형 범주에 대한 누적분포함수 모형</a>
+  <ul class="collapse">
+  <li><a href="#범주-확률과-디자인-행렬" id="toc-범주-확률과-디자인-행렬" class="nav-link" data-scroll-target="#범주-확률과-디자인-행렬">범주 확률과 디자인 행렬</a></li>
+  </ul></li>
+  <li><a href="#순서형-범주에-대한-순차-모형" id="toc-순서형-범주에-대한-순차-모형" class="nav-link" data-scroll-target="#순서형-범주에-대한-순차-모형">순서형 범주에 대한 순차 모형</a></li>
+  <li><a href="#범주형-모형에-대한-추론" id="toc-범주형-모형에-대한-추론" class="nav-link" data-scroll-target="#범주형-모형에-대한-추론">범주형 모형에 대한 추론</a>
+  <ul class="collapse">
+  <li><a href="#벌점우도와-iwls" id="toc-벌점우도와-iwls" class="nav-link" data-scroll-target="#벌점우도와-iwls">벌점우도와 IWLS</a></li>
+  <li><a href="#반응함수의-도함수" id="toc-반응함수의-도함수" class="nav-link" data-scroll-target="#반응함수의-도함수">반응함수의 도함수</a></li>
+  <li><a href="#베이지안-추론" id="toc-베이지안-추론" class="nav-link" data-scroll-target="#베이지안-추론">베이지안 추론</a></li>
+  </ul></li>
+  <li><a href="#기타-평활화-접근법" id="toc-기타-평활화-접근법" class="nav-link" data-scroll-target="#기타-평활화-접근법">기타 평활화 접근법</a></li>
+  <li><a href="#평활화-스플라인" id="toc-평활화-스플라인" class="nav-link" data-scroll-target="#평활화-스플라인">평활화 스플라인</a>
+  <ul class="collapse">
+  <li><a href="#평활화-스플라인의-베이지안-해석" id="toc-평활화-스플라인의-베이지안-해석" class="nav-link" data-scroll-target="#평활화-스플라인의-베이지안-해석">평활화 스플라인의 베이지안 해석</a></li>
+  </ul></li>
+  <li><a href="#다음-글" id="toc-다음-글" class="nav-link" data-scroll-target="#다음-글">다음 글</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 베이지안 평활기법 — 전체 목차
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>제1장 평활기법과 비모수 회귀분석의 기본 개념</strong></p>
+<ol type="1">
+<li><a href="../../posts/smoothing/smoothing1.html">평활화 기법 소개</a></li>
+<li><a href="../../posts/smoothing/smoothing2.html">베이지안 평활기법</a></li>
+<li><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a></li>
+<li><a href="../../posts/smoothing/smoothing4.html">벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing5.html">베이지안 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing6.html">비정규분포 관측값의 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing7.html">범주형 관측값 모형과 평활화 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a></li>
+</ol>
+<p><strong>제2장 선형혼합모형</strong></p>
+<ol start="9" type="1">
+<li><a href="../../posts/smoothing/smoothing9.html">선형혼합모형</a></li>
+<li><a href="../../posts/smoothing/smoothing10.html">선형혼합모형의 우도 기반 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing11.html">선형혼합모형의 베이지안 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing12.html">유한 혼합모형</a></li>
+</ol>
+<p><strong>제3장 종단 데이터를 위한 비모수 혼합모형</strong></p>
+<ol start="13" type="1">
+<li><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a></li>
+</ol>
+<p><strong>제4장 공간 평활화와 공간가법 회귀모형</strong></p>
+<ol start="14" type="1">
+<li><a href="../../posts/smoothing/smoothing14.html">공간 평활과 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing15.html">가우스 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing16.html">텐서곱 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing17.html">방사 기저 평활</a></li>
+<li><a href="../../posts/smoothing/smoothing18.html">정상 가우스 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing19.html">베리오그램과 공분산 모수의 추정</a></li>
+<li><a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p><a href="../../posts/smoothing/smoothing6.html">앞 글</a>에서는 지수족 종속변수에 대한 벌점 스플라인과 IWLS 후보분포를 이용한 MH 알고리즘을 살펴보았다. 이번 글에서는 종속변수가 범주형인 경우로 비모수 회귀분석을 확장하고, 이어서 미분계수의 적분에 기반한 벌점을 사용하는 평활화 스플라인을 소개한다.</p>
+<section id="일변수-범주형-관측값-모형" class="level2">
+<h2 class="anchored" data-anchor-id="일변수-범주형-관측값-모형">일변수 범주형 관측값 모형</h2>
+<p>비모수 회귀분석은 종속변수가 범주형(categorical) 관측값인 경우로 확장하여 적용할 수 있다. 범주형 관측값 모형은 설명변수에 따라 종속변수의 범주(category)가 달라지거나, 설명변수가 해당 범주가 선택될 확률에 영향을 미치는 경우에 유용하다.</p>
+<p>범주형 종속변수 <span class="math inline">\(Y_i\)</span>가 전체 <span class="math inline">\(C\)</span>개의 범주 중 하나의 값을 갖는다고 하자. 그러면 범주형 종속변수는 <span class="math inline">\(C-1\)</span>개의 범주에 대한 지시변수로 다음과 같이 나타낼 수 있다.</p>
+<p><span class="math display">\[
+y_i^{(c)} =
+\begin{cases}1, &amp; \text{if}\quad Y_i = c,\\
+0, &amp; \text{otherwise,}\end{cases}\qquad c=1,\ldots,C-1.
+\]</span></p>
+<p>여기서 지시변수의 개수가 <span class="math inline">\(C\)</span>개가 아니라 <span class="math inline">\(C-1\)</span>개인 이유는 <span class="math inline">\(y_i^{(1)},\ldots,y_i^{(C-1)}\)</span>이 모두 0이면 <span class="math inline">\(Y_i=C\)</span>가 되어 <span class="math inline">\(C-1\)</span>개의 정보만으로도 전체 범주를 모두 표현할 수 있기 때문이다. 범주형 종속변수를 벡터 형태로 간단히 나타내면 <span class="math inline">\(\mathbf y_i = (y_i^{(1)},\ldots,y_i^{(C-1)})^{\top}\)</span>로 표기할 수 있다. 다음으로 범주 <span class="math inline">\(c\)</span>가 선택될 확률을 <span class="math inline">\(\pi_i^{(c)}\)</span>라고 하자. 즉,</p>
+<p><span class="math display">\[
+\pi_i^{(c)}=P(Y_i=c)=P(y_i^{(c)}=1), \quad c=1,\ldots,C-1
+\]</span></p>
+<p>이다. 마찬가지로 각 범주가 선택될 확률을 벡터로 표기하면 <span class="math inline">\(\boldsymbol\pi_i=(\pi_i^{(1)},\ldots,\pi_i^{(C-1)})^{\top}\)</span>로 쓸 수 있다. 이를 달리 표현하면 벡터 <span class="math inline">\(\mathbf y_i\)</span>는 다음과 같은 범주분포(categorical distribution)를 따르는 것으로 이해할 수 있다.</p>
+<p><span class="math display">\[
+\mathbf y_i \sim \text{Cat}(\boldsymbol\pi_i)
+\]</span></p>
+<p>이제 범주형 종속변수를 설명변수와 연결하기 위하여, 범주분포의 파라미터 <span class="math inline">\(\boldsymbol\pi_i\)</span>가 벡터값을 받아 벡터값을 내는 반응함수 <span class="math inline">\(h\)</span>를 통하여 결정되도록 구성해 보자. 그러면 함수 <span class="math inline">\(h:\mathbb{R}^{C-1}\to \mathbb{R}^{C-1}\)</span>는 각 범주에 대한 비모수 함수의 값 <span class="math inline">\(\boldsymbol\eta_i=(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})^{\top}\)</span>에 대하여</p>
+<p><span id="eq-cat-response"><span class="math display">\[
+\boldsymbol\pi_i= h(\boldsymbol\eta_i)
+\tag{1}\]</span></span></p>
+<p>를 만족한다. 이러한 구성은 비모수 회귀분석을 다변수 일반화선형모형의 틀에서 분석할 수 있도록 해준다.</p>
+</section>
+<section id="일반-범주형-모형-다항로짓모형" class="level2">
+<h2 class="anchored" data-anchor-id="일반-범주형-모형-다항로짓모형">일반 범주형 모형: 다항로짓모형</h2>
+<p>범주형 관측값 모형 중에서 가장 잘 알려진 모형은 (이항)로짓모형을 다변수로 확장한 다항로짓모형(multinomial logit model)이다. 이항로짓모형과 유사하게 확률 파라미터 <span class="math inline">\(\boldsymbol\pi_i\)</span>를 다음과 같은 로짓 반응함수를 이용하여 구한다.</p>
+<p><span id="eq-mnl"><span class="math display">\[
+\pi_i^{(c)}=h^{(c)}(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})=\begin{cases}\dfrac{\exp(\eta_i^{(c)})}{1+\sum_{j=1}^{C-1} \exp(\eta_i^{(j)})}, &amp; c=1,\ldots,C-1,\\[2ex]
+\dfrac{1}{1+\sum_{j=1}^{C-1} \exp(\eta_i^{(j)})}, &amp; c=C.
+\end{cases}
+\tag{2}\]</span></span></p>
+<section id="은닉효용-표현" class="level3">
+<h3 class="anchored" data-anchor-id="은닉효용-표현">은닉효용 표현</h3>
+<p>다항로짓모형에서 설명변수의 효과에 대한 해석을 돕고 MCMC 추론을 용이하게 하기 위하여 별도의 은닉변수(latent variable)를 도입하기도 한다. 은닉변수 <span class="math inline">\(l_i^{(c)}\)</span>를 다음과 같이 정의하자.</p>
+<p><span class="math display">\[
+l_i^{(c)}=\eta_i^{(c)}+\varepsilon_i^{(c)},\quad c=1,\ldots,C
+\]</span></p>
+<p>여기서 <span class="math inline">\(\varepsilon_i^{(c)}\)</span>는 어떤 연속확률분포를 따르는 i.i.d. 확률변수를 의미한다. 은닉변수 <span class="math inline">\(l_i^{(c)}\)</span>는 설명변수의 직접적인 효과와 오차항으로 표현되는 변동성으로 구성된 효용함수(utility)로 볼 수 있다. 이 경우 최대 효용을 제공하는 범주가 선택될 것이므로, 범주 <span class="math inline">\(c\)</span>가 선택된다는 것은 해당 범주의 효용이 가장 크다는 것을 의미한다.</p>
+<p><span class="math display">\[
+Y_i=c \quad \Longleftrightarrow\quad l_i^{(c)}=\max_{j=1,\ldots,C} l_i^{(j)}
+\]</span></p>
+<p>마지막으로 모형의 식별을 위하여 마지막 범주의 효용을 기준범주로 빼주는 제약조건을 부가하면 통상적인 다항회귀모형이 된다.</p>
+<p><span class="math display">\[
+\tilde{\eta}_i^{(c)}= \eta_i^{(c)}-\eta_i^{(C)},\quad c=1,\ldots,C-1.
+\]</span></p>
+<p>오차항에 어떠한 연속확률분포를 사용하는가에 따라 최종적으로 귀결되는 종속변수의 확률분포가 달라질 수 있다. 오차항에 극값분포(extreme value distribution)인 Gumbel 분포</p>
+<p><span class="math display">\[
+F(\varepsilon)=\exp(-\exp(-\varepsilon)),\quad f(\varepsilon) =\exp(-\exp(-\varepsilon))\exp(-\varepsilon)
+\]</span></p>
+<p>를 이용하면, 위 모형은 식별 제약조건을 만족하는 다항로짓모형</p>
+<p><span class="math display">\[
+P(Y_i=c)=\frac{\exp(\tilde{\eta}_i^{(c)})}{\sum_{j=1}^{C} \exp(\tilde{\eta}_i^{(j)})}
+\]</span></p>
+<p>이 된다. 은닉변수의 오차항이 서로 독립인 정규분포를 따르면 독립 다항프로빗모형(multinomial independent probit model)이, 오차항이 서로 독립이 아니고 상관관계가 있는 정규분포를 따르면 다변수 프로빗모형(multivariate probit model)이 된다.</p>
+</section>
+<section id="범주-공통-설명변수와-범주별-설명변수" class="level3">
+<h3 class="anchored" data-anchor-id="범주-공통-설명변수와-범주별-설명변수">범주 공통 설명변수와 범주별 설명변수</h3>
+<p>비모수 다항로짓모형을 구성할 때에는 두 가지 형태의 설명변수를 구별하여야 한다. 설명변수는 모든 범주에서 동일한 값을 가질 수도 있고, 범주에 따라 다른 값을 가질 수도 있다. 모든 범주에서 동일한 값을 갖는 경우 은닉변수는</p>
+<p><span class="math display">\[
+l_i^{(c)} = f^{(c)}(x_i) + \varepsilon_i^{(c)},
+\]</span></p>
+<p>범주에 따라 다른 값을 갖는 경우 은닉변수는</p>
+<p><span class="math display">\[
+l_i^{(c)}=f(x_i^{(c)})+\varepsilon_i^{(c)}
+\]</span></p>
+<p>가 된다.</p>
+<p>모든 범주에서 동일한 값을 갖는 경우, 범주형 회귀모형은 비모수 함수 <span class="math inline">\(f^{(c)}(x_i)=\eta_i^{(c)}=\mathbf x_i^{\top}\boldsymbol\gamma^{(c)}\)</span>로 표현할 수 있으며, <span class="math inline">\(\boldsymbol\gamma^{(c)}\)</span>는 범주별로 서로 다른 값을 갖게 된다. 이를 행렬로 간단히 표현하면</p>
+<p><span class="math display">\[
+\boldsymbol\eta_i =\mathbf X_i \boldsymbol\gamma
+\]</span></p>
+<p>와 같다. 디자인 벡터 <span class="math inline">\(\mathbf x_i=(B_1(x_i),\ldots,B_K(x_i))^{\top}\)</span>에 대하여, 식별조건에 따라 행렬 <span class="math inline">\(\mathbf X_i\)</span>는 <span class="math inline">\(C-1\)</span>개의 행을 가지며 <span class="math inline">\(\mathbf X_i\)</span>와 <span class="math inline">\(\boldsymbol\gamma\)</span>는 다음과 같다.</p>
+<p><span class="math display">\[
+\mathbf X_i=\begin{pmatrix}\mathbf x_i^{\top} &amp;&amp;\\ &amp;\ddots&amp;\\&amp;&amp;\mathbf x_i^{\top} \end{pmatrix},\qquad \boldsymbol\gamma =(\boldsymbol\gamma^{(1)\top},\ldots,\boldsymbol\gamma^{(C-1)\top})^{\top}
+\]</span></p>
+<p>범주별로 설명변수가 다른 값을 갖는 경우에는 비모수 함수를 <span class="math inline">\(f(x_i^{(c)})=\mathbf x_i^{(c)\top}\boldsymbol\gamma\)</span>로 표현할 수 있으며, <span class="math inline">\(\boldsymbol\gamma\)</span>는 모든 범주에서 동일한 값을 갖는다. 이때 디자인 벡터는 <span class="math inline">\(\mathbf x_i^{(c)}=(B_1(x_i^{(c)}),\ldots,B_K(x_i^{(c)}))^{\top}\)</span>가 되고, 식별조건</p>
+<p><span class="math display">\[
+\eta_i^{(c)}=f(x_i^{(c)})-f(x_i^{(C)}),\quad c=1,\ldots,C-1
+\]</span></p>
+<p>에 따라 행렬 <span class="math inline">\(\mathbf X_i\)</span>는</p>
+<p><span class="math display">\[
+\mathbf X_i=\begin{pmatrix}(\mathbf x_i^{(1)} -\mathbf x_i^{(C)} )^{\top} \\ \vdots\\(\mathbf x_i^{(C-1)}-\mathbf x_i^{(C)})^{\top} \end{pmatrix}
+\]</span></p>
+<p>가 된다.</p>
+</section>
+</section>
+<section id="순서형-범주에-대한-누적분포함수-모형" class="level2">
+<h2 class="anchored" data-anchor-id="순서형-범주에-대한-누적분포함수-모형">순서형 범주에 대한 누적분포함수 모형</h2>
+<p>순서 범주형 모형은 종속변수의 범주 순서에 의미가 있는 경우를 다루기 위한 모형이다. 종속변수 <span class="math inline">\(Y_i\)</span>가 <span class="math inline">\(C\)</span>개의 범주 중 범주 <span class="math inline">\(c\)</span>에 속한다고 하자. 다음과 같은 은닉변수</p>
+<p><span class="math display">\[
+l_i = \eta_i + \varepsilon_i,\quad -\infty&lt;l_i&lt;\infty
+\]</span></p>
+<p>를 이용하여 은닉변수와 종속변수의 관계를 표현하면</p>
+<p><span class="math display">\[
+Y_i =c \quad \Longleftrightarrow\quad \theta^{(c-1)}&lt; l_i\le \theta^{(c)}
+\]</span></p>
+<p>이다. 여기서 <span class="math inline">\(-\infty=\theta^{(0)}&lt;\theta^{(1)}&lt;\cdots&lt;\theta^{(C-1)}&lt;\theta^{(C)}=\infty\)</span>는 기준점(threshold)이다. 은닉변수는 비모수 설명함수 <span class="math inline">\(\eta_i\)</span>와 오차항 <span class="math inline">\(\varepsilon_i\)</span>로 이루어져 있고, 오차항은 연속확률분포 <span class="math inline">\(F\)</span>를 따른다. 설명함수는 전체 분포의 위치를 정하는 반면, 기준점 <span class="math inline">\(\theta\)</span>는 오차항 분포에서 각 범주의 위치를 결정한다. 따라서 설명함수 <span class="math inline">\(\eta_i\)</span>가 증가한다는 것은 종속변수가 더 높은 범주에 속할 확률이 높아진다는 것을 의미한다. 위 식으로부터 범주형 종속변수의 누적확률</p>
+<p><span id="eq-cumulative"><span class="math display">\[
+P(Y_i\le c)=F(\theta^{(c)}-\eta_i)
+\tag{3}\]</span></span></p>
+<p>이 결정되기 때문에 이 모형을 순서형 범주에 대한 누적분포함수 모형이라고 부르며, 오차항의 분포를 어떤 분포로 선택하느냐에 따라 누적로짓모형(cumulative logit model), 누적프로빗모형(cumulative probit model) 등으로 구분할 수 있다.</p>
+<p>위 식에서 알 수 있듯이 설명함수 <span class="math inline">\(\eta_i\)</span>에 상수항이 포함되는 경우, 상수항과 기준점이 함께 변동할 수 있어 모형이 식별되지 않는다. 따라서 모형의 식별을 위해서 설명함수에 상수항을 포함하지 않거나, 기준점 중 하나를 특정 값, 예를 들어 <span class="math inline">\(\theta^{(1)}=0\)</span>으로 고정한다.</p>
+<section id="범주-확률과-디자인-행렬" class="level3">
+<h3 class="anchored" data-anchor-id="범주-확률과-디자인-행렬">범주 확률과 디자인 행렬</h3>
+<p>통계적 추론을 위하여 <span class="math inline">\(\eta_i^{(c)}=\theta^{(c)} - \eta_i\)</span>라 하고 각 범주의 확률을 구해 보면</p>
+<p><span class="math display">\[
+\begin{aligned}
+P(Y_i=1)&amp;=\pi_i^{(1)}=h^{(1)}(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})=F(\eta_i^{(1)}),\\
+P(Y_i=c)&amp;=\pi_i^{(c)}=h^{(c)}(\eta_i^{(1)},\ldots,\eta_i^{(C-1)})=F(\eta_i^{(c)}) - F(\eta_i^{(c-1)}),\quad c=2,\ldots,C-1
+\end{aligned}
+\]</span></p>
+<p>이며, <span class="math inline">\(P(Y_i=C)=1-F(\eta_i^{(C-1)})\)</span>이다. 비모수 함수가 하나의 설명함수 <span class="math inline">\(\eta_i =f(x_i)=\mathbf x_i^{\top}\tilde{\boldsymbol\gamma}\)</span>로 주어지는 경우 디자인 행렬과 회귀계수는 각각</p>
+<p><span class="math display">\[
+\mathbf X_i=\begin{pmatrix}1 &amp;&amp;&amp; -\mathbf x_i^{\top}\\ &amp;\ddots&amp; &amp;\vdots\\&amp;&amp;1 &amp;- \mathbf x_i^{\top} \end{pmatrix},\qquad \boldsymbol\gamma =(\theta^{(1)},\ldots,\theta^{(C-1)},\tilde{\boldsymbol\gamma}^{\top})^{\top}
+\]</span></p>
+<p>이다. 설명함수가 범주별로 다른 확장된 형태의 비모수 함수인 경우에는 <span class="math inline">\(\eta_i^{(c)}=\theta^{(c)}-f^{(c)}(x_i)\)</span>, <span class="math inline">\(f^{(c)}(x_i)=\mathbf x_i^{\top}\tilde{\boldsymbol\gamma}^{(c)}\)</span>이고, 이 경우 디자인 행렬 <span class="math inline">\(\mathbf X_i\)</span>와 회귀계수 <span class="math inline">\(\boldsymbol\gamma\)</span>는 각각</p>
+<p><span class="math display">\[
+\mathbf X_i=\begin{pmatrix}1 \;\; -\mathbf x_i^{\top}&amp;&amp; \\ &amp;\ddots&amp; \\&amp;&amp;1 \;\; - \mathbf x_i^{\top} \end{pmatrix},\qquad \boldsymbol\gamma =(\theta^{(1)},\tilde{\boldsymbol\gamma}^{(1)\top},\ldots,\theta^{(C-1)},\tilde{\boldsymbol\gamma}^{(C-1)\top})^{\top}
+\]</span></p>
+<p>가 된다. 하지만 설명함수를 범주별로 별도의 함수로 추정하는 경우, 함수 <span class="math inline">\(f^{(c)}(x_i)\)</span>가 다음의 순서조건</p>
+<p><span class="math display">\[
+\theta^{(1)}-f^{(1)}(x_i)&lt;\cdots&lt;\theta^{(C-1)}-f^{(C-1)}(x_i)
+\]</span></p>
+<p>을 모두 만족시켜야 하므로 주의가 요구된다.</p>
+</section>
+</section>
+<section id="순서형-범주에-대한-순차-모형" class="level2">
+<h2 class="anchored" data-anchor-id="순서형-범주에-대한-순차-모형">순서형 범주에 대한 순차 모형</h2>
+<p>순서형 범주에 속하는 종속변수를 모형화하는 또 다른 예는 범주가 단계적으로 진행되는 경우이다. 질병의 심각 정도(단계)가 시간에 따라 진행하는 것과 같이 종속변수가 낮은 단계에서 높은 단계로 순차적으로 이동하는 경우에 적합한 모형이다.</p>
+<p>이 모형에서 은닉변수는 설명함수 <span class="math inline">\(\eta_i\)</span>와 i.i.d. 오차항 <span class="math inline">\(\varepsilon_i^{(c)}\)</span>로 구성된다.</p>
+<p><span class="math display">\[
+l_i^{(c)}=\eta_i +\varepsilon_i^{(c)}
+\]</span></p>
+<p>종속변수의 단계를 결정하는 일련의 기준점 <span class="math inline">\(\theta^{(1)},\ldots,\theta^{(C-1)}\)</span>이 주어졌을 때, 단계 <span class="math inline">\(c\)</span>에 도달한 종속변수가 단계 <span class="math inline">\(c\)</span>에서 멈출 조건부 확률을 은닉변수로 표현하면 다음과 같다.</p>
+<p><span id="eq-sequential"><span class="math display">\[
+P(Y_i = c \mid Y_i \ge c )= P( l_i^{(c)}\le \theta^{(c)})=F(\theta^{(c)}-\eta_i)
+\tag{4}\]</span></span></p>
+<p>여기서 각 단계의 확률에는 기준점 <span class="math inline">\(\theta^{(c)}\)</span>만 관련되어 있기 때문에, 누적분포함수 모형에서와 같이 <span class="math inline">\(\theta^{(1)},\ldots,\theta^{(C-1)}\)</span>이 순서대로 정렬되어야 한다는 조건을 만족할 필요는 없다. 선형함수를 <span class="math inline">\(\tilde{\eta}_i^{(c)}=\theta^{(c)}-\eta_i\)</span>로 표기하고 위 조건부 확률로부터 단계 <span class="math inline">\(c\)</span>에 대한 주변확률을 구하면</p>
+<p><span class="math display">\[
+P(Y_i=c)=\pi_i^{(c)}=h^{(c)}(\tilde\eta_i^{(1)},\ldots,\tilde\eta_i^{(C-1)})=F(\tilde\eta_i^{(c)})\prod_{s=1}^{c-1}\big[1-F(\tilde\eta_i^{(s)})\big]
+\]</span></p>
+<p>이다. 누적분포함수 모형과 마찬가지로 분포함수 <span class="math inline">\(F\)</span>로 로지스틱 분포를 쓰느냐 표준정규분포를 쓰느냐에 따라 순차 로짓모형, 순차 프로빗모형으로 불리며, 설명함수를 범주별로 다르게 두는 경우에도 누적분포함수 모형과 동일하게 확장할 수 있다.</p>
+</section>
+<section id="범주형-모형에-대한-추론" class="level2">
+<h2 class="anchored" data-anchor-id="범주형-모형에-대한-추론">범주형 모형에 대한 추론</h2>
+<section id="벌점우도와-iwls" class="level3">
+<h3 class="anchored" data-anchor-id="벌점우도와-iwls">벌점우도와 IWLS</h3>
+<p>비모수 범주형 관측값 모형의 추론은 일변수 비정규분포 관측값 모형과 동일하게 벌점우도함수를 이용한다. 벌점로그우도함수의 일반적인 구조는</p>
+<p><span id="eq-cat-penlik"><span class="math display">\[
+l_{\text{pen}}(\boldsymbol\gamma) = l(\boldsymbol\gamma) - \frac{1}{2}\boldsymbol\gamma^{\top} \mathbf K \boldsymbol\gamma
+\tag{5}\]</span></span></p>
+<p>이다. 여기서 <span class="math inline">\(l\)</span>과 <span class="math inline">\(l_{\text{pen}}\)</span>은 각각 로그우도함수와 벌점로그우도함수를 의미한다. 우도함수는 종속변수가 범주분포를 따른다는 가정에 의해 쉽게 구할 수 있다.</p>
+<p>일반 범주형 모형에서 설명함수 <span class="math inline">\(\eta^{(c)}=f^{(c)}(x) =\mathbf x^{\top}\boldsymbol\gamma^{(c)}\)</span>에 대응하는 개별 벌점행렬을 <span class="math inline">\(\mathbf K^{(c)}\)</span>라고 하면 전체 벌점행렬은</p>
+<p><span class="math display">\[
+\mathbf K =\text{blockdiag}\left(\frac{1}{\tau_1^2}\mathbf K^{(1)},\ldots,\frac{1}{\tau_{C-1}^2}\mathbf K^{(C-1)}\right)
+\]</span></p>
+<p>이다. 순서형 모형의 경우 설명함수 <span class="math inline">\(\eta^{(c)}=\theta^{(c)}-f(x)= \theta^{(c)}-\mathbf x^{\top}\tilde{\boldsymbol\gamma}\)</span>에 대응하는 개별 벌점행렬 <span class="math inline">\(\tilde{\mathbf K}\)</span>에 대하여 전체 벌점행렬은</p>
+<p><span class="math display">\[
+\mathbf K =\text{blockdiag}\left(\mathbf 0_{C-1}, \frac{1}{\tau^2}\tilde{\mathbf K}\right)
+\]</span></p>
+<p>이다. 여기서 <span class="math inline">\(\mathbf 0_{C-1}\)</span>은 <span class="math inline">\((C-1) \times (C-1)\)</span> 차원의 영행렬로, 기준점에는 벌점을 적용하지 않기 위해 부가된 것이다.</p>
+<p>비선형함수의 계수 <span class="math inline">\(\boldsymbol\gamma\)</span>는 IWLS 알고리즘에 따라 다음과 같이 반복적으로 업데이트하여 벌점우도함수 <span class="math inline">\(l_{\text{pen}}(\boldsymbol\gamma)\)</span>를 극대화한다.</p>
+<p><span id="eq-cat-iwls"><span class="math display">\[
+\boldsymbol\gamma ^{(k+1)}= (\mathbf X^{\top}\mathbf W^{(k)} \mathbf X +\mathbf K)^{-1} \mathbf X^{\top}\mathbf W^{(k)} \hat{\mathbf y}^{(k)}
+\tag{6}\]</span></span></p>
+<p>여기서 행렬 <span class="math inline">\(\mathbf X\)</span>는 개별 디자인 행렬 <span class="math inline">\(\mathbf X_i\)</span>를 쌓아 올려 만들고, 가중치 행렬 <span class="math inline">\(\mathbf W\)</span>는 다음과 같이 정의한다.</p>
+<p><span class="math display">\[
+\mathbf W =\mathbf D\mathbf V^{-1} \mathbf D^{\top}
+\]</span></p>
+<p>여기서 <span class="math inline">\(\mathbf D=\text{blockdiag}(\mathbf D_1, \ldots, \mathbf D_n)\)</span>, <span class="math inline">\(\mathbf V=\text{blockdiag}(\mathbf V_1, \ldots, \mathbf V_n)\)</span>이고, 개별 행렬 <span class="math inline">\(\mathbf D_i\)</span>와 <span class="math inline">\(\mathbf V_i\)</span>는 각각</p>
+<p><span class="math display">\[
+\mathbf D_i =\frac{\partial h(\boldsymbol\eta_i)}{\partial\boldsymbol\eta}=\begin{pmatrix}\dfrac{\partial h^{(1)}(\boldsymbol\eta_i)}{\partial\eta^{(1)}}&amp;\cdots&amp;\dfrac{\partial h^{(C-1)}(\boldsymbol\eta_i)}{\partial\eta^{(1)}}\\
+\vdots&amp;\ddots&amp;\vdots\\
+\dfrac{\partial h^{(1)}(\boldsymbol\eta_i)}{\partial\eta^{(C-1)}}&amp;\cdots&amp;\dfrac{\partial h^{(C-1)}(\boldsymbol\eta_i)}{\partial\eta^{(C-1)}}\end{pmatrix},\quad \mathbf V_i=\text{Cov}(\mathbf y_i)=\begin{pmatrix} \pi_i^{(1)}(1-\pi_i^{(1)})&amp;\cdots&amp;-\pi_i^{(1)}\pi_i^{(C-1)}\\
+\vdots&amp;\ddots&amp;\vdots\\
+-\pi_i^{(1)}\pi_i^{(C-1)}&amp;\cdots&amp;\pi_i^{(C-1)}(1-\pi_i^{(C-1)})\end{pmatrix}
+\]</span></p>
+<p>이다. 마지막으로 업데이트 과정의 작업 관측값 <span class="math inline">\(\hat{\mathbf y}\)</span>는 다음과 같다.</p>
+<p><span class="math display">\[
+\hat{\mathbf y} = \boldsymbol\eta + (\mathbf D^{-1})^{\top}(\mathbf y -\boldsymbol\pi)
+\]</span></p>
+</section>
+<section id="반응함수의-도함수" class="level3">
+<h3 class="anchored" data-anchor-id="반응함수의-도함수">반응함수의 도함수</h3>
+<p>반응함수의 설명함수에 대한 도함수는 반응함수를 어떻게 선택하느냐에 따라 달라진다. 다항로짓모형의 미분계수는</p>
+<p><span class="math display">\[
+\frac{\partial h^{(c)}(\boldsymbol\eta)}{\partial\eta^{(k)}}=\begin{cases}
+\dfrac{\exp(\eta^{(c)})\big(1+\sum_{j=1,j\neq c}^{C-1} \exp(\eta^{(j)})\big)}{\big(1+\sum_{j=1}^{C-1} \exp(\eta^{(j)})\big)^2}=\pi^{(c)}(1-\pi^{(c)}), &amp; c=k,\\[3ex]
+-\dfrac{\exp(\eta^{(c)})\exp(\eta^{(k)})}{\big(1+\sum_{j=1}^{C-1} \exp(\eta^{(j)})\big)^2}=-\pi^{(c)}\pi^{(k)}, &amp; c\neq k
+\end{cases}
+\]</span></p>
+<p>이고, 따라서 <span class="math inline">\(\mathbf D_i=\mathbf V_i\)</span>이므로 <span class="math inline">\(\mathbf W_i=\mathbf D_i=\mathbf V_i\)</span>가 성립한다.</p>
+<p>누적분포함수 모형이나 순차 모형에서는 미분계수가 은닉변수 오차항의 분포함수 <span class="math inline">\(F\)</span>에 의존한다. <span class="math inline">\(F\)</span>의 확률밀도함수를 <span class="math inline">\(f\)</span>라고 하면, 누적분포함수 모형의 미분계수는</p>
+<p><span class="math display">\[
+\frac{\partial h^{(c)}(\boldsymbol\eta)}{\partial\eta^{(k)}}=\begin{cases}
+f(\eta^{(k)}), &amp; k=c,\\
+-f(\eta^{(k)}), &amp; k=c-1,\\
+0, &amp; \text{otherwise}
+\end{cases}
+\]</span></p>
+<p>이고, 순차 모형의 미분계수는</p>
+<p><span class="math display">\[
+\frac{\partial h^{(c)}(\tilde{\boldsymbol\eta})}{\partial\tilde\eta^{(k)}}=\begin{cases}
+f(\tilde\eta^{(c)})\prod_{j=1}^{c-1}\big(1-F(\tilde\eta^{(j)})\big), &amp; k=c,\\
+-F(\tilde\eta^{(c)})f(\tilde\eta^{(k)})\prod_{j=1,j\neq k}^{c-1}\big(1-F(\tilde\eta^{(j)})\big), &amp; k&lt;c,\\
+0, &amp; k&gt;c
+\end{cases}
+\]</span></p>
+<p>이다.</p>
+</section>
+<section id="베이지안-추론" class="level3">
+<h3 class="anchored" data-anchor-id="베이지안-추론">베이지안 추론</h3>
+<p>베이지안 추론은 앞에서 도입한 은닉효용 변수를 이용한 Gibbs sampler로 수행할 수 있다. 기준범주 <span class="math inline">\(C\)</span>의 효용을 0으로 두면 알고리즘은 다음과 같다.</p>
+<blockquote class="blockquote">
+<p><strong>알고리즘 2 (다항모형의 Gibbs sampler)</strong></p>
+<ol type="1">
+<li>은닉변수 <span class="math inline">\(l_i^{(c)},\; c=1,\ldots,C-1\)</span>의 업데이트
+<ol type="a">
+<li><span class="math inline">\(Y_i=c,\; c\neq C\)</span>이면, 제약조건 <span class="math inline">\(l_i^{(c)}&gt;l_i^{(h)},\; h\neq c\)</span>와 <span class="math inline">\(l_i^{(c)}&gt;0\)</span>을 만족하도록 <span class="math inline">\(l_i^{(c)} \sim N(\mathbf x_i^{\top}\boldsymbol\gamma^{(c)},1)\)</span>을 추출한 후, 제약조건에 맞게 <span class="math inline">\(l_i^{(h)} \sim N(\mathbf x_i^{\top}\boldsymbol\gamma^{(h)},1)\)</span>을 추출한다.</li>
+<li><span class="math inline">\(Y_i=C\)</span>이면, <span class="math inline">\(l_i^{(h)}&lt;0\)</span>을 만족하도록 <span class="math inline">\(l_i^{(h)} \sim N(\mathbf x_i^{\top}\boldsymbol\gamma^{(h)},1),\; h=1,\ldots,C-1\)</span>을 추출한다.</li>
+</ol></li>
+<li><span class="math inline">\(\boldsymbol\gamma^{(c)}\)</span>와 <span class="math inline">\(\tau_c^2\)</span>의 업데이트: <span class="math inline">\(c=1,\ldots,C-1\)</span>에 대하여, 정규분포 모형에서 <span class="math inline">\(\boldsymbol\gamma\)</span>와 <span class="math inline">\(\tau^2\)</span>를 추출하듯이 <span class="math inline">\(y_i\)</span>를 <span class="math inline">\(l_i^{(c)}\)</span>로 바꾸어 <span class="math inline">\(\boldsymbol\gamma^{(c)}\)</span>와 <span class="math inline">\(\tau_c^2\)</span>를 추출한다.</li>
+</ol>
+</blockquote>
+</section>
+</section>
+<section id="기타-평활화-접근법" class="level2">
+<h2 class="anchored" data-anchor-id="기타-평활화-접근법">기타 평활화 접근법</h2>
+<p>일반적으로 많이 활용되는 또 다른 벌점 접근법은 미분계수의 제곱에 근거한 벌점을 정의하는 것이다. B-스플라인의 경우 미분계수의 제곱에 근거한 벌점은 차분 벌점과 대응된다. 가장 보편적으로 이용되는 방법은 다음과 같이 이차 미분계수의 제곱을 적분하는 것이다.</p>
+<p><span id="eq-integrated-penalty"><span class="math display">\[
+\text{pen}(f)=\int (f''(x))^2dx
+\tag{7}\]</span></span></p>
+<p>이 방법은 두 번 미분가능한 함수들의 공간에서 시각적으로 매끄러운 평활화 함수를 도출할 수 있도록 해준다. 벌점항을 기저함수 계수의 이차형식으로 표현하면</p>
+<p><span class="math display">\[
+\int(f''(x))^2dx=\sum_{k_1=1}^K \sum_{k_2 =1}^K \gamma_{k_1}\gamma_{k_2 }\int B_{k_1}'' (x)B_{k_2}''(x)dx = \boldsymbol\gamma^{\top}\mathbf K \boldsymbol \gamma
+\]</span></p>
+<p>이며, 이러한 적분 벌점은 재생커널 힐버트 공간(Reproducing Kernel Hilbert Space: RKHS)의 틀에서 이해할 수 있다. 행렬 <span class="math inline">\(\mathbf K\)</span>의 원소들은 기저함수의 형태에 의존하는데, 직교 기저함수인 경우에는 항등행렬(identity matrix)이 된다. 기저함수 접근법을 RKHS와 결합하면 벌점행렬이 단순히 기저함수의 함수값으로 바뀌어 구성하기가 쉬워진다. 벌점의 이차형식은 정밀도 행렬 <span class="math inline">\(\mathbf K\)</span>를 갖는 정규 사전분포를 <span class="math inline">\(\boldsymbol\gamma\)</span>에 부여하는 베이지안 접근법과 동등하다. 이 분포는 부분적으로 비정칙(improper)이며, 선형함수들은 이차 미분계수의 적분 벌점에 의해 영향을 받지 않으므로 벌점행렬은 2차원 영공간을 갖는다.</p>
+</section>
+<section id="평활화-스플라인" class="level2">
+<h2 class="anchored" data-anchor-id="평활화-스플라인">평활화 스플라인</h2>
+<p>평활화 스플라인(smoothing splines)은 적분 벌점을 갖는 가장 잘 알려진 평활화 접근법이다. 이 방법은 최적성을 만족하지만, P-스플라인과 비교할 때 복잡한 모형에 적용하기 어렵다는 단점이 있다. 다음 최적화 문제를 생각해 보자.</p>
+<p><span id="eq-smoothing-spline"><span class="math display">\[
+\min_f\sum_{i=1}^n(y_i-f(x_i))^2+\lambda\int(f''(x))^2dx
+\tag{8}\]</span></span></p>
+<p>여기서 <span class="math inline">\(f(x)\)</span>는 두 번 미분가능한 함수이다. 이 최적화 문제의 해는 서로 다른 관측값마다 결합점을 갖는 유한 차원의 자연 3차 스플라인(natural cubic splines) 함수공간의 한 곡선이 된다. 즉,</p>
+<p><span class="math display">\[
+f(x)=\sum_{k=1}^K \gamma_k B_k(x)
+\]</span></p>
+<p>이다. 여기서 <span class="math inline">\(K\)</span>는 서로 다른 관측값의 개수이고, <span class="math inline">\(B_k\)</span>는 이 결합점들을 갖는 3차 스플라인 기저를 나타내는데, 경계점 바깥에서는 스플라인이 선형으로 제한된다. 재생커널 힐버트 공간(RKHS)의 틀로 해석하면 평활화 스플라인을 다른 기저함수를 이용하여 나타내는 것도 가능하다.</p>
+<p>평활화 스플라인은 벌점최소자승 기준(penalized least-squares criterion)을 이용하여 추정할 수 있다. 즉,</p>
+<p><span class="math display">\[
+\text{PLS}(\boldsymbol\gamma)= (\mathbf y-\mathbf X \boldsymbol \gamma)^{\top}(\mathbf y-\mathbf X \boldsymbol \gamma)+\lambda\boldsymbol\gamma^{\top}\mathbf K \boldsymbol\gamma
+\]</span></p>
+<p>이며, 여기서 <span class="math inline">\(\mathbf X\)</span>는 기저함수의 함수값들로 구성된 행렬이고, <span class="math inline">\(\mathbf K\)</span>는 벌점행렬이다. 계수와 함수의 추정값은 각각 다음과 같다.</p>
+<p><span class="math display">\[
+\hat{\boldsymbol\gamma}=(\mathbf X^{\top} \mathbf X+\lambda\mathbf K)^{-1}\mathbf X^{\top} \mathbf y,\qquad \hat{\mathbf f}=\mathbf X\hat{\boldsymbol\gamma}
+\]</span></p>
+<p>평활화 스플라인은 관측값의 수에 해당하는 차원의 연립방정식을 풀어야 하므로 상당한 수의 기저함수를 필요로 하고, 따라서 함수 추정 시 계산량이 많다. 그래서 수치적으로 계산이 어려운 경우 최적성을 일부 포기하고 차원을 줄이는 방법을 사용하기도 한다. Hastie(1996)는 평활화 스플라인의 차원을 줄이는 방법으로 스펙트럼 분해(spectral decomposition) 후 큰 고유값에 해당하는 고유벡터만을 이용하는 방법을 제시하였다. 이 방법은 사후적으로 결합점을 줄이는 작업을 피할 수 있고, 적정한 개수의 기저함수를 갖는 이른바 저차원 평활화 함수(low-rank smoother)이다. 벌점 스플라인 또한 저차원 평활화 함수이지만, 기저함수를 더 직관적이고 쉽게 구성할 수 있다는 점에서 더 선호된다고 할 수 있다.</p>
+<section id="평활화-스플라인의-베이지안-해석" class="level3">
+<h3 class="anchored" data-anchor-id="평활화-스플라인의-베이지안-해석">평활화 스플라인의 베이지안 해석</h3>
+<p>이차형식의 벌점항에 대응하는 사전분포는 다음과 같다.</p>
+<p><span class="math display">\[
+p(\boldsymbol\gamma)\propto\exp\left(-\frac{1}{2\tau^2}\boldsymbol\gamma^{\top}\mathbf K \boldsymbol \gamma\right)
+\]</span></p>
+<p>보다 일반적인 베이지안 해석을 도출하기 위하여 다음과 같은 최적화 문제를 고려해 보자.</p>
+<p><span class="math display">\[
+\min_{f} \sum_{i=1}^n(y_i-f(x_i))^2+\lambda\int(f^{(m)}(x))^2dx
+\]</span></p>
+<p>여기서 <span class="math inline">\(f^{(m)}(x)\)</span>는 <span class="math inline">\(f\)</span>의 <span class="math inline">\(m\)</span>계 도함수를 나타낸다.</p>
+</section>
+</section>
+<section id="다음-글" class="level2">
+<h2 class="anchored" data-anchor-id="다음-글">다음 글</h2>
+<p>다음 글 <a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a>에서는 여러 개의 설명변수를 갖는 가법모형과 백피팅 알고리즘을 살펴본다.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

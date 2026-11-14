@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Junho Lee">
+<meta name="description" content="비정규 확률효과 사전분포와 유한 혼합모형의 MCMC 추론">
+
+<title>유한 혼합모형 – Practical Bayesian Extremist</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-a13f158f7665f28e33a70d393e4643f4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "일치 없음",
+    "search-matching-documents-text": "일치된 문서",
+    "search-copy-link-title": "검색 링크 복사",
+    "search-hide-matches-text": "추가 검색 결과 숨기기",
+    "search-more-match-text": "추가 검색결과",
+    "search-more-matches-text": "추가 검색결과",
+    "search-clear-button-title": "제거",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "취소",
+    "search-submit-button-title": "검색",
+    "search-label": "검색"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Practical Bayesian Extremist</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="검색"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="탐색 전환" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../research.html"> 
+<span class="menu-text">Research</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../CV_KOR.html"> 
+<span class="menu-text">Curriculum Vitae</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.github.com/morner75"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/junho-lee-050943267/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">유한 혼합모형</h1>
+                  <div>
+        <div class="description">
+          비정규 확률효과 사전분포와 유한 혼합모형의 MCMC 추론
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Bayesian smoothing</div>
+                <div class="quarto-category">Mixed models</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">저자</div>
+      <div class="quarto-title-meta-contents">
+               <p>Junho Lee </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">공개</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">2022년 10월 14일</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">목차</h2>
+   
+  <ul>
+  <li><a href="#선형혼합모형의-확장" id="toc-선형혼합모형의-확장" class="nav-link active" data-scroll-target="#선형혼합모형의-확장">선형혼합모형의 확장</a>
+  <ul class="collapse">
+  <li><a href="#두꺼운-꼬리를-갖는-확률효과-분포" id="toc-두꺼운-꼬리를-갖는-확률효과-분포" class="nav-link" data-scroll-target="#두꺼운-꼬리를-갖는-확률효과-분포">두꺼운 꼬리를 갖는 확률효과 분포</a></li>
+  <li><a href="#비대칭-확률효과-분포" id="toc-비대칭-확률효과-분포" class="nav-link" data-scroll-target="#비대칭-확률효과-분포">비대칭 확률효과 분포</a></li>
+  </ul></li>
+  <li><a href="#유한-혼합모형" id="toc-유한-혼합모형" class="nav-link" data-scroll-target="#유한-혼합모형">유한 혼합모형</a>
+  <ul class="collapse">
+  <li><a href="#정규분포의-유한-혼합" id="toc-정규분포의-유한-혼합" class="nav-link" data-scroll-target="#정규분포의-유한-혼합">정규분포의 유한 혼합</a></li>
+  </ul></li>
+  <li><a href="#유한-혼합모형의-mcmc-추론" id="toc-유한-혼합모형의-mcmc-추론" class="nav-link" data-scroll-target="#유한-혼합모형의-mcmc-추론">유한 혼합모형의 MCMC 추론</a></li>
+  <li><a href="#정규-사전분포의-벌점-혼합모형" id="toc-정규-사전분포의-벌점-혼합모형" class="nav-link" data-scroll-target="#정규-사전분포의-벌점-혼합모형">정규 사전분포의 벌점 혼합모형</a></li>
+  <li><a href="#다음-글" id="toc-다음-글" class="nav-link" data-scroll-target="#다음-글">다음 글</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<div class="callout callout-style-simple callout-note callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>연재: 베이지안 평활기법 — 전체 목차
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><strong>제1장 평활기법과 비모수 회귀분석의 기본 개념</strong></p>
+<ol type="1">
+<li><a href="../../posts/smoothing/smoothing1.html">평활화 기법 소개</a></li>
+<li><a href="../../posts/smoothing/smoothing2.html">베이지안 평활기법</a></li>
+<li><a href="../../posts/smoothing/smoothing3.html">시계열 평활 모형의 확장과 비정규 관측값</a></li>
+<li><a href="../../posts/smoothing/smoothing4.html">벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing5.html">베이지안 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing6.html">비정규분포 관측값의 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing7.html">범주형 관측값 모형과 평활화 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing8.html">다변수 가법모형과 백피팅</a></li>
+</ol>
+<p><strong>제2장 선형혼합모형</strong></p>
+<ol start="9" type="1">
+<li><a href="../../posts/smoothing/smoothing9.html">선형혼합모형</a></li>
+<li><a href="../../posts/smoothing/smoothing10.html">선형혼합모형의 우도 기반 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing11.html">선형혼합모형의 베이지안 추론</a></li>
+<li><a href="../../posts/smoothing/smoothing12.html">유한 혼합모형</a></li>
+</ol>
+<p><strong>제3장 종단 데이터를 위한 비모수 혼합모형</strong></p>
+<ol start="13" type="1">
+<li><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a></li>
+</ol>
+<p><strong>제4장 공간 평활화와 공간가법 회귀모형</strong></p>
+<ol start="14" type="1">
+<li><a href="../../posts/smoothing/smoothing14.html">공간 평활과 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing15.html">가우스 마코프 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing16.html">텐서곱 벌점 스플라인</a></li>
+<li><a href="../../posts/smoothing/smoothing17.html">방사 기저 평활</a></li>
+<li><a href="../../posts/smoothing/smoothing18.html">정상 가우스 확률필드</a></li>
+<li><a href="../../posts/smoothing/smoothing19.html">베리오그램과 공분산 모수의 추정</a></li>
+<li><a href="../../posts/smoothing/smoothing20.html">공간가법 회귀분석</a></li>
+</ol>
+</div>
+</div>
+</div>
+<p><a href="../../posts/smoothing/smoothing11.html">앞 글</a>에서는 가우시안 확률효과를 갖는 선형혼합모형의 경험 베이즈·완전 베이즈 추론과 깁스 샘플링을 살펴보았다. 이번 글에서는 확률효과의 정규분포 가정을 완화하는 선형혼합모형의 확장, 특히 유한 혼합모형을 다룬다.</p>
+<section id="선형혼합모형의-확장" class="level2">
+<h2 class="anchored" data-anchor-id="선형혼합모형의-확장">선형혼합모형의 확장</h2>
+<p>선형혼합모형(linear mixed model)은 종단 자료에서 개체별 변동성을 모형화하는 동시에 개체 전체에 걸쳐 나타나는 정보도 함께 나타낼 수 있어 매력적이다. 하지만 경우에 따라 확률효과를 정규분포(normal distribution)로 모형화하는 데에 문제가 발생할 수 있다. 만약 실제 확률효과(random effect)의 분포가 정규분포와 유사하지 않다면 고정효과(fixed effect)의 추정값에 상당한 오차가 발생하는 등 모형 설정상의 오류가 나타나기 때문이다. 그 결과 특정 개체에 대한 확률효과의 추정값이 모집단 평균 방향으로 과도하게 축소될 수 있고, 실제 분포가 여러 개의 최빈값(mode)을 갖는 경우 비슷한 효과를 가진 개체들이 동일한 집단으로 제대로 모형화되지 않을 수 있다. 이 경우 정규분포보다는 데이터의 성격에 따라 변할 수 있는 유연한 확률효과 분포를 이용하는 것을 고려할 수 있다.</p>
+<section id="두꺼운-꼬리를-갖는-확률효과-분포" class="level3">
+<h3 class="anchored" data-anchor-id="두꺼운-꼬리를-갖는-확률효과-분포">두꺼운 꼬리를 갖는 확률효과 분포</h3>
+<p>우선 두꺼운 꼬리를 갖는 확률효과 분포로는 작은 자유도를 갖는 Student <span class="math inline">\(t\)</span> 분포나 Laplace 분포를 이용할 수 있으며, 확률효과 분포를 정규분포의 규모 혼합(scale mixture)으로 계층적으로 나타내는 것도 가능하다. 즉,</p>
+<p><span id="eq-t-mixture"><span class="math display">\[
+\boldsymbol\alpha_i\mid \mathbf Q\sim t_v(\mathbf 0, \mathbf Q)\quad
+\Leftrightarrow \quad \boldsymbol\alpha_i\mid \mathbf Q,\lambda_i \sim N(\mathbf 0, \mathbf Q/ \lambda_i),\quad \lambda_i\sim \Gamma(v/2,v/2),\quad i=1,\ldots,n
+\tag{1}\]</span></span></p>
+<p>이고, 공분산 행렬에는 <span class="math inline">\(\mathbf Q\sim IW(a,\mathbf B)\)</span>를 부여한다. 위 조건부 분포를 <span class="math inline">\(\lambda_i\)</span>에 대하여 적분하면 Student <span class="math inline">\(t\)</span> 분포가 된다. 파라미터 <span class="math inline">\(\lambda_i\)</span>와 <span class="math inline">\(\mathbf Q\)</span>는 깁스 추출법을 이용하여 다음과 같이 업데이트할 수 있다.</p>
+<p><span id="eq-t-gibbs"><span class="math display">\[
+\begin{aligned}
+\lambda_i \mid \cdot &amp;\sim \Gamma\left(\frac{v}{2}+\frac{q}{2},\;\frac{v}{2}+\frac{1}{2}\boldsymbol\alpha_i^{\top}\mathbf Q^{-1}\boldsymbol\alpha_i\right),\quad q=\dim(\boldsymbol\alpha_i)\\
+\mathbf Q \mid \cdot&amp; \sim IW\left(a+\frac{n}{2},\;\mathbf B +\frac{1}{2}\sum_{i=1}^n\lambda_i \boldsymbol\alpha_i\boldsymbol\alpha_i^{\top}\right)
+\end{aligned}
+\tag{2}\]</span></span></p>
+</section>
+<section id="비대칭-확률효과-분포" class="level3">
+<h3 class="anchored" data-anchor-id="비대칭-확률효과-분포">비대칭 확률효과 분포</h3>
+<p>다음으로 비대칭적인 분포의 확률효과를 고려해 보자. 0에 대하여 대칭인 단봉 밀도함수 <span class="math inline">\(f\)</span>에 대하여 원점을 기준으로 양쪽에 서로 다른 규모 요소를 부여하면</p>
+<p><span id="eq-skew"><span class="math display">\[
+p(\alpha_i\mid \lambda)=\frac{2}{\lambda+1/\lambda}\left[f\left(\frac{\alpha_i}{\lambda}\right)1_{[0,\infty)}(\alpha_i)+f(\lambda\alpha_i)1_{(-\infty,0)}(\alpha_i)\right]
+\tag{3}\]</span></span></p>
+<p>이다. 여기서 <span class="math inline">\(\lambda\)</span>는 기울어진 정도를 조절한다. <span class="math inline">\(\lambda=1\)</span>이면 <span class="math inline">\(f(\alpha_i)\)</span>가 되어 대칭이고, <span class="math inline">\(0&lt;\lambda&lt;1\)</span>이면 음의 비대칭성을, <span class="math inline">\(\lambda&gt;1\)</span>이면 양의 비대칭성을 갖는다.</p>
+<p>그러나 단봉 형태의 모수적 사전분포는 여전히 확률효과의 군집을 모형화하기에는 부족하다. 이를 모형화하기 위한 방법으로 유한 혼합모형, Dirichlet 과정 모형, Dirichlet 과정 혼합모형을 생각할 수 있으며, 이 글에서는 유한 혼합모형을 살펴본다.</p>
+</section>
+</section>
+<section id="유한-혼합모형" class="level2">
+<h2 class="anchored" data-anchor-id="유한-혼합모형">유한 혼합모형</h2>
+<p>확률효과의 사전분포가 여러 개의 봉우리를 갖는 모수적 분포라고 가정해 보자. 유한 혼합 사전분포는</p>
+<p><span id="eq-finite-mixture"><span class="math display">\[
+p(\alpha_i\mid \boldsymbol\pi, \boldsymbol\phi) = \sum_{k=1}^K \pi_kp(\alpha_i\mid \phi_k)
+\tag{4}\]</span></span></p>
+<p>로 정의되며, 여기서 <span class="math inline">\(\boldsymbol\pi=(\pi_1,\dots,\pi_K),\; \pi_1+\cdots+\pi_K=1\)</span>은 혼합분포의 가중치이고, <span class="math inline">\(\boldsymbol\phi=(\phi_1,\dots,\phi_K)\)</span>는 구성분포 <span class="math inline">\(p(\alpha_i\mid \phi_k),\;k=1,\dots,K\)</span>의 파라미터이다.</p>
+<p><span class="math inline">\(K\)</span>개의 구성분포 중 <span class="math inline">\(k\)</span>번째 구성분포의 평균을 <span class="math inline">\(\mu_k\)</span>라 하면, 확률효과의 기대값은</p>
+<p><span class="math display">\[
+E(\alpha_i\mid c_i=k)=\mu_k,\qquad E(\alpha_i)=\sum_{k=1}^K\pi_k\mu_k\neq0
+\]</span></p>
+<p>로 일반적으로 0이 아니다. 따라서 확률효과를 다음과 같이 다시 정의해 보자.</p>
+<p><span class="math display">\[
+\alpha_i = \tilde{\alpha}+\tilde{\alpha}_i
+\]</span></p>
+<p>여기서 <span class="math inline">\(\tilde\alpha=E(\alpha_i)\)</span>는 설명변수 <span class="math inline">\(\mathbf z_{ij}\)</span>의 고정효과를, <span class="math inline">\(\tilde{\alpha}_i\)</span>는 <span class="math inline">\(E(\tilde{\alpha}_i)=0\)</span>인 확률효과를 나타낸다. 따라서 확률효과 변수 <span class="math inline">\(\mathbf z_{ij}\)</span>는 고정효과 변수 <span class="math inline">\(\mathbf u_{ij}\)</span>의 일부가 되어야 한다.</p>
+<p>관측 모형은 다음과 같이 정의한다.</p>
+<p><span id="eq-mixture-obs"><span class="math display">\[
+\begin{gathered}
+\mathbf y_i =\mathbf U_i \boldsymbol\beta +\mathbf Z_i \boldsymbol\alpha_i +\boldsymbol\varepsilon_i,\quad \boldsymbol\varepsilon_i \sim N(\mathbf 0,\sigma^2\mathbf I)\\
+\boldsymbol\alpha_i\sim\sum_{k=1}^K \pi_kp(\boldsymbol\alpha_i\mid \phi_k)
+\end{gathered}
+\tag{5}\]</span></span></p>
+<p>여기서 확률효과 <span class="math inline">\(\boldsymbol\alpha_i\)</span>는 확률 <span class="math inline">\(\pi_k\)</span>로 선택된 혼합분포 구성항목 <span class="math inline">\(p(\boldsymbol\alpha_i\mid \phi_k)\)</span>에서 추출된 것으로 간주한다. 이는 잠재 분류 변수 <span class="math inline">\(c_i\in \{1,\ldots,K\}\)</span>를 도입하여 군집 형태로 표현할 수도 있다.</p>
+<p><span id="eq-latent-class"><span class="math display">\[
+\begin{gathered}
+p(\boldsymbol\alpha_i\mid \boldsymbol\pi,\boldsymbol\phi)=\sum_{k=1}^K p(c_i=k\mid \boldsymbol\pi)p(\boldsymbol\alpha_i\mid c_i=k,\boldsymbol\phi)=\sum_{k=1}^K\pi_k p(\boldsymbol\alpha_i\mid \phi_k)\\
+\boldsymbol\alpha_i\mid c_i \sim p(\boldsymbol\alpha_i\mid \phi_{c_i})
+\end{gathered}
+\tag{6}\]</span></span></p>
+<section id="정규분포의-유한-혼합" class="level3">
+<h3 class="anchored" data-anchor-id="정규분포의-유한-혼합">정규분포의 유한 혼합</h3>
+<p>이제 서로 다른 정규분포로 구성된 유한 혼합 사전분포를 살펴보자. 혼합모형의 각 구성항목을 다변량 정규분포로 설정하면 다음과 같다.</p>
+<p><span id="eq-normal-mixture"><span class="math display">\[
+\boldsymbol\alpha_i \mid \boldsymbol\pi,\boldsymbol\mu,\mathbf Q \sim  \sum_{k=1}^K \pi_k N(\boldsymbol\mu_k,\mathbf Q_k)
+\tag{7}\]</span></span></p>
+<p>여기서 <span class="math inline">\(\boldsymbol\mu=(\boldsymbol\mu_1,\ldots,\boldsymbol\mu_K)\)</span>는 미지의 평균, <span class="math inline">\(\mathbf Q=(\mathbf Q_1,\ldots,\mathbf Q_K)\)</span>는 미지의 공분산, <span class="math inline">\(\boldsymbol\pi=(\pi_1,\ldots, \pi_K)\)</span>는 혼합분포의 가중치를 의미한다. 이와 같은 확률효과를 갖는 선형혼합모형을 이질성 모형(heterogeneity model)이라고 부른다. <span class="math inline">\(K=1\)</span>인 경우에는 정규분포 확률효과 사전분포를 갖는 전통적인 선형혼합모형이 된다. 잠재 분류 변수를 이용한 조건부 모형은</p>
+<p><span class="math display">\[
+\mathbf y_i = \mathbf U_i \boldsymbol\beta +\mathbf Z_i\boldsymbol\alpha_i +\boldsymbol\varepsilon_i,\quad \boldsymbol\varepsilon_i\sim N(\mathbf 0,\sigma^2\mathbf I), \quad \boldsymbol\alpha_i\mid c_i\sim N(\boldsymbol\mu_{c_i}, \mathbf Q_{c_i})
+\]</span></p>
+<p>이고, 확률효과를 적분한 주변 모형은</p>
+<p><span class="math display">\[
+\mathbf y_i =\mathbf U_i \boldsymbol\beta+\mathbf Z_i\boldsymbol \mu_{c_i}+\tilde{\boldsymbol\varepsilon}_i,\quad \tilde{\boldsymbol\varepsilon}_i\sim N(\mathbf 0,\boldsymbol\nu_i),\quad \boldsymbol\nu_i=\mathbf Z_i\mathbf Q_{c_i}\mathbf Z_i^{\top}+\sigma^2\mathbf I
+\]</span></p>
+<p>이다. 주변 모형 표현으로 보면, 이질성 모형은 유한 개의 선형혼합모형으로 이루어진 혼합모형으로 간주할 수 있다.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">노트</span>예시: 잠재 그룹 혼합모형 (latent class mixed model)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>공분산이 영행렬, 즉 <span class="math inline">\(\mathbf Q_1=\cdots=\mathbf Q_K=\mathbf 0\)</span>인 모형을 고려해 보자. 이때 <span class="math inline">\(p(\boldsymbol\alpha_i\mid \boldsymbol\pi, \boldsymbol\mu)\)</span>는 정의역(support)이 점 <span class="math inline">\(\boldsymbol\mu_1,\ldots, \boldsymbol\mu_K\)</span>이고 확률질량함수가 <span class="math inline">\(p(\boldsymbol\alpha_i=\boldsymbol\mu_k)=\pi_k\)</span>인 이산형 분포가 된다. 잠재 그룹 혼합모형의 주변 분포는 다음과 같다.</p>
+<p><span class="math display">\[
+p(\mathbf y_i\mid \boldsymbol\pi,\boldsymbol\mu)=\sum_{k=1}^K \pi_k\,\psi(\mathbf y_i\mid \mathbf U_i\boldsymbol\beta+\mathbf Z_i \boldsymbol\mu_k, \sigma^2 \mathbf I)
+\]</span></p>
+<p>여기서 <span class="math inline">\(\psi\)</span>는 정규분포 밀도함수이다. 위 분포는 선형회귀모형의 유한 혼합모형으로 귀결된다.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="유한-혼합모형의-mcmc-추론" class="level2">
+<h2 class="anchored" data-anchor-id="유한-혼합모형의-mcmc-추론">유한 혼합모형의 MCMC 추론</h2>
+<p>유한 혼합모형의 파라미터 <span class="math inline">\(\boldsymbol\pi=(\pi_1,\ldots,\pi_K)\)</span>와 <span class="math inline">\(\boldsymbol\phi=(\phi_1,\ldots,\phi_K)\)</span>에 사전분포를 부여해 보자. 먼저 <span class="math inline">\(\boldsymbol\phi\)</span>에 대한 사전분포로는 모형에 적합한 특정한 분포 <span class="math inline">\(G_0\)</span>를 가정한다. 즉,</p>
+<p><span class="math display">\[
+\phi_k\overset{\text{i.i.d.}}{\sim} G_0
+\]</span></p>
+<p>이다. 예를 들면 켤레분포인 정규분포와 역위샤트 사전분포가 될 수 있다. 분포 <span class="math inline">\(G_0\)</span>가 초모수(hyper-parameter)를 가지고 있다면 초모수에도 초사전분포(hyper-prior)를 부여할 수 있다.</p>
+<p>혼합 가중치 <span class="math inline">\(\boldsymbol\pi\)</span>의 사전분포로는 보통 대칭인 Dirichlet 사전분포를 부여한다.</p>
+<p><span id="eq-dirichlet"><span class="math display">\[
+\boldsymbol\pi \sim \text{Dir}(\nu_0/K,\ldots, \nu_0/K)
+\tag{8}\]</span></span></p>
+<p>여기서 <span class="math inline">\(\nu_0\)</span>는 정밀도를 나타내는 파라미터이다. 모든 모수가 같다는 것은 혼합분포 구성항목들의 라벨이 서로 바뀔 수 있다는(교환 가능하다는) 가정을 나타낸다. Dirichlet 분포의 성질로부터</p>
+<p><span class="math display">\[
+E(\pi_k)=\frac{1}{K},\quad \operatorname{Var}(\pi_k)=\frac{1-1/K}{K(\nu_0+1)}
+\]</span></p>
+<p>이다.</p>
+<p>이제 고정효과 계수 <span class="math inline">\(\boldsymbol\beta\)</span>, 확률효과 계수 <span class="math inline">\(\boldsymbol\alpha=(\boldsymbol\alpha_1,\ldots,\boldsymbol\alpha_n)\)</span>, 혼합모형 파라미터 <span class="math inline">\(\boldsymbol\phi\)</span>와 <span class="math inline">\(\boldsymbol\pi\)</span>, 분류 변수 <span class="math inline">\(\mathbf c=(c_1,\ldots,c_n)\)</span>의 사후분포를 구하기 위한 MCMC 알고리즘을 살펴보자. 잠재 분류 변수 <span class="math inline">\(\mathbf c\)</span>가 주어지면 각 확률효과 계수가 어떤 군집(cluster)에서 나온 것인지 알 수 있으므로, 잠재 분류 변수 <span class="math inline">\(\mathbf c\)</span>를 추가하여 전체 모형을 구성한다. 깁스 추출의 구조는 다음과 같다.</p>
+<ol type="1">
+<li>다항분포(multinomial distribution)와 Dirichlet 분포의 켤레성(conjugacy)을 이용하여 <span class="math inline">\(p(\boldsymbol\pi\mid \mathbf c, \boldsymbol\phi,\mathbf y)=p(\boldsymbol\pi\mid \mathbf c)\)</span>로부터 추출한다.</li>
+<li>선형모형과 동일한 방식으로 <span class="math inline">\(p(\boldsymbol\beta\mid \mathbf c, \boldsymbol\phi,\boldsymbol\alpha,\sigma^2,\mathbf y)\)</span>로부터 고정효과 계수 <span class="math inline">\(\boldsymbol\beta\)</span>를 업데이트한다.</li>
+<li>켤레성을 이용하여 각각의 <span class="math inline">\(\phi_k\)</span>를 개별적으로 업데이트하여 <span class="math inline">\(p(\boldsymbol\phi\mid \mathbf c, \boldsymbol\beta,\boldsymbol\alpha,\sigma^2,\mathbf y)\)</span>로부터 추출한다.</li>
+<li>켤레성을 이용하여 각각의 <span class="math inline">\(\boldsymbol\alpha_i\)</span>를 개별적으로 <span class="math inline">\(p(\boldsymbol\alpha_i\mid\boldsymbol\beta,\phi_{c_i},\sigma^2,\mathbf y_i)\)</span>로부터 업데이트한다.</li>
+<li>업데이트된 파라미터를 이용하여 역감마분포 <span class="math inline">\(p(\sigma^2\mid\boldsymbol\beta,\boldsymbol\alpha,\mathbf y)\)</span>로부터 추출한다.</li>
+</ol>
+<p>이질성 모형(heterogeneity model)을 예로 들면, 고정효과 계수 <span class="math inline">\(\boldsymbol\beta\)</span>에는 약정보 정규 사전분포</p>
+<p><span class="math display">\[
+\boldsymbol\beta\sim N(\mathbf c, \mathbf C)
+\]</span></p>
+<p>를, <span class="math inline">\(\boldsymbol\phi\)</span>에 대한 사전분포 <span class="math inline">\(G_0\)</span>로는 켤레분포인 정규·역위샤트 분포</p>
+<p><span class="math display">\[
+\boldsymbol\mu_k\sim N(\mathbf m,\mathbf M),\quad \mathbf Q_k\sim IW(a,\mathbf B)
+\]</span></p>
+<p>를 부여한다. 또한 오차항의 분산에는 역감마분포 <span class="math inline">\(\sigma^2\sim IG(a_{\sigma},b_{\sigma})\)</span>를, 가중치 <span class="math inline">\(\boldsymbol\pi\)</span>에는 Dirichlet 사전분포</p>
+<p><span class="math display">\[
+\boldsymbol\pi\sim \text{Dir}(\nu_0/K,\ldots,\nu_0/K)
+\]</span></p>
+<p>를 부여한다. (여기서 사전평균 <span class="math inline">\(\mathbf c\)</span>는 분류 변수 <span class="math inline">\(\mathbf c\)</span>와는 다른 것이다.)</p>
+</section>
+<section id="정규-사전분포의-벌점-혼합모형" class="level2">
+<h2 class="anchored" data-anchor-id="정규-사전분포의-벌점-혼합모형">정규 사전분포의 벌점 혼합모형</h2>
+<p>혼합모형에서 구성분포의 개수 <span class="math inline">\(K\)</span>에 대하여 좀 더 살펴보자. 보통은 계산 부담을 덜기 위하여 확률효과 계수 <span class="math inline">\(\boldsymbol\alpha\)</span>의 차원과 혼합분포의 개수 <span class="math inline">\(K\)</span>를 작게 유지하고, 암묵적으로 그 수가 알려져 있거나 주어진 것으로 가정한다. 데이터를 바탕으로 <span class="math inline">\(K\)</span>를 구하는 일반적인 방법으로는 교차검증(CV) 또는 DIC를 이용하는 방법이 있다. 베이지안 접근법은 <span class="math inline">\(K\)</span>에 포아송 사전분포를 부여하는 모수적 방법과 Dirichlet 과정(Dirichlet process) 사전분포를 부여하는 비모수적 방법으로 나눌 수 있다.</p>
+<p>디리클레 과정과 이에 기반한 확률효과 사전분포, 그리고 비정규 종속변수를 위한 일반선형혼합모형은 추후 보완할 예정이다.</p>
+</section>
+<section id="다음-글" class="level2">
+<h2 class="anchored" data-anchor-id="다음-글">다음 글</h2>
+<p><a href="../../posts/smoothing/smoothing13.html">가법혼합모형과 일반가법혼합모형</a>에서는 제3장으로 넘어가 종단 데이터를 위한 비모수 혼합모형을 소개한다.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "복사완료!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "복사완료!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/morner75\.github\.io\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>rendered by <a href="https://quarto.org/">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>
